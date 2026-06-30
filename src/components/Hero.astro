@@ -1,0 +1,133 @@
+---
+/**
+ * Hero.astro
+ * Hero a sangre completa con claim + CTA + scroll indicator.
+ * Imagen de fondo full-bleed, tipografía editorial grande.
+ */
+import { SITE } from '../data/site';
+
+interface Props {
+  image: string;
+  imageAlt?: string;
+  eyebrow?: string;
+  title?: string;
+  highlight?: string; // palabra destacada con serif italic
+  subtitle?: string;
+  primaryCta?: { label: string; href: string };
+  secondaryCta?: { label: string; href: string };
+}
+
+const {
+  image,
+  imageAlt = 'Interiorismo — proyecto destacado de MIT Interiorismo',
+  eyebrow = 'Estudio boutique · Madrid',
+  title = 'Diseño de interiores',
+  highlight = 'que se vive',
+  subtitle = 'Espacios con alma, pensados para la vida que quieres vivir.',
+  primaryCta = { label: 'Ver proyectos', href: '/proyectos' },
+  secondaryCta = { label: 'Empezar un proyecto', href: '/contacto' },
+} = Astro.props;
+---
+
+<section
+  class="relative isolate h-[100svh] min-h-[640px] w-full overflow-hidden bg-ink"
+  aria-label="Hero — MIT Interiorismo"
+>
+  <!-- Imagen de fondo a sangre completa -->
+  <picture class="absolute inset-0 -z-10">
+    <source srcset={image.replace(/\.[^.]+$/, '.avif')} type="image/avif" />
+    <source srcset={image.replace(/\.[^.]+$/, '.webp')} type="image/webp" />
+    <img
+      src={image}
+      alt={imageAlt}
+      class="h-full w-full object-cover opacity-90"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      width="1920"
+      height="1080"
+    />
+  </picture>
+
+  <!-- Gradiente oscuro para legibilidad del texto (no imagen completa) -->
+  <div
+    class="absolute inset-0 -z-10 bg-gradient-to-b from-ink/40 via-ink/20 to-ink/80"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- Contenido -->
+  <div
+    class="relative mx-auto flex h-full max-w-wide flex-col justify-end px-gutter pb-16 sm:pb-24 md:pb-32"
+  >
+    <div class="max-w-3xl" data-hero-text>
+      <p
+        class="mb-6 text-xs uppercase tracking-[0.25em] text-cream/80 md:text-sm"
+      >
+        {eyebrow}
+      </p>
+
+      <h1
+        class="font-display text-display-xl text-cream"
+      >
+        {title}
+        <span class="block italic text-teal-light">{highlight}</span>
+      </h1>
+
+      <p
+        class="mt-6 max-w-xl text-lg text-cream/90 md:text-xl"
+      >
+        {subtitle}
+      </p>
+
+      <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:gap-4">
+        <a
+          href={primaryCta.href}
+          class="group inline-flex items-center justify-center gap-2 bg-cream px-7 py-4 text-sm font-medium text-ink transition-all duration-300 hover:bg-teal hover:text-cream"
+        >
+          {primaryCta.label}
+          <span
+            class="inline-block transition-transform duration-300 group-hover:translate-x-1"
+            aria-hidden="true">→</span
+          >
+        </a>
+        <a
+          href={secondaryCta.href}
+          class="group inline-flex items-center justify-center gap-2 border border-cream/30 bg-transparent px-7 py-4 text-sm font-medium text-cream backdrop-blur-sm transition-all duration-300 hover:border-cream hover:bg-cream/10"
+        >
+          {secondaryCta.label}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div
+    class="absolute bottom-6 left-1/2 -translate-x-1/2 text-cream/70 sm:bottom-8"
+    aria-hidden="true"
+  >
+    <div class="flex flex-col items-center gap-2 text-xs uppercase tracking-[0.2em]">
+      <span>Scroll</span>
+      <div
+        class="h-10 w-px animate-pulse bg-gradient-to-b from-cream to-transparent"
+      >
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Animación de entrada — manejada por GSAP island si está disponible */
+  [data-hero-text] {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+
+  /* Si JS está deshabilitado o reduced-motion, mostrar directamente */
+  @media (prefers-reduced-motion: reduce) {
+    [data-hero-text] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

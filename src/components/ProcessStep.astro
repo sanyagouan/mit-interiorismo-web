@@ -1,0 +1,36 @@
+---
+/**
+ * ProcessStep.astro
+ * Bloque individual del proceso (4 pasos).
+ */
+interface Props {
+  number: string;
+  title: string;
+  description: string;
+}
+
+const { number, title, description } = Astro.props;
+---
+
+<article class="group relative">
+  <div class="flex items-baseline gap-6">
+    <span
+      class="font-display text-display-md text-teal-light transition-colors duration-500 group-hover:text-teal"
+    >
+      {number}
+    </span>
+    <div class="flex-1 pt-3">
+      <h3 class="mb-3 font-display text-2xl text-ink md:text-3xl">
+        {title}
+      </h3>
+      <p class="max-w-md text-ink-muted">{description}</p>
+    </div>
+  </div>
+
+  <!-- Línea editorial -->
+  <div
+    class="mt-8 h-px w-full bg-gradient-to-r from-ink/20 via-ink/10 to-transparent"
+    aria-hidden="true"
+  >
+  </div>
+</article>

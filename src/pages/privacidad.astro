@@ -1,0 +1,62 @@
+---
+/**
+ * /privacidad — Política de privacidad
+ * Mínima para compliance. Pendiente de revisión legal completa.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../data/site';
+---
+
+<BaseLayout
+  title={`Política de privacidad — ${SITE.name}`}
+  description="Política de privacidad de MIT Interiorismo."
+>
+  <main id="main-content" class="bg-cream py-section">
+    <div class="mx-auto max-w-3xl px-gutter">
+      <h1 class="font-display text-display-md mb-12 text-ink">
+        Política de privacidad
+      </h1>
+
+      <div class="prose prose-lg max-w-none text-ink-muted">
+        <p class="text-sm text-ink-light">
+          Última actualización: [Pendiente]
+        </p>
+
+        <h2>Responsable del tratamiento</h2>
+        <p>
+          MIT Interiorismo<br />
+          Email: {SITE.email}<br />
+          {SITE.address.city}, {SITE.address.country}
+        </p>
+
+        <h2>Finalidad</h2>
+        <p>
+          Los datos personales recogidos a través del formulario de contacto
+          serán utilizados exclusivamente para gestionar tu solicitud y, en su
+          caso, mantener una relación comercial.
+        </p>
+
+        <h2>Legitimación</h2>
+        <p>
+          La base legal para el tratamiento de tus datos es tu consentimiento
+          explícito al marcar la casilla de aceptación en el formulario de
+          contacto.
+        </p>
+
+        <h2>Conservación</h2>
+        <p>
+          Los datos se conservarán mientras se mantenga la relación comercial
+          o hasta que solicites su supresión.
+        </p>
+
+        <h2>Derechos</h2>
+        <p>
+          Puedes ejercer tus derechos de acceso, rectificación, supresión,
+          oposición, limitación y portabilidad enviando un email a {SITE.email}.
+        </p>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>

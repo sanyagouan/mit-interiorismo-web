@@ -1,0 +1,210 @@
+---
+/**
+ * Home — index.astro
+ * Página principal con hero + proyectos destacados + servicios + proceso + CTA contacto.
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import ProcessStep from '../components/ProcessStep.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, SERVICES, PROCESS_STEPS } from '../data/site';
+import { getFeaturedProjects, PROJECT_TYPES } from '../data/projects';
+
+// Hero — usando la mejor foto real disponible (oficina Luciano con luz natural)
+const heroImage = '/images/hero/hero-oficina-luciano.jpg';
+const featured = getFeaturedProjects();
+---
+
+<BaseLayout
+  title={`${SITE.name} — ${SITE.title}`}
+  description={SITE.description}
+>
+  <main id="main-content">
+    <Hero
+      image={heroImage}
+      imageAlt="Oficina con luz natural — proyecto de MIT Interiorismo en Logroño"
+      eyebrow={`Estudio boutique · ${SITE.address.city} (${SITE.address.region})`}
+      title="Diseño que transforma."
+      highlight="Técnica que construye."
+      subtitle="Reformas integrales, espacios corporativos y consultoría en La Rioja y País Vasco. Diseño + instalaciones + normativa, todo bajo un mismo proyecto."
+      primaryCta={{ label: 'Ver proyectos', href: '/proyectos' }}
+      secondaryCta={{ label: 'Empezar un proyecto', href: '/contacto' }}
+    />
+
+    <!-- ============================================================
+         INTRO — Manifiesto editorial
+         ============================================================ -->
+    <section class="bg-cream py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="grid gap-12 md:grid-cols-12 md:gap-16">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">
+              Sobre el estudio
+            </p>
+          </div>
+          <div class="md:col-span-8">
+            <h2 class="font-display text-display-lg text-ink">
+              Donde el <span class="italic text-teal">diseño</span> encuentra a la <span class="italic text-teal">ingeniería</span>.
+            </h2>
+            <div class="mt-8 max-w-2xl space-y-4 text-lg text-ink-muted">
+              <p>
+                mit interiorismo es un estudio boutique dirigido por María Iturbe Sánchez,
+                diseñadora de interiores con sede en Yécora (Álava) y más de 11 años de experiencia.
+              </p>
+              <p>
+                Lo que nos diferencia: no proyectamos solo la estética. Proyectamos también
+                las instalaciones. Eléctricas, climatización, fontanería. Todo con normativa
+                (CTE, REBT, RITE) y con presupuestos transparentes, partida a partida.
+              </p>
+              <p class="font-display italic text-teal-deep">
+                Defensa técnica del cliente, siempre.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROYECTOS DESTACADOS
+         ============================================================ -->
+    <section class="bg-cream-warm py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-16 flex items-end justify-between">
+          <div>
+            <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
+              Selección
+            </p>
+            <h2 class="font-display text-display-lg text-ink">
+              Proyectos recientes
+            </h2>
+          </div>
+          <a
+            href="/proyectos"
+            class="group hidden items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-teal md:inline-flex"
+          >
+            Ver todos
+            <span
+              class="inline-block transition-transform duration-300 group-hover:translate-x-1"
+              aria-hidden="true">→</span
+            >
+          </a>
+        </div>
+
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
+          {featured.map((project, idx) => (
+            <ProjectCard
+              slug={project.slug}
+              title={project.title}
+              type={PROJECT_TYPES[project.type]}
+              year={project.year}
+              location={project.location}
+              cover={project.cover}
+              index={idx}
+            />
+          ))}
+        </div>
+
+        <div class="mt-12 text-center md:hidden">
+          <a
+            href="/proyectos"
+            class="inline-flex items-center gap-2 text-sm font-medium text-ink"
+          >
+            Ver todos los proyectos →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SERVICIOS
+         ============================================================ -->
+    <section class="bg-cream py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-16 grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">
+              Servicios
+            </p>
+          </div>
+          <div class="md:col-span-8">
+            <h2 class="font-display text-display-lg text-ink">
+              Lo que <span class="italic text-teal">hacemos</span>
+            </h2>
+          </div>
+        </div>
+
+        <div class="grid gap-px overflow-hidden border border-ink/10 bg-ink/10 md:grid-cols-2">
+          {
+            SERVICES.map((service) => (
+              <article class="group bg-cream p-8 transition-colors duration-500 hover:bg-cream-warm md:p-12">
+                <h3 class="mb-3 font-display text-2xl text-ink md:text-3xl">
+                  {service.title}
+                </h3>
+                <p class="text-ink-muted">{service.description}</p>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         PROCESO
+         ============================================================ -->
+    <section class="bg-cream-warm py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-16 grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">
+              El proceso
+            </p>
+          </div>
+          <div class="md:col-span-8">
+            <h2 class="font-display text-display-lg text-ink">
+              Cómo <span class="italic text-teal">trabajamos</span>
+            </h2>
+          </div>
+        </div>
+
+        <div class="space-y-12">
+          {PROCESS_STEPS.map((step) => (
+            <ProcessStep
+              number={step.number}
+              title={step.title}
+              description={step.description}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CTA FINAL
+         ============================================================ -->
+    <section class="bg-teal py-section text-cream">
+      <div class="mx-auto max-w-3xl px-gutter text-center">
+        <h2 class="font-display text-display-lg">
+          ¿Tienes un proyecto en mente?
+        </h2>
+        <p class="mt-6 text-lg text-cream/85">
+          Hablemos. La primera consulta es siempre sin compromiso.
+        </p>
+        <a
+          href="/contacto"
+          class="group mt-10 inline-flex items-center gap-2 bg-cream px-8 py-4 text-sm font-medium text-teal transition-all duration-300 hover:bg-cream-warm"
+        >
+          Empezar un proyecto
+          <span
+            class="inline-block transition-transform duration-300 group-hover:translate-x-1"
+            aria-hidden="true">→</span
+          >
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

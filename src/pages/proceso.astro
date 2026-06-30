@@ -1,0 +1,65 @@
+---
+/**
+ * /proceso — Cómo trabajamos
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProcessStep from '../components/ProcessStep.astro';
+import Footer from '../components/Footer.astro';
+import { PROCESS_STEPS, SITE } from '../data/site';
+---
+
+<BaseLayout
+  title={`Proceso — ${SITE.name}`}
+  description="Cómo trabajamos en MIT Interiorismo: del primer café a la entrega de llaves."
+>
+  <main id="main-content" class="bg-cream">
+    <section class="bg-cream py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
+          El proceso
+        </p>
+        <h1 class="font-display text-display-xl text-ink max-w-4xl">
+          Del primer café<br />a las llaves de tu casa.
+        </h1>
+        <p class="mt-6 max-w-2xl text-lg text-ink-muted">
+          Un proyecto de interiorismo lleva su tiempo. Nos gusta ser
+          transparentes con el nuestro para que sepas siempre en qué punto
+          estamos.
+        </p>
+      </div>
+    </section>
+
+    <section class="bg-cream-warm py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="space-y-16">
+          {PROCESS_STEPS.map((step) => (
+            <ProcessStep
+              number={step.number}
+              title={step.title}
+              description={step.description}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-teal py-section text-cream">
+      <div class="mx-auto max-w-3xl px-gutter text-center">
+        <h2 class="font-display text-display-lg">
+          ¿Empezamos?
+        </h2>
+        <p class="mt-6 text-lg text-cream/85">
+          El primer paso siempre es una conversación tranquila.
+        </p>
+        <a
+          href="/contacto"
+          class="group mt-10 inline-flex items-center gap-2 bg-cream px-8 py-4 text-sm font-medium text-teal transition-all duration-300 hover:bg-cream-warm"
+        >
+          Hablemos →
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

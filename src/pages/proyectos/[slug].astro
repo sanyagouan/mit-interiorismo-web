@@ -1,0 +1,196 @@
+---
+/**
+ * /proyectos/[slug] — Página individual de proyecto
+ *
+ * Datos dinámicos desde projects.ts (Single Source of Truth).
+ * Soporta galería, datos duros (facts), estado del proyecto.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+import {
+  PROJECTS,
+  PROJECT_TYPES,
+  PROJECT_STATUS,
+} from '../../data/projects';
+import { SITE } from '../../data/site';
+
+export function getStaticPaths() {
+  return PROJECTS.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await import(
+  `../../content/projects/${project.slug}.md`
+).catch(() => ({ Content: null }));
+
+// Preparar array de imágenes (cover + gallery)
+const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
+  (img, idx, arr) => arr.indexOf(img) === idx && Boolean(img)
+);
+---
+
+<BaseLayout
+  title={`${project.title} — ${project.subtitle} | ${SITE.name}`}
+  description={project.description}
+  ogImage={project.cover}
+>
+  <main id="main-content" class="bg-cream">
+    <article>
+      <!-- Hero del proyecto -->
+      <header class="relative h-[70svh] min-h-[480px] overflow-hidden bg-ink">
+        <picture>
+          <source
+            srcset={project.cover.replace(/\.[^.]+$/, '.avif')}
+            type="image/avif"
+          />
+          <source
+            srcset={project.cover.replace(/\.[^.]+$/, '.webp')}
+            type="image/webp"
+          />
+          <img
+            src={project.cover}
+            alt={`${project.title} — proyecto de MIT Interiorismo`}
+            class="h-full w-full object-cover"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            width="1920"
+            height="1080"
+          />
+        </picture>
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-ink/40 via-transparent to-ink/85"
+          aria-hidden="true"
+        >
+        </div>
+
+        <div
+          class="absolute inset-x-0 bottom-0 mx-auto max-w-wide px-gutter pb-12 text-cream"
+        >
+          <div
+            class="mb-4 flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-cream/80"
+          >
+            <span>{PROJECT_TYPES[project.type]}</span>
+            <span aria-hidden="true">·</span>
+            <span>{project.location}</span>
+            <span aria-hidden="true">·</span>
+            <span>{project.year}</span>
+            {
+              project.surface && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span>{project.surface} m²</span>
+                </>
+              )
+            }
+            <span aria-hidden="true">·</span>
+            <span class="rounded-full border border-cream/30 px-3 py-1">
+              {PROJECT_STATUS[project.status]}
+            </span>
+          </div>
+          <h1 class="font-display text-display-lg text-cream max-w-4xl">
+            {project.title}
+          </h1>
+          <p class="mt-3 font-display text-xl italic text-cream/80">
+            {project.subtitle}
+          </p>
+        </div>
+      </header>
+
+      <!-- Descripción del proyecto + datos duros -->
+      <section class="bg-cream py-section">
+        <div class="mx-auto max-w-wide px-gutter">
+          <div class="grid gap-12 md:grid-cols-12">
+            <div class="md:col-span-3">
+              <p class="text-xs uppercase tracking-[0.25em] text-teal">
+                Sobre el proyecto
+              </p>
+            </div>
+            <div class="md:col-span-8">
+              <p class="font-display text-2xl text-ink md:text-3xl">
+                {project.description}
+              </p>
+
+              {
+                project.facts && project.facts.length > 0 && (
+                  <div class="mt-10 border-l-2 border-teal/30 pl-6">
+                    <p class="mb-4 text-xs uppercase tracking-[0.25em] text-ink-light">
+                      Datos clave
+                    </p>
+                    <ul class="space-y-2 text-base text-ink-muted">
+                      {project.facts.map((fact) => (
+                        <li class="flex gap-3">
+                          <span class="text-teal" aria-hidden="true">
+                            ✓
+                          </span>
+                          <span>{fact}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              }
+
+              {
+                Content && (
+                  <div class="prose prose-lg mt-8 max-w-2xl text-ink-muted">
+                    <Content />
+                  </div>
+                )
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Galería -->
+      {
+        galleryImages.length > 1 && (
+          <section class="bg-cream-warm py-section">
+            <div class="mx-auto max-w-wide px-gutter">
+              <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
+                Galería
+              </p>
+              <h2 class="font-display mb-10 text-display-md text-ink">
+                Imágenes del proyecto
+              </h2>
+              <div class="grid gap-4 md:grid-cols-2 lg:gap-6">
+                {galleryImages.slice(1).map((img) => (
+                  <figure class="overflow-hidden bg-cream">
+                    <img
+                      src={img}
+                      alt={`${project.title} — imagen adicional`}
+                      class="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        )
+      }
+    </article>
+
+    <!-- Volver -->
+    <section class="border-t border-ink/10 bg-cream-warm py-12">
+      <div class="mx-auto max-w-wide px-gutter text-center">
+        <a
+          href="/proyectos"
+          class="group inline-flex items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-teal"
+        >
+          <span
+            class="inline-block transition-transform duration-300 group-hover:-translate-x-1"
+            aria-hidden="true">←</span
+          >
+          Volver a proyectos
+        </a>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

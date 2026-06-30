@@ -1,0 +1,118 @@
+---
+/**
+ * Footer.astro
+ * Pie de página editorial con datos de contacto y social.
+ */
+import { SITE, NAV } from '../data/site';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-ink text-cream">
+  <div class="mx-auto max-w-wide px-gutter py-section">
+    <div class="grid gap-12 md:grid-cols-12">
+      <!-- Logo + claim -->
+      <div class="md:col-span-5">
+        <p class="font-display text-display-md mb-6 text-cream">
+          Hablemos.
+        </p>
+        <p class="max-w-md text-cream/70">
+          Cada proyecto empieza con una conversación. Escríbenos y
+          hablamos sobre cómo hacer de tu espacio un lugar con alma.
+        </p>
+      </div>
+
+      <!-- Navegación -->
+      <nav class="md:col-span-3" aria-label="Navegación principal">
+        <h2 class="mb-4 text-xs uppercase tracking-[0.25em] text-cream/50">
+          Navegación
+        </h2>
+        <ul class="space-y-2">
+          {
+            NAV.map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="text-cream/80 transition-colors hover:text-teal-light"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <!-- Contacto -->
+      <div class="md:col-span-4">
+        <h2 class="mb-4 text-xs uppercase tracking-[0.25em] text-cream/50">
+          Contacto
+        </h2>
+        <ul class="space-y-3 text-cream/80">
+          <li>
+            <a
+              href={`mailto:${SITE.email}`}
+              class="transition-colors hover:text-teal-light"
+            >
+              {SITE.email}
+            </a>
+          </li>
+          <li>
+            <a
+              href={`tel:${SITE.phone.replace(/\s/g, '')}`}
+              class="transition-colors hover:text-teal-light"
+            >
+              {SITE.phone}
+            </a>
+          </li>
+          <li class="text-cream/60">
+            {SITE.address.city}, {SITE.address.region}
+          </li>
+        </ul>
+
+        <!-- Social -->
+        <div class="mt-6 flex gap-4">
+          {
+            SITE.social.instagram && (
+              <a
+                href={SITE.social.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                class="text-cream/60 transition-colors hover:text-teal-light"
+              >
+                Instagram
+              </a>
+            )
+          }
+          {
+            SITE.social.linkedin && (
+              <a
+                href={SITE.social.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                class="text-cream/60 transition-colors hover:text-teal-light"
+              >
+                LinkedIn
+              </a>
+            )
+          }
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="mt-section flex flex-col items-start justify-between gap-4 border-t border-cream/10 pt-8 text-xs text-cream/50 md:flex-row md:items-center"
+    >
+      <p>
+        © {year} {SITE.name}. Todos los derechos reservados.
+      </p>
+      <div class="flex gap-6">
+        <a href="/privacidad" class="hover:text-teal-light">Privacidad</a>
+        <a href="/aviso-legal" class="hover:text-teal-light">Aviso legal</a>
+        <a href="/cookies" class="hover:text-teal-light">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>

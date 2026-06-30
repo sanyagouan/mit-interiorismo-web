@@ -1,0 +1,85 @@
+---
+/**
+ * ProjectCard.astro
+ * Card editorial para proyectos del portfolio.
+ * Tipografía grande + imagen a sangre + hover reveal.
+ */
+
+interface Props {
+  slug: string;
+  title: string;
+  type: string;
+  year: number;
+  location: string;
+  cover: string;
+  index?: number;
+}
+
+const { slug, title, type, year, location, cover, index } = Astro.props;
+---
+
+<a
+  href={`/proyectos/${slug}`}
+  class="group block overflow-hidden bg-cream-warm"
+  data-project-card
+  data-index={index}
+>
+  <div class="relative aspect-[4/5] overflow-hidden bg-ink/5">
+    <picture>
+      <source srcset={cover.replace(/\.[^.]+$/, '.avif')} type="image/avif" />
+      <source srcset={cover.replace(/\.[^.]+$/, '.webp')} type="image/webp" />
+      <img
+        src={cover}
+        alt={`${title} — proyecto de interiorismo en ${location}`}
+        class="h-full w-full object-cover transition-transform duration-[1.4s] ease-out-expo group-hover:scale-105"
+        loading="lazy"
+        decoding="async"
+        width="800"
+        height="1000"
+      />
+    </picture>
+
+    <!-- Overlay hover sutil -->
+    <div
+      class="absolute inset-0 bg-ink/0 transition-colors duration-700 ease-out-expo group-hover:bg-ink/10"
+      aria-hidden="true"
+    >
+    </div>
+  </div>
+
+  <div class="p-6 md:p-8">
+    <div
+      class="mb-3 flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-ink-muted"
+    >
+      <span>{type}</span>
+      <span aria-hidden="true">·</span>
+      <span>{location}</span>
+      <span aria-hidden="true">·</span>
+      <span>{year}</span>
+    </div>
+
+    <h3
+      class="font-display text-display-sm text-ink transition-colors duration-300 group-hover:text-teal"
+    >
+      {title}
+    </h3>
+  </div>
+</a>
+
+<style>
+  [data-project-card] {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-project-card] {
+      opacity: 1;
+      transform: none;
+    }
+
+    [data-project-card] img {
+      transition: none !important;
+    }
+  }
+</style>

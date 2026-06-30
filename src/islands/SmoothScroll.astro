@@ -1,0 +1,79 @@
+---
+/**
+ * SmoothScroll.astro (Island)
+ * Activa Lenis smooth scroll solo si no hay prefers-reduced-motion.
+ * Importa GSAP y sincroniza con ScrollTrigger.
+ */
+---
+
+<script>
+  import Lenis from 'lenis';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const prefersReducedMotion = window.matchMedia(
+    '(prefers-reduced-motion: reduce)'
+  ).matches;
+
+  if (!prefersReducedMotion) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      smoothWheel: true,
+    });
+
+    // Sincronizar Lenis con ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    // Hero text reveal
+    const heroText = document.querySelector('[data-hero-text]');
+    if (heroText) {
+      gsap.to(heroText, {
+        opacity: 1,
+        y: 0,
+        duration: 1.4,
+        ease: 'power3.out',
+        delay: 0.3,
+      });
+    }
+
+    // Project cards stagger reveal
+    const projectCards = document.querySelectorAll('[data-project-card]');
+    projectCards.forEach((card, idx) => {
+      gsap.to(card, {
+        opacity: 1,
+        y: 0,
+        duration: 1.0,
+        ease: 'power3.out',
+        delay: 0.1 + idx * 0.1,
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
+        },
+      });
+    });
+
+    // Cleanup on navigation away (Astro view transitions)
+    document.addEventListener('astro:before-swap', () => {
+      lenis.destroy();
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    });
+  } else {
+    // Sin animaciones — mostrar contenido directamente
+    document
+      .querySelectorAll('[data-hero-text], [data-project-card]')
+      .forEach((el) => {
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'none';
+      });
+  }
+</script>

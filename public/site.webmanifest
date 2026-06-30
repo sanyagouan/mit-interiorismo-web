@@ -1,0 +1,17 @@
+{
+  "name": "MIT Interiorismo",
+  "short_name": "MIT",
+  "description": "Estudio boutique de interiorismo en Madrid",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#115A6B",
+  "lang": "es-ES",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

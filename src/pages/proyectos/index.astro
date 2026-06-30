@@ -1,0 +1,50 @@
+---
+/**
+ * /proyectos — Galería completa de proyectos
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import Footer from '../../components/Footer.astro';
+import { PROJECTS, PROJECT_TYPES } from '../../data/projects';
+import { SITE } from '../../data/site';
+---
+
+<BaseLayout
+  title={`Proyectos — ${SITE.name}`}
+  description="Selección de proyectos de interiorismo realizados por MIT Interiorismo en La Rioja y País Vasco. Reformas integrales, cambios de uso, oficinas técnicas y asesoría."
+>
+  <main id="main-content" class="bg-cream pt-section">
+    <header class="mx-auto max-w-wide px-gutter pb-16">
+      <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
+        Portfolio
+      </p>
+      <h1 class="font-display text-display-xl text-ink">
+        Proyectos
+      </h1>
+      <p class="mt-6 max-w-2xl text-lg text-ink-muted">
+        Cada proyecto es único. Aquí los que estamos desarrollando activamente
+        y los recién completados en La Rioja y País Vasco —reformas integrales,
+        cambios de uso, oficinas técnicas y asesoría técnica.
+      </p>
+    </header>
+
+    <section class="pb-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
+          {PROJECTS.map((project, idx) => (
+            <ProjectCard
+              slug={project.slug}
+              title={project.title}
+              type={PROJECT_TYPES[project.type]}
+              year={project.year}
+              location={project.location}
+              cover={project.cover}
+              index={idx}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>

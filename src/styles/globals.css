@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   VARIABLES GLOBALES — Design Tokens
+   ============================================ */
+:root {
+  /* Paleta principal — extraída de decisiones aprobadas */
+  --color-teal: #115A6B;
+  --color-teal-light: #4C8390;
+  --color-teal-deep: #0A3D4A;
+  --color-cream: #FAF7F2;
+  --color-cream-warm: #F0EBE0;
+  --color-ink: #1A1817;
+  --color-ink-soft: #2A2826;
+  --color-ink-muted: #5C5853;
+  --color-accent-clay: #D4A373;
+  --color-accent-terracotta: #C4553C;
+
+  /* Tipografía */
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Espaciado fluido */
+  --space-section: clamp(4rem, 10vh, 8rem);
+  --space-gutter: clamp(1.25rem, 4vw, 2.5rem);
+
+  /* Animación */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-reveal: 1.2s;
+}
+
+/* ============================================
+   RESET + BASE
+   ============================================ */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    /* Lenis controlará el smooth scroll; respetar prefers-reduced-motion */
+  }
+
+  body {
+    @apply bg-cream text-ink font-sans;
+    font-feature-settings: 'kern', 'liga', 'calt', 'ss01';
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+    font-feature-settings: 'kern', 'liga', 'calt';
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+    max-width: 78ch;
+  }
+
+  /* Selección de texto coherente con paleta */
+  ::selection {
+    background-color: var(--color-teal);
+    color: var(--color-cream);
+  }
+
+  /* Focus visible accesible */
+  :focus-visible {
+    outline: 2px solid var(--color-teal);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Skip to content — accesibilidad de teclado */
+  .skip-to-content {
+    position: absolute;
+    top: -100%;
+    left: 1rem;
+    z-index: 9999;
+    padding: 0.875rem 1.75rem;
+    background: var(--color-teal);
+    color: var(--color-cream);
+    font-weight: 600;
+    border-radius: 4px;
+    transition: top 0.2s var(--ease-out-expo);
+  }
+
+  .skip-to-content:focus {
+    top: 1rem;
+  }
+}
+
+/* ============================================
+   UTILIDADES EDITORIALES
+   ============================================ */
+@layer utilities {
+  /* Sangrado completo — para fotos y elementos a sangre */
+  .bleed {
+    width: 100vw;
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Tipografía editorial con kerning optimizado */
+  .text-display-xl {
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+
+  .text-display-lg {
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+  }
+
+  .text-display-md {
+    font-size: clamp(2rem, 4.5vw, 3.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  /* Hover reveal — usado en cards de proyectos */
+  .reveal-on-hover {
+    transition: transform 0.6s var(--ease-out-expo),
+                opacity 0.6s var(--ease-out-expo);
+  }
+
+  /* Línea editorial bajo headings */
+  .editorial-rule {
+    position: relative;
+    padding-bottom: 0.5em;
+  }
+  .editorial-rule::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 3rem;
+    height: 1px;
+    background: var(--color-teal);
+  }
+}
+
+/* ============================================
+   ACCESIBILIDAD — prefers-reduced-motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Lenis desactivado por JS cuando se detecta esta preferencia */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+}
+
+/* ============================================
+   PERFORMANCE — Imágenes
+   ============================================ */
+img, video {
+  height: auto;
+  max-width: 100%;
+  display: block;
+}
+
+img[loading="lazy"] {
+  background: linear-gradient(90deg, #f0ebe0 0%, #ede4d4 100%);
+}
+
+/* ============================================
+   TIPOGRAFÍA VARIABLE — Instrument Serif + Inter
+   Cargadas desde Google Fonts vía <link> en Layout
+   ============================================ */
+
+/* Soporte para font-display: swap nativo */
+@font-face {
+  font-family: 'fallback-display';
+  src: local('Georgia');
+  font-display: swap;
+  ascent-override: 95%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+  size-adjust: 105%;
+}
+
+@font-face {
+  font-family: 'fallback-sans';
+  src: local('system-ui');
+  font-display: swap;
+  ascent-override: 90%;
+  descent-override: 22%;
+  line-gap-override: 0%;
+}

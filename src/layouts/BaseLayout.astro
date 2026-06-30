@@ -1,0 +1,168 @@
+---
+/**
+ * BaseLayout.astro
+ * Layout principal con SEO completo, meta tags, OG, structured data.
+ * Reutilizado por todas las páginas del sitio.
+ */
+
+import '../styles/globals.css';
+import { SITE } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  canonical?: string;
+  type?: 'website' | 'article';
+  noIndex?: boolean;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  ogImage = SITE.ogImage,
+  canonical,
+  type = 'website',
+  noIndex = false,
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL('https://www.mitinteriorismo.studio');
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, siteUrl).toString();
+const ogImageURL = new URL(ogImage, siteUrl).toString();
+
+// Structured data — InteriorDesignService + LocalBusiness Yécora (Álava)
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'InteriorDesignService',
+      '@id': `${siteUrl}#business`,
+      name: SITE.name,
+      description: SITE.description,
+      url: siteUrl.toString(),
+      image: ogImageURL,
+      logo: `${siteUrl}favicon.svg`,
+      email: SITE.email,
+      telephone: SITE.phone,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: SITE.address.city,
+        addressRegion: SITE.address.region,
+        addressCountry: SITE.address.country,
+      },
+      areaServed: [
+        { '@type': 'City', name: 'Logroño' },
+        { '@type': 'City', name: 'Haro' },
+        { '@type': 'City', name: 'Yécora' },
+        { '@type': 'AdministrativeArea', name: 'La Rioja' },
+        { '@type': 'AdministrativeArea', name: 'Álava' },
+        { '@type': 'AdministrativeArea', name: 'País Vasco' },
+        { '@type': 'Country', name: 'España' },
+      ],
+      priceRange: '€€€',
+      sameAs: [
+        SITE.social.instagram,
+        SITE.social.linkedin,
+      ].filter(Boolean),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${siteUrl}#website`,
+      url: siteUrl.toString(),
+      name: SITE.name,
+      inLanguage: 'es-ES',
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="es-ES" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Primary Meta Tags -->
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Favicon & PWA basics -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#115A6B" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:locale" content="es_ES" />
+    <meta property="og:site_name" content={SITE.name} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={canonicalURL} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={ogImageURL} />
+
+    <!-- Tipografía variable: Instrument Serif (display) + Inter (sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap"
+    />
+
+    <!-- Structured data -->
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+    <!-- DNS prefetch para CDNs -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+
+    <!-- Smooth scroll será activado por island SmoothScroll (Lenis) -->
+  </head>
+
+  <body>
+    <a href="#main-content" class="skip-to-content">
+      Saltar al contenido principal
+    </a>
+
+    <slot />
+
+    <!-- Smooth scroll Lenis como island -->
+    <!-- Smooth scroll Lenis + GSAP cargados como island -->
+    <script>
+      // Detectar prefers-reduced-motion
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        import('../islands/SmoothScroll.astro');
+      } else {
+        // Sin animaciones — mostrar contenido directamente
+        document.addEventListener('DOMContentLoaded', () => {
+          document.querySelectorAll('[data-hero-text], [data-project-card]').forEach((el) => {
+            (el as HTMLElement).style.opacity = '1';
+            (el as HTMLElement).style.transform = 'none';
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  /* Estilos específicos del layout si los hubiera */
+</style>
