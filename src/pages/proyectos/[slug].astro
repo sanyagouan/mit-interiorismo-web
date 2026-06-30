@@ -170,6 +170,21 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
                   </figure>
                 ))}
               </div>
+              {project.facts && project.facts.length > 0 && (
+                <div class="mt-12 border-l-2 border-teal pl-6">
+                  <p class="mb-3 text-xs uppercase tracking-[0.25em] text-ink-light">
+                    Datos del proyecto
+                  </p>
+                  <ul class="space-y-2 text-base text-ink-muted">
+                    {project.facts.map((fact) => (
+                      <li class="flex gap-3">
+                        <span class="text-teal" aria-hidden="true">✓</span>
+                        <span>{fact}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </section>
         )

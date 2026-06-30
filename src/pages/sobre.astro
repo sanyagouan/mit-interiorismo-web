@@ -1,30 +1,32 @@
 ---
 /**
- * /sobre — Sobre María y el estudio
+ * /sobre — Sobre María
  *
- * Datos verificados del brief de investigación (30 jun 2026).
- * Biografía construida a partir de SOUL.md, USER.md y PDFs de proyectos.
+ * Datos verificados del repositorio GeneraIA-Yago/WEB-MARIA:
+ * biografía, formación ESDIR (8,41), trayectoria profesional (2008-actual),
+ * foto de María.
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import { SITE } from '../data/site';
+import { SITE, MARIA } from '../data/site';
 ---
 
 <BaseLayout
   title={`Sobre — ${SITE.name}`}
-  description={`Conoce a María Iturbe Sánchez y la filosofía de ${SITE.name}. Estudio boutique de interiorismo en ${SITE.address.city} (${SITE.address.region}). 11+ años de experiencia uniendo diseño, técnica e instalaciones.`}
+  description={`Conoce a María Iturbe Sánchez, interiorista con más de 17 años de experiencia, fundada ESDIR La Rioja 8,41. Estudio boutique en ${MARIA.city}.`}
 >
   <main id="main-content" class="bg-cream">
+
     <section class="bg-cream py-section">
       <div class="mx-auto max-w-wide px-gutter">
         <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
-          Sobre
+          Sobre el estudio
         </p>
         <h1 class="font-display text-display-xl text-ink max-w-4xl">
-          Diseño que transforma. Técnica que construye.
+          Donde el <span class="italic text-teal">diseño</span> encuentra a la <span class="italic text-teal">ingeniería</span>.
         </h1>
         <p class="mt-6 max-w-2xl text-lg text-ink-muted">
-          {SITE.address.city}, {SITE.address.region}. Dedicada al interiorismo técnico desde hace más de una década.
+          Yécora, Álava. 17 años haciendo espacios que funcionan.
         </p>
       </div>
     </section>
@@ -32,108 +34,53 @@ import { SITE } from '../data/site';
     <section class="bg-cream pb-section">
       <div class="mx-auto max-w-wide px-gutter">
         <div class="grid gap-12 md:grid-cols-12">
-          <!-- Columna izquierda — imagen del estudio / placeholder honesto -->
           <div class="md:col-span-5">
-            <div
-              class="aspect-[3/4] overflow-hidden bg-cream-warm"
-              aria-hidden="true"
-            >
-              <div
-                class="flex h-full w-full flex-col items-center justify-center gap-6 bg-gradient-to-br from-teal-mist to-cream-warm px-8 text-center"
-              >
-                <span class="font-display text-7xl italic text-teal-deep">M</span>
-                <p class="text-sm uppercase tracking-[0.25em] text-ink-light">
-                  María Iturbe Sánchez
-                </p>
-                <p class="font-display text-sm italic text-ink-muted">
-                  Diseñadora de interiores
-                </p>
-              </div>
-            </div>
-            <p class="mt-4 text-xs text-ink-light italic">
-              Foto profesional: pendiente de incorporar por la diseñadora.
-            </p>
+            <img
+              src={MARIA.photo}
+              alt={MARIA.fullName}
+              class="aspect-[4/5] w-full object-cover bg-cream-warm"
+              loading="eager"
+            />
           </div>
-
-          <!-- Columna derecha — biografía -->
           <div class="md:col-span-7">
             <h2 class="font-display text-display-md mb-8 text-ink">
-              María
+              {MARIA.fullName}
             </h2>
-            <div class="space-y-5 text-lg text-ink-muted">
-              <p>
-                Soy <strong class="text-ink">María Iturbe Sánchez</strong>, diseñadora
-                de interiores con sede en Yécora (Álava) y más de 11 años de experiencia
-                en reformas integrales, espacios comerciales y consultoría técnica.
-              </p>
-              <p>
-                Mi enfoque une lo que normalmente va separado: <strong class="text-teal-deep">el diseño y la ingeniería</strong>.
-                No proyecto solo la estética — proyecto también las instalaciones
-                (eléctricas, climatización, fontanería) y las tramito con la normativa
-                vigente (CTE, REBT, RITE, DB-SI, DB-HR, DB-HE). Esto me permite defender
-                técnicamente a cada cliente frente a gremios y proveedores.
-              </p>
-              <p>
-                Trabajo con <strong class="text-ink">AutoCAD, SketchUp, V-Ray 5 y Presto</strong>
-                para entregar a cada cliente planos ejecutivos, renders fotorrealistas y
-                presupuestos desglosados partida a partida. Sin sorpresas, sin opacidad.
-              </p>
-              <p>
-                Mi rol en cada proyecto es claro: <em>aliada técnica del cliente</em>.
-                Si un instalador te cobra de más, te lo digo y te ahorro el dinero (ver caso
-                Haro — 68% de ahorro frente a presupuesto de instalador local).
-              </p>
-              <p>
-                Opero como estudio boutique, sin prisa y sin franquicia. Un solo interlocutor,
-                de principio a fin, en La Rioja y País Vasco.
-              </p>
+            <p class="mb-2 text-sm uppercase tracking-[0.2em] text-teal">
+              {MARIA.role}
+            </p>
+            <p class="mb-8 font-display text-2xl text-ink-soft">
+              {MARIA.city}
+            </p>
+            <div class="space-y-5 text-lg text-ink-muted" set:html={MARIA.bioFull}>
             </div>
 
             <dl class="mt-12 grid grid-cols-2 gap-x-8 gap-y-6 border-t border-ink/10 pt-8">
               <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">
-                  Estudio
-                </dt>
-                <dd class="mt-2 font-display text-2xl text-ink">Yécora, Álava</dd>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Estudio</dt>
+                <dd class="mt-2 font-display text-2xl text-ink">{MARIA.city}</dd>
               </div>
               <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">
-                  Zona de actuación
-                </dt>
-                <dd class="mt-2 font-display text-xl text-ink">
-                  La Rioja · Álava · País Vasco
-                </dd>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Zona</dt>
+                <dd class="mt-2 font-display text-xl text-ink">{MARIA.zone}</dd>
               </div>
               <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">
-                  Experiencia
-                </dt>
-                <dd class="mt-2 font-display text-2xl text-ink">+11 años</dd>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Experiencia</dt>
+                <dd class="mt-2 font-display text-2xl text-ink">+17 años</dd>
               </div>
               <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">
-                  Modelo
-                </dt>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Modelo</dt>
                 <dd class="mt-2 font-display text-2xl text-ink">Boutique</dd>
               </div>
-              <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">
-                  Software
-                </dt>
-                <dd class="mt-2 text-sm text-ink-muted">
-                  AutoCAD · SketchUp · V-Ray 5 · Presto · InDesign
-                </dd>
-              </div>
-              <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">
-                  Contacto
-                </dt>
-                <dd class="mt-2 text-sm">
-                  <a
-                    href={`mailto:${SITE.email}`}
-                    class="text-teal transition-colors hover:text-teal-deep"
-                  >
+              <div class="col-span-2">
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Contacto</dt>
+                <dd class="mt-2 text-base">
+                  <a href={`mailto:${SITE.email}`} class="text-teal transition-colors hover:text-teal-deep">
                     {SITE.email}
+                  </a>
+                  {' · '}
+                  <a href={SITE.social.linkedin} target="_blank" rel="noopener" class="text-teal transition-colors hover:text-teal-deep">
+                    LinkedIn
                   </a>
                 </dd>
               </div>
@@ -143,16 +90,12 @@ import { SITE } from '../data/site';
       </div>
     </section>
 
-    <!-- ============================================================
-         FILOSOFÍA / DIFERENCIADORES
-         ============================================================ -->
+    <!-- FILOSOFÍA -->
     <section class="bg-cream-warm py-section">
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-16 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">
-              Forma de trabajar
-            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">Forma de trabajar</p>
           </div>
           <div class="md:col-span-8">
             <h2 class="font-display text-display-lg text-ink">
@@ -160,49 +103,99 @@ import { SITE } from '../data/site';
             </h2>
           </div>
         </div>
-
         <div class="grid gap-12 md:grid-cols-2">
-          <div>
-            <h3 class="font-display mb-3 text-2xl text-ink">
-              Diseño + técnica, juntos
-            </h3>
-            <p class="text-ink-muted">
-              La mayoría de interioristas trabajan solo con la estética. Yo proyecto
-              también las instalaciones: eléctricas, climatización, fontanería. Todo
-              con normativa. Esto evita que el cliente tenga que contratar dos
-              profesionales separados y se encuentre con proyectos descoordinados.
+          {[
+            { t: 'Diseño + técnica, juntos', d: 'La mayoría de interioristas trabajan solo con la estética. Yo proyecto también las instalaciones: eléctricas, climatización, fontanería. Todo con normativa.' },
+            { t: 'Presupuestos transparentes', d: 'Cada partida, cada medición, cada proveedor. Si un instalador cobra de más, te lo digo y te ahorro el dinero.' },
+            { t: 'Defensa técnica del cliente', d: 'Soy tu aliada frente a gremios, proveedores y posibles sorpresas. Cuando surge un problema en obra, te lo explico y te defiendo.' },
+            { t: 'Boutique, no franquicia', d: 'Un solo interlocutor, de principio a fin. Honorarios fijos en torno al 11% s/ PEM.' },
+            { t: '17 años de experiencia', d: 'Desde 2008, he pasado por Echazarreta Construcciones, COOK cocina y baño, BLURARQUITECTURA y mi propio estudio desde 2020.' },
+          ].map((card) => (
+            <div>
+              <h3 class="font-display mb-3 text-2xl text-ink">{card.t}</h3>
+              <p class="text-ink-muted" set:html={card.d}></p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- TRAYECTORIA -->
+    <section class="bg-cream py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-12 grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">Trayectoria</p>
+            <h2 class="font-display mt-3 text-display-sm text-ink">17 años haciendo espacios</h2>
+          </div>
+          <div class="md:col-span-8">
+            <p class="text-lg text-ink-muted">
+              He trabajado en estudio grande, en showrooms premium, en prácticas con arquitectos y finalmente he fundado mi propio estudio. Aquí la línea completa, de lo más reciente a lo más antiguo.
             </p>
           </div>
-          <div>
-            <h3 class="font-display mb-3 text-2xl text-ink">
-              Presupuestos transparentes
-            </h3>
-            <p class="text-ink-muted">
-              Cada partida, cada medición, cada proveedor. Si un instalador te cobra
-              de más, te lo digo y te ahorro el dinero. No acepto presupuestos
-              inflados ni soluciones a medias.
-            </p>
+        </div>
+
+        <div class="space-y-px overflow-hidden border border-ink/10 bg-ink/10">
+          {MARIA.trajectory.map((job) => (
+            <article class="group bg-cream p-8 transition-colors duration-300 hover:bg-cream-warm md:p-10">
+              <div class="grid gap-4 md:grid-cols-12">
+                <div class="md:col-span-3">
+                  <p class="text-xs uppercase tracking-[0.2em] text-teal">
+                    {job.from} — {job.to}
+                  </p>
+                </div>
+                <div class="md:col-span-9">
+                  <h3 class="font-display text-xl text-ink md:text-2xl">
+                    {job.role} <span class="text-ink-muted">· {job.company}</span>
+                  </h3>
+                  <p class="mt-3 text-ink-muted">{job.description}</p>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- FORMACIÓN -->
+    <section class="bg-cream-warm py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-12 grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">Formación</p>
+            <h2 class="font-display mt-3 text-display-sm text-ink">Bases académicas</h2>
           </div>
-          <div>
-            <h3 class="font-display mb-3 text-2xl text-ink">
-              Defensa técnica del cliente
-            </h3>
-            <p class="text-ink-muted">
-              Soy tu aliada frente a gremios, proveedores y posibles sorpresas. Cuando
-              surge un problema en obra, te lo explico, te propongo soluciones y te
-              defiendo frente a desviaciones.
-            </p>
+        </div>
+
+        {MARIA.education.map((edu) => (
+          <article class="border-l-2 border-teal pl-6">
+            <p class="text-xs uppercase tracking-[0.2em] text-ink-light">{edu.from} — {edu.to}</p>
+            <h3 class="font-display mt-2 text-2xl text-ink">{edu.title}</h3>
+            <p class="mt-1 text-ink-soft">{edu.institution}</p>
+            <p class="mt-3 max-w-2xl text-ink-muted" set:html={edu.detail}></p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- HABILIDADES -->
+    <section class="bg-cream py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-12 grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">Habilidades</p>
           </div>
-          <div>
-            <h3 class="font-display mb-3 text-2xl text-ink">
-              Boutique, no franquicia
-            </h3>
-            <p class="text-ink-muted">
-              Un solo interlocutor, de principio a fin. Sin intermediarios,
-              sin subcontratas, sin comisiones ocultas. Honorarios fijos y claros
-              (en torno al 11% s/ PEM para proyectos boutique).
-            </p>
+          <div class="md:col-span-8">
+            <h2 class="font-display text-display-lg text-ink">Stack <span class="italic text-teal">técnico</span></h2>
           </div>
+        </div>
+        <div class="grid gap-x-8 gap-y-6 md:grid-cols-3">
+          {MARIA.skills.map((s) => (
+            <div class="border-t border-ink/15 pt-4">
+              <p class="font-display text-xl text-ink">{s.skill}</p>
+              <p class="mt-1 text-sm text-ink-muted">{s.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

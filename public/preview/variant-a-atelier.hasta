@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="es-ES">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Variant A — Atelier Editorial · MIT Interiorismo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4efe7;
+    --bg-deep: #ece5d6;
+    --ink: #1a1814;
+    --ink-soft: #2a2824;
+    --ink-muted: #5c5853;
+    --accent: #115a6b;
+    --accent-light: #4c8390;
+    --paper: #faf6ed;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--ink); }
+  body {
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .display, h1, h2, .serif { font-family: 'Fraunces', serif; font-weight: 300; letter-spacing: -0.015em; }
+  .italic { font-style: italic; }
+  a { color: inherit; text-decoration: none; }
+  img { display: block; max-width: 100%; height: auto; }
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 24px 48px; mix-blend-mode: difference; color: #f4efe7;
+  }
+  .nav-logo { font-family: 'Fraunces', serif; font-size: 18px; letter-spacing: -0.02em; }
+  .nav-logo em { font-style: italic; color: var(--accent-light); }
+  .nav-links { display: flex; gap: 36px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.15em; }
+  .nav-tag {
+    position: fixed; bottom: 24px; right: 48px; z-index: 60;
+    background: var(--accent); color: var(--paper);
+    padding: 6px 14px; font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  /* HERO */
+  .hero {
+    height: 100svh; min-height: 720px;
+    position: relative; overflow: hidden;
+    display: flex; align-items: flex-end;
+    padding: 0 48px 80px;
+  }
+  .hero-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background-image: url('/images/hero/hero-oficina-luciano.jpg');
+    background-size: cover; background-position: center;
+    filter: brightness(0.7) saturate(0.95);
+  }
+  .hero-img::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(26,24,20,0.85) 100%);
+  }
+  .hero-text {
+    position: relative; z-index: 2; max-width: 920px;
+    color: var(--paper);
+  }
+  .hero-eyebrow {
+    font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--accent-light); margin-bottom: 24px;
+  }
+  .hero-title {
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    line-height: 0.95; font-weight: 300;
+  }
+  .hero-title .a { font-style: italic; color: var(--accent-light); }
+  .hero-sub {
+    margin-top: 32px; max-width: 540px;
+    font-size: 18px; color: rgba(250,246,237,0.85);
+  }
+  .hero-meta {
+    position: absolute; top: 48px; right: 48px; z-index: 2;
+    text-align: right; color: var(--paper); font-size: 12px;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    line-height: 1.8;
+  }
+  .hero-meta span { display: block; }
+  .hero-cta { margin-top: 48px; display: inline-flex; align-items: center; gap: 16px; padding-bottom: 6px; border-bottom: 1px solid var(--paper); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; }
+
+  /* MANIFIESTO */
+  .manifesto { padding: 160px 48px; display: grid; grid-template-columns: 200px 1fr 1fr; gap: 80px; background: var(--bg); }
+  .manifesto-label { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); padding-top: 12px; }
+  .manifesto h2 { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.1; max-width: 18ch; }
+  .manifesto h2 em { font-style: italic; color: var(--accent); }
+  .manifesto p { font-size: 18px; line-height: 1.7; color: var(--ink-soft); max-width: 38ch; }
+  .manifesto p + p { margin-top: 20px; }
+
+  /* PROYECTOS — full bleed editorial */
+  .projects-tag { padding: 0 48px 24px; font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); }
+  .project {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    align-items: stretch; min-height: 80vh;
+  }
+  .project:nth-child(even) { grid-template-columns: 1fr 1fr; }
+  .project:nth-child(even) .project-img { order: 2; }
+  .project-img { position: relative; overflow: hidden; min-height: 600px; }
+  .project-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.4s cubic-bezier(0.16,1,0.3,1); }
+  .project:hover .project-img img { transform: scale(1.04); }
+  .project-body { display: flex; flex-direction: column; justify-content: center; padding: 80px 80px; background: var(--paper); }
+  .project-body .meta { font-size: 12px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 24px; }
+  .project-body h3 { font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.05; font-weight: 300; max-width: 14ch; }
+  .project-body .desc { margin-top: 32px; font-size: 17px; line-height: 1.7; color: var(--ink-soft); max-width: 44ch; }
+  .project-body .facts { margin-top: 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px 32px; font-size: 13px; color: var(--ink-muted); }
+  .project-body .facts dt { text-transform: uppercase; letter-spacing: 0.15em; font-size: 11px; color: var(--ink-muted); }
+  .project-body .facts dd { font-family: 'Fraunces', serif; font-size: 18px; color: var(--ink); margin-top: 4px; font-weight: 300; }
+  .project-link { margin-top: 40px; display: inline-flex; align-items: center; gap: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--ink); align-self: flex-start; font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; }
+
+  /* FILOSOFÍA */
+  .philosophy { padding: 160px 48px; background: var(--ink); color: var(--paper); }
+  .philosophy-grid { display: grid; grid-template-columns: 200px 1fr 1fr 1fr; gap: 60px; max-width: 1200px; margin: 0 auto; }
+  .philosophy-label { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent-light); padding-top: 12px; }
+  .philosophy h2 { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.1; grid-column: 2 / -1; max-width: 16ch; font-weight: 300; }
+  .philosophy h2 em { font-style: italic; color: var(--accent-light); }
+  .philosophy-card { grid-column: span 1; }
+  .philosophy-card h4 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 300; margin-bottom: 14px; }
+  .philosophy-card p { font-size: 15px; line-height: 1.65; color: rgba(250,246,237,0.78); }
+  .philosophy-cards { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+
+  /* CTA final */
+  .cta-final { padding: 160px 48px 80px; text-align: center; background: var(--bg-deep); }
+  .cta-final .label { font-size: 12px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 24px; }
+  .cta-final h2 { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.05; font-weight: 300; }
+  .cta-final h2 em { font-style: italic; color: var(--accent); }
+  .cta-final p { margin: 32px auto 0; max-width: 50ch; color: var(--ink-soft); font-size: 17px; }
+  .cta-final a.btn {
+    display: inline-flex; margin-top: 48px; align-items: center; gap: 12px;
+    background: var(--ink); color: var(--paper); padding: 18px 32px;
+    font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+
+  /* FOOTER */
+  footer { padding: 60px 48px 40px; background: var(--ink); color: var(--paper); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 60px; }
+  footer h5 { font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(250,246,237,0.5); margin-bottom: 18px; }
+  footer p, footer a { font-size: 14px; color: rgba(250,246,237,0.85); }
+  footer .colophon { grid-column: 1 / -1; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(250,246,237,0.1); font-size: 12px; color: rgba(250,246,237,0.5); display: flex; justify-content: space-between; }
+
+  /* responsive */
+  @media (max-width: 900px) {
+    .nav { padding: 20px 24px; }
+    .hero { padding: 0 24px 60px; }
+    .hero-meta { display: none; }
+    .manifesto { grid-template-columns: 1fr; padding: 100px 24px; gap: 32px; }
+    .project { grid-template-columns: 1fr; }
+    .project:nth-child(even) .project-img { order: 0; }
+    .project-body { padding: 60px 24px; }
+    .philosophy, .cta-final { padding: 100px 24px; }
+    .philosophy-grid { grid-template-columns: 1fr; }
+    .philosophy-cards { grid-column: 1; grid-template-columns: 1fr; gap: 32px; }
+    footer { grid-template-columns: 1fr; padding: 60px 24px 30px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">mit <em>interiorismo</em></div>
+  <div class="nav-links">
+    <a href="#">Proyectos</a>
+    <a href="#">Estudio</a>
+    <a href="#">Proceso</a>
+    <a href="#">Contacto</a>
+  </div>
+</nav>
+<div class="nav-tag">Concepto A · Atelier Editorial</div>
+
+<section class="hero">
+  <div class="hero-img"></div>
+  <div class="hero-meta">
+    <span>Yécora · Álava</span>
+    <span>Est. 2020</span>
+  </div>
+  <div class="hero-text">
+    <p class="hero-eyebrow">Estudio boutique de interiorismo · La Rioja · País Vasco</p>
+    <h1 class="hero-title">Donde el <span class="a">diseño</span><br/>encuentra a la <span class="a">ingeniería</span>.</h1>
+    <p class="hero-sub">Reformas integrales, espacios corporativos y consultoría técnica. Diseño + instalaciones + normativa, todo bajo un mismo proyecto.</p>
+    <a href="#" class="hero-cta">Ver proyectos →</a>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="manifesto-label">Manifiesto</div>
+  <h2>mit interiorismo es un <em>estudio boutique</em> dirigido por María Iturbe Sánchez.</h2>
+  <div>
+    <p>Diseñadora de interiores con sede en Yécora (Álava) y más de 11 años de experiencia, María une lo que normalmente va separado: el diseño y la ingeniería.</p>
+    <p>No proyecta solo la estética. Proyecta también las instalaciones — eléctricas, climatización, fontanería — y las tramita con la normativa vigente (CTE, REBT, RITE).</p>
+  </div>
+  <div>
+    <p>Esto le permite defender técnicamente a cada cliente frente a gremios, proveedores y posibles sorpresas de obra.</p>
+    <p>El resultado: reformas <em>inteligentes</em>, presupuestos transparentes y un único interlocutor de principio a fin.</p>
+  </div>
+</section>
+
+<div class="projects-tag">Trabajos seleccionados · 2026</div>
+
+<article class="project">
+  <div class="project-img">
+    <img src="/images/projects/luciano/foto-04-oficina-principal.jpg" alt="Oficina del proyecto Luciano" />
+  </div>
+  <div class="project-body">
+    <div class="meta">Logroño, La Rioja · 2026 · Cambio de uso</div>
+    <h3>Proyecto Luciano</h3>
+    <p class="desc">Transformación de un local de oficinas en 2 apartamentos tipo suite para venta o alquiler más una oficina técnica en entreplanta. Fachada con aislamiento de lana de roca, cumplimiento del CTE 2026 (DB-SI, DB-HR, DB-HE, DB-HS 3).</p>
+    <dl class="facts">
+      <div><dt>Superficie</dt><dd>133 m²</dd></div>
+      <div><dt>Programa</dt><dd>2 viviendas + oficina</dd></div>
+      <div><dt>Estado</dt><dd>Anteproyecto</dd></div>
+      <div><dt>Normativa</dt><dd>CTE 2026</dd></div>
+    </dl>
+    <a href="#" class="project-link">Ver caso →</a>
+  </div>
+</article>
+
+<article class="project">
+  <div class="project-img">
+    <img src="/images/projects/efitar/moodboard-3.png" alt="Moodboard del proyecto EFITAR" />
+  </div>
+  <div class="project-body">
+    <div class="meta">Logroño, La Rioja · 2026 · Reforma comercial</div>
+    <h3>Oficina Técnica EFITAR</h3>
+    <p class="desc">Transformación de un local comercial en oficina técnica de ingeniería eléctrica. Lenguaje arquitectónico claro, luminoso y tecnológico: roble natural, microcemento claro, acero blanco texturizado, iluminación 3000K.</p>
+    <dl class="facts">
+      <div><dt>Superficie</dt><dd>107 m²</dd></div>
+      <div><dt>Presupuesto</dt><dd>178–198 K€</dd></div>
+      <div><dt>Estado</dt><dd>En presupuesto</dd></div>
+      <div><dt>Equipo</dt><dd>5 puestos CAD</dd></div>
+    </dl>
+    <a href="#" class="project-link">Ver caso →</a>
+  </div>
+</article>
+
+<article class="project">
+  <div class="project-img">
+    <img src="/images/projects/berceo/plano.png" alt="Plano del proyecto Berceo" />
+  </div>
+  <div class="project-body">
+    <div class="meta">Logroño, La Rioja · 2026 · Reforma integral</div>
+    <h3>Vivienda Gonzalo de Berceo</h3>
+    <p class="desc">Reforma integral con aerotermia por fancoils como sistema principal de climatización. Redistribución completa, instalaciones eléctricas dimensionadas para los nuevos usos (10 circuitos, cuadro general en cocina).</p>
+    <dl class="facts">
+      <div><dt>Superficie</dt><dd>80 m²</dd></div>
+      <div><dt>Sistema</dt><dd>Aerotermia</dd></div>
+      <div><dt>Estado</dt><dd>En curso</dd></div>
+      <div><dt>Circuitos</dt><dd>10 · nuevos</dd></div>
+    </dl>
+    <a href="#" class="project-link">Ver caso →</a>
+  </div>
+</article>
+
+<article class="project">
+  <div class="project-img">
+    <img src="/images/projects/efitar/fachada-01.jpg" alt="Fachada del local EFITAR antes" />
+  </div>
+  <div class="project-body">
+    <div class="meta">Haro, La Rioja · 2026 · Asesoría técnica</div>
+    <h3>Asesoría climatización</h3>
+    <p class="desc">Comparativa de presupuestos de instalador local vs propuesta MIT para sustitución de aire acondicionado. Resultado: <em>68% de ahorro</em> para el cliente con equipo más nuevo y mejor.</p>
+    <dl class="facts">
+      <div><dt>Ahorro</dt><dd>4.172 € (-68%)</dd></div>
+      <div><dt>Equipo</dt><dd>Daikin Emura 3</dd></div>
+      <div><dt>Estado</dt><dd>Completado</dd></div>
+      <div><dt>Superficie</dt><dd>40 m²</dd></div>
+    </dl>
+    <a href="#" class="project-link">Ver caso →</a>
+  </div>
+</article>
+
+<section class="philosophy">
+  <div class="philosophy-grid">
+    <div class="philosophy-label">Filosofía</div>
+    <h2>Cuatro principios que <em>gobiernan</em> cada proyecto.</h2>
+    <div></div>
+    <div class="philosophy-cards">
+      <div class="philosophy-card"><h4>Diseño + técnica, juntos</h4><p>La mayoría de interioristas trabajan solo con la estética. MIT proyecta también las instalaciones.</p></div>
+      <div class="philosophy-card"><h4>Presupuestos transparentes</h4><p>Cada partida, cada medición, cada proveedor. Si un instalador cobra de más, lo advierto y ahorro al cliente.</p></div>
+      <div class="philosophy-card"><h4>Defensa técnica del cliente</h4><p>Aliada frente a gremios, proveedores y sorpresas de obra. Traducción de normativa CTE/REBT/RITE.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-final">
+  <p class="label">Próximo paso</p>
+  <h2>¿Tienes un proyecto <em>en mente</em>?</h2>
+  <p>La primera consulta es siempre sin compromiso. Te respondemos en menos de 48h con una primera valoración.</p>
+  <a href="#" class="btn">Empezar un proyecto →</a>
+</section>
+
+<footer>
+  <div>
+    <h5>Estudio</h5>
+    <p>mit interiorismo<br/>María Iturbe Sánchez<br/>Yécora, Álava</p>
+  </div>
+  <div>
+    <h5>Contacto</h5>
+    <p><a href="mailto:hola@mitinteriorismo.studio">hola@mitinteriorismo.studio</a></p>
+    <p>La Rioja · Álava · País Vasco</p>
+  </div>
+  <div>
+    <h5>Navegación</h5>
+    <p><a href="#">Proyectos</a></p>
+    <p><a href="#">Sobre María</a></p>
+    <p><a href="#">Proceso</a></p>
+  </div>
+  <div class="colophon">
+    <span>© 2026 mit interiorismo</span>
+    <span>Concepto A · Atelier Editorial</span>
+  </div>
+</footer>
+
+</body>
+</html>

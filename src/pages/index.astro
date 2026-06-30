@@ -1,7 +1,16 @@
 ---
 /**
  * Home — index.astro
- * Página principal con hero + proyectos destacados + servicios + proceso + CTA contacto.
+ *
+ * ACTUALIZADO 30 jun 2026 con TODO el contenido real encontrado en
+ * GeneraIA-Yago/WEB-MARIA + proyectos activos 2026:
+ *
+ * - 7 proyectos (4 activos + 3 históricos 2020) — galería con fotos reales
+ * - Foto de María en sección de estudio
+ * - Trayectoria completa (Echazarreta, COOK, Blurarq, mit)
+ * - Formación ESDIR 8,41
+ * - Stack técnico (AutoCAD, SketchUp, V-Ray 5, Presto, InDesign, Photoshop)
+ * - Servicios con evidencias
  */
 
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -9,11 +18,11 @@ import Hero from '../components/Hero.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import ProcessStep from '../components/ProcessStep.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, SERVICES, PROCESS_STEPS } from '../data/site';
+import { SITE, SERVICES, PROCESS_STEPS, DIFFERENTIATORS, MARIA } from '../data/site';
 import { getFeaturedProjects, PROJECT_TYPES } from '../data/projects';
 
-// Hero — usando la mejor foto real disponible (oficina Luciano con luz natural)
-const heroImage = '/images/hero/hero-oficina-luciano.jpg';
+// Hero
+const heroImage = '/images/projects/lapuebla/02.jpg';
 const featured = getFeaturedProjects();
 ---
 
@@ -24,18 +33,11 @@ const featured = getFeaturedProjects();
   <main id="main-content">
     <Hero
       image={heroImage}
-      imageAlt="Oficina con luz natural — proyecto de MIT Interiorismo en Logroño"
-      eyebrow={`Estudio boutique · ${SITE.address.city} (${SITE.address.region})`}
-      title="Diseño que transforma."
-      highlight="Técnica que construye."
-      subtitle="Reformas integrales, espacios corporativos y consultoría en La Rioja y País Vasco. Diseño + instalaciones + normativa, todo bajo un mismo proyecto."
-      primaryCta={{ label: 'Ver proyectos', href: '/proyectos' }}
-      secondaryCta={{ label: 'Empezar un proyecto', href: '/contacto' }}
+      imageAlt="Merendero Lapuebla — espacio social con diseño contemporáneo"
+      eyebrow={`Estudio boutique · ${SITE.address.city} (${SITE.address.region}) · ${SITE.experienceYears} años`}
     />
 
-    <!-- ============================================================
-         INTRO — Manifiesto editorial
-         ============================================================ -->
+    <!-- INTRO — Manifiesto editorial -->
     <section class="bg-cream py-section">
       <div class="mx-auto max-w-wide px-gutter">
         <div class="grid gap-12 md:grid-cols-12 md:gap-16">
@@ -46,17 +48,14 @@ const featured = getFeaturedProjects();
           </div>
           <div class="md:col-span-8">
             <h2 class="font-display text-display-lg text-ink">
-              Donde el <span class="italic text-teal">diseño</span> encuentra a la <span class="italic text-teal">ingeniería</span>.
+              <span class="italic text-teal">Diseño</span> + <span class="italic text-teal">técnica</span>. Una sola autoría, de principio a fin.
             </h2>
             <div class="mt-8 max-w-2xl space-y-4 text-lg text-ink-muted">
               <p>
-                mit interiorismo es un estudio boutique dirigido por María Iturbe Sánchez,
-                diseñadora de interiores con sede en Yécora (Álava) y más de 11 años de experiencia.
+                mit interiorismo es un estudio boutique de Yécora (Álava) dirigido por María Iturbe Sánchez. Diseño + instalaciones + normativa, todo bajo un mismo proyecto.
               </p>
               <p>
-                Lo que nos diferencia: no proyectamos solo la estética. Proyectamos también
-                las instalaciones. Eléctricas, climatización, fontanería. Todo con normativa
-                (CTE, REBT, RITE) y con presupuestos transparentes, partida a partida.
+                La mayoría de interioristas trabajan solo con la estética. mit interiorismo proyecta también las instalaciones — eléctricas, climatización, fontanería — y las tramita con la normativa vigente (CTE, REBT, RITE). Esto permite defender técnicamente a cada cliente frente a gremios, proveedores y sorpresas de obra.
               </p>
               <p class="font-display italic text-teal-deep">
                 Defensa técnica del cliente, siempre.
@@ -67,34 +66,79 @@ const featured = getFeaturedProjects();
       </div>
     </section>
 
-    <!-- ============================================================
-         PROYECTOS DESTACADOS
-         ============================================================ -->
+    <!-- SOBRE MARÍA — imagen + bio + trayectoria condensada -->
     <section class="bg-cream-warm py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-5">
+            <img
+              src={MARIA.photo}
+              alt={MARIA.fullName}
+              class="aspect-[4/5] w-full object-cover"
+              loading="lazy"
+              width="528"
+              height="660"
+            />
+          </div>
+          <div class="md:col-span-7">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal mb-6">María Iturbe Sánchez</p>
+            <h2 class="font-display text-display-md text-ink mb-8">
+              Interior Design Specialist.
+            </h2>
+            <p class="text-lg text-ink-muted mb-6" set:html={MARIA.bio}></p>
+            <dl class="grid grid-cols-2 gap-x-8 gap-y-6 border-t border-ink/10 pt-6">
+              <div>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Formación</dt>
+                <dd class="mt-1 font-display text-base text-ink">ESDIR La Rioja (2015-2020) · 8,41</dd>
+              </div>
+              <div>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Trayectoria</dt>
+                <dd class="mt-1 text-sm text-ink-muted">Echazarreta · COOK · Blurarq · mit interiorismo</dd>
+              </div>
+              <div>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Software</dt>
+                <dd class="mt-1 text-sm text-ink-muted">AutoCAD · SketchUp · V-Ray 5 · Presto · InDesign · Photoshop</dd>
+              </div>
+              <div>
+                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Normativa</dt>
+                <dd class="mt-1 text-sm text-ink-muted">CTE · REBT · RITE · DB-SI · DB-HR · DB-HE</dd>
+              </div>
+            </dl>
+            <a
+              href="/sobre"
+              class="group mt-8 inline-flex items-center gap-2 border-b border-ink pb-1 text-sm font-medium text-ink transition-colors hover:text-teal"
+            >
+              Sobre María y la trayectoria completa
+              <span class="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROYECTOS DESTACADOS -->
+    <section class="bg-cream py-section">
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-16 flex items-end justify-between">
           <div>
             <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
-              Selección
+              Selección — {featured.length} proyectos
             </p>
             <h2 class="font-display text-display-lg text-ink">
-              Proyectos recientes
+              Trabajos destacados
             </h2>
           </div>
           <a
             href="/proyectos"
             class="group hidden items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-teal md:inline-flex"
           >
-            Ver todos
-            <span
-              class="inline-block transition-transform duration-300 group-hover:translate-x-1"
-              aria-hidden="true">→</span
-            >
+            Ver todos ({7} proyectos en archivo)
+            <span class="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
           </a>
         </div>
 
         <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
-          {featured.map((project, idx) => (
+          {featured.slice(0, 6).map((project, idx) => (
             <ProjectCard
               slug={project.slug}
               title={project.title}
@@ -106,44 +150,39 @@ const featured = getFeaturedProjects();
             />
           ))}
         </div>
-
-        <div class="mt-12 text-center md:hidden">
-          <a
-            href="/proyectos"
-            class="inline-flex items-center gap-2 text-sm font-medium text-ink"
-          >
-            Ver todos los proyectos →
-          </a>
-        </div>
       </div>
     </section>
 
-    <!-- ============================================================
-         SERVICIOS
-         ============================================================ -->
-    <section class="bg-cream py-section">
+    <!-- SERVICIOS -->
+    <section class="bg-cream-warm py-section">
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-16 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">
-              Servicios
-            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">Servicios</p>
           </div>
           <div class="md:col-span-8">
             <h2 class="font-display text-display-lg text-ink">
               Lo que <span class="italic text-teal">hacemos</span>
             </h2>
+            <p class="mt-6 max-w-2xl text-lg text-ink-muted">
+              Siete servicios definidos por los proyectos reales de María, no por lo que se estila anunciar en webs de interiorismo.
+            </p>
           </div>
         </div>
 
-        <div class="grid gap-px overflow-hidden border border-ink/10 bg-ink/10 md:grid-cols-2">
+        <div class="grid gap-px overflow-hidden border border-ink/10 bg-ink/10 md:grid-cols-2 lg:grid-cols-3">
           {
             SERVICES.map((service) => (
-              <article class="group bg-cream p-8 transition-colors duration-500 hover:bg-cream-warm md:p-12">
+              <article class="group bg-cream p-8 transition-colors duration-500 hover:bg-cream-warm md:p-10">
                 <h3 class="mb-3 font-display text-2xl text-ink md:text-3xl">
                   {service.title}
                 </h3>
                 <p class="text-ink-muted">{service.description}</p>
+                {service.evidence && (
+                  <p class="mt-4 border-t border-ink/10 pt-4 text-xs uppercase tracking-[0.2em] text-ink-light">
+                    {service.evidence}
+                  </p>
+                )}
               </article>
             ))
           }
@@ -151,16 +190,37 @@ const featured = getFeaturedProjects();
       </div>
     </section>
 
-    <!-- ============================================================
-         PROCESO
-         ============================================================ -->
+    <!-- DIFERENCIADORES -->
+    <section class="bg-cream py-section">
+      <div class="mx-auto max-w-wide px-gutter">
+        <div class="mb-12 grid gap-12 md:grid-cols-12">
+          <div class="md:col-span-4">
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">Por qué mit interiorismo</p>
+          </div>
+          <div class="md:col-span-8">
+            <h2 class="font-display text-display-lg text-ink">
+              Cinco razones, todas <span class="italic text-teal">demostrables</span>.
+            </h2>
+          </div>
+        </div>
+        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {DIFFERENTIATORS.map((d, idx) => (
+            <div class="border-t-2 border-teal pt-6">
+              <p class="font-display text-xl text-teal mb-3">0{idx + 1}</p>
+              <h3 class="font-display text-xl text-ink mb-3">{d.title}</h3>
+              <p class="text-sm text-ink-muted" set:html={d.body}></p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- PROCESO -->
     <section class="bg-cream-warm py-section">
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-16 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">
-              El proceso
-            </p>
+            <p class="text-xs uppercase tracking-[0.25em] text-teal">El proceso</p>
           </div>
           <div class="md:col-span-8">
             <h2 class="font-display text-display-lg text-ink">
@@ -181,9 +241,7 @@ const featured = getFeaturedProjects();
       </div>
     </section>
 
-    <!-- ============================================================
-         CTA FINAL
-         ============================================================ -->
+    <!-- CTA FINAL -->
     <section class="bg-teal py-section text-cream">
       <div class="mx-auto max-w-3xl px-gutter text-center">
         <h2 class="font-display text-display-lg">
@@ -193,15 +251,25 @@ const featured = getFeaturedProjects();
           Hablemos. La primera consulta es siempre sin compromiso.
         </p>
         <a
-          href="/contacto"
-          class="group mt-10 inline-flex items-center gap-2 bg-cream px-8 py-4 text-sm font-medium text-teal transition-all duration-300 hover:bg-cream-warm"
+          href={SITE.social.linkedin}
+          target="_blank"
+          rel="noopener"
+          class="mt-8 inline-flex items-center gap-2 border-b border-cream/30 pb-1 text-sm tracking-wider text-cream/85 hover:text-cream"
         >
-          Empezar un proyecto
-          <span
-            class="inline-block transition-transform duration-300 group-hover:translate-x-1"
-            aria-hidden="true">→</span
-          >
+          LinkedIn → linkedin.com/in/maríaiturbe
         </a>
+        <div class="mt-12">
+          <a
+            href="/contacto"
+            class="group inline-flex items-center gap-2 bg-cream px-8 py-4 text-sm font-medium text-teal transition-all duration-300 hover:bg-cream-warm"
+          >
+            Empezar un proyecto
+            <span
+              class="inline-block transition-transform duration-300 group-hover:translate-x-1"
+              aria-hidden="true">→</span
+            >
+          </a>
+        </div>
       </div>
     </section>
   </main>

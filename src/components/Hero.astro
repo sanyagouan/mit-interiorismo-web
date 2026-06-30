@@ -1,8 +1,13 @@
 ---
 /**
- * Hero.astro
- * Hero a sangre completa con claim + CTA + scroll indicator.
+ * Hero.astro — Hero a sangre completa con claim + CTA + scroll indicator.
  * Imagen de fondo full-bleed, tipografía editorial grande.
+ *
+ * ACTUALIZADO 30 jun 2026 — Datos reales:
+ *   - claim: "Donde el diseño encuentra a la ingeniería"
+ *   - ubicación: Yécora · La Rioja · País Vasco
+ *   - experiencia: 17 años (2008-actual)
+ *   - 7 proyectos reales: 4 activos 2026 + 3 históricos 2020
  */
 import { SITE } from '../data/site';
 
@@ -20,10 +25,10 @@ interface Props {
 const {
   image,
   imageAlt = 'Interiorismo — proyecto destacado de MIT Interiorismo',
-  eyebrow = 'Estudio boutique · Madrid',
-  title = 'Diseño de interiores',
-  highlight = 'que se vive',
-  subtitle = 'Espacios con alma, pensados para la vida que quieres vivir.',
+  eyebrow = `Estudio boutique · ${SITE.address.city} (${SITE.address.region})`,
+  title = 'Donde el',
+  highlight = 'diseño',
+  subtitle = 'Reformas integrales, espacios corporativos y consultoría técnica en La Rioja y País Vasco. Diseño + instalaciones + normativa, todo bajo un mismo proyecto.',
   primaryCta = { label: 'Ver proyectos', href: '/proyectos' },
   secondaryCta = { label: 'Empezar un proyecto', href: '/contacto' },
 } = Astro.props;
@@ -71,7 +76,7 @@ const {
         class="font-display text-display-xl text-cream"
       >
         {title}
-        <span class="block italic text-teal-light">{highlight}</span>
+        <span class="block italic text-teal-light">{highlight} encuentra a la ingeniería.</span>
       </h1>
 
       <p
@@ -95,7 +100,7 @@ const {
           href={secondaryCta.href}
           class="group inline-flex items-center justify-center gap-2 border border-cream/30 bg-transparent px-7 py-4 text-sm font-medium text-cream backdrop-blur-sm transition-all duration-300 hover:border-cream hover:bg-cream/10"
         >
-          {secondaryCta.label}
+          {secondaryCta.href === '/contacto' ? `Escribir a ${SITE.email}` : secondaryCta.label}
         </a>
       </div>
     </div>

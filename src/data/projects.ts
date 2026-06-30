@@ -1,47 +1,161 @@
 /**
- * Projects data — Portfolio de MIT Interiorismo
+ * Projects data — Portfolio real de MIT Interiorismo
  *
- * DATOS VERIFICADOS el 30 jun 2026 a partir del brief de investigación
- * (archivos locales, PDFs, presupuesto, fotos de estado actual).
- * NO se han inventado proyectos — solo los 4 documentados.
+ * Datos VERIFICADOS del repositorio GeneraIA-Yago/WEB-MARIA (11 commits, 120MB
+ * assets, incluido FOTO DE MARÍA + LinkedIn PDF + 38 imágenes históricas)
+ * cruzado con los proyectos activos documentados en
+ * /root/.hermes/profiles/maria/proyectos/ (jun 2026).
  *
- * Nota importante:
- * - NO hay fotos de proyectos terminados online. Los renders son preliminares.
- * - Luciano: hay 6 fotos reales del estado actual (NO terminadas).
- * - EFITAR: hay fotos de fachada + 3 moodboards de la propuesta.
- * - Berceo: solo hay un render plano del proyecto.
- * - Haro: sin fotos (es asesoría técnica, no reforma).
+ * Estructura:
+ * - 4 proyectos activos 2026 en La Rioja (Berceo, EFITAR, Luciano, Haro)
+ * - 3 proyectos históricos 2020 (Lapuebla, Kripan, Labastida)
+ *
+ * NO se han inventado proyectos. Solo los documentados.
  */
 
 export interface Project {
   slug: string;
   title: string;
-  /** Subtítulo editorial para mostrar en la home */
   subtitle: string;
   type:
     | 'reforma-integral'
     | 'reforma-comercial'
     | 'cambio-uso'
     | 'asesoria-tecnica'
-    | 'consultoria';
+    | 'espacios-sociales'
+    | 'residencial';
   year: number;
-  status: 'en-curso' | 'presupuesto' | 'completado' | 'anteproyecto';
+  status: 'en-curso' | 'presupuesto' | 'completado' | 'anteproyecto' | 'historico-2020';
   location: string;
   surface?: number; // m²
   cover: string;
+  /** Lista completa de imágenes para la galería del detalle */
   gallery?: string[];
+  /** Es la imagen principal que se ve en la home y en el listado */
   featured: boolean;
   description: string;
-  /** Bullet points de datos duros (m², presupuesto, etc.) */
+  /** Bullet points de datos duros del proyecto */
   facts?: string[];
   tags?: string[];
 }
 
 export const PROJECTS: Project[] = [
+  // ────── HISTÓRICOS 2020 ──────
+  {
+    slug: 'merendero-lapuebla',
+    title: 'Merendero en Lapuebla',
+    subtitle: 'Reforma integral · Espacios sociales · Álava 2020',
+    type: 'espacios-sociales',
+    year: 2020,
+    status: 'historico-2020',
+    location: 'Lapuebla de Labarca, Álava',
+    surface: undefined,
+    cover: '/images/projects/lapuebla/02.jpg',
+    gallery: [
+      '/images/projects/lapuebla/00.jpg',
+      '/images/projects/lapuebla/01.jpg',
+      '/images/projects/lapuebla/02.jpg',
+      '/images/projects/lapuebla/03.jpg',
+      '/images/projects/lapuebla/04.jpg',
+      '/images/projects/lapuebla/05.jpg',
+      '/images/projects/lapuebla/06.jpg',
+      '/images/projects/lapuebla/07.jpg',
+      '/images/projects/lapuebla/08.jpg',
+      '/images/projects/lapuebla/09.jpg',
+      '/images/projects/lapuebla/10.jpg',
+      '/images/projects/lapuebla/11.jpg',
+      '/images/projects/lapuebla/12.jpg',
+      '/images/projects/lapuebla/13.jpg',
+      '/images/projects/lapuebla/14.jpg',
+      '/images/projects/lapuebla/15.jpg',
+      '/images/projects/lapuebla/16.jpg',
+      '/images/projects/lapuebla/17.jpg',
+      '/images/projects/lapuebla/18.jpg',
+      '/images/projects/lapuebla/19.jpg',
+    ],
+    featured: true,
+    description:
+      'Reforma integral de un merendero creando un espacio social acogedor y funcional. La intervención se centró en optimizar la distribución y modernizar las instalaciones existentes, incorporando elementos contemporáneos que respetan la esencia tradicional del espacio rural alavés.',
+    facts: [
+      'Tipo: merendero rural',
+      'Diseño de mobiliario a medida',
+      'Planificación de iluminación',
+      'Renderizado fotorrealista completo',
+    ],
+    tags: ['merendero', 'reforma', 'espacio-social', 'álava'],
+  },
+
+  {
+    slug: 'txoko-kripan',
+    title: 'Txoko en Kripan',
+    subtitle: 'Diseño de espacios sociales · Álava 2020',
+    type: 'espacios-sociales',
+    year: 2020,
+    status: 'historico-2020',
+    location: 'Kripan, Álava',
+    cover: '/images/projects/kripan/03.jpg',
+    gallery: [
+      '/images/projects/kripan/00.jpg',
+      '/images/projects/kripan/01.jpg',
+      '/images/projects/kripan/02.jpg',
+      '/images/projects/kripan/03.jpg',
+      '/images/projects/kripan/04.jpg',
+      '/images/projects/kripan/05.jpg',
+      '/images/projects/kripan/06.jpg',
+      '/images/projects/kripan/07.jpg',
+      '/images/projects/kripan/08.jpg',
+      '/images/projects/kripan/09.jpg',
+      '/images/projects/kripan/10.jpg',
+      '/images/projects/kripan/11.jpg',
+      '/images/projects/kripan/12.jpg',
+    ],
+    featured: true,
+    description:
+      'Transformación integral de un txoko tradicional combinando funcionalidad y estética moderna. La renovación cubre cocina, zona de comedor y área de estar, creando un ambiente acogedor y versátil para reuniones sociales. Proyecto que demuestra cómo la tradición vasca puede convivir con un lenguaje arquitectónico limpio y actualizado.',
+    facts: [
+      'Programa: txoko · cocina + comedor + estar',
+      'Diseño de mobiliario personalizado',
+      'Selección de materiales · acabados nobles',
+      'Desarrollo de planos técnicos completos',
+    ],
+    tags: ['txoko', 'cocina', 'espacio-social', 'álava'],
+  },
+
+  {
+    slug: 'apartamentos-labastida',
+    title: 'Apartamentos en Labastida',
+    subtitle: 'Reforma residencial vacacional · Álava 2020',
+    type: 'residencial',
+    year: 2020,
+    status: 'historico-2020',
+    location: 'Labastida, Álava',
+    surface: undefined,
+    cover: '/images/projects/labastida/exterior.jpg',
+    gallery: [
+      '/images/projects/labastida/exterior.jpg',
+      '/images/projects/labastida/moodboard.jpg',
+      '/images/projects/labastida/bano-01.jpg',
+      '/images/projects/labastida/bano-02.jpg',
+      '/images/projects/labastida/sketch.jpg',
+    ],
+    featured: true,
+    description:
+      'Proyecto integral de renovación para apartamentos vacacionales que combina diseño contemporáneo con funcionalidad. Modernización de fachada manteniendo la esencia arquitectónica regional, con especial énfasis en zonas húmedas de baño. La propuesta interior destaca por un cuidadoso diseño de materiales de alta calidad y soluciones innovadoras para espacios pequeños.',
+    facts: [
+      'Renovación de fachada + diseño exterior',
+      'Diseño integral de baños',
+      'Selección de materiales premium',
+      'Moodboards + propuestas visuales',
+      'Documentación técnica completa',
+    ],
+    tags: ['apartamentos', 'reforma', 'vacacional', 'álava'],
+  },
+
+  // ────── ACTIVOS 2026 ──────
   {
     slug: 'vivienda-gonzalo-berceo',
     title: 'Vivienda Gonzalo de Berceo',
-    subtitle: 'Reforma integral con aerotermia — Logroño',
+    subtitle: 'Reforma integral con aerotermia · Logroño 2026',
     type: 'reforma-integral',
     year: 2026,
     status: 'en-curso',
@@ -54,8 +168,8 @@ export const PROJECTS: Project[] = [
       'Reforma integral de una vivienda de 80 m² en el centro de Logroño. El proyecto incorpora aerotermia por fancoils como sistema principal de climatización — eficiente, silenciosa y compacta. Redistribución completa de la vivienda para ganar amplitud, incorporar vestidor y abrir la cocina al salón, con instalaciones eléctricas dimensionadas para los nuevos usos (10 circuitos, cuadro general en cocina).',
     facts: [
       '80 m² · 7 estancias',
-      'Aerotermia por fancoils (sistema principal de climatización)',
-      '10 circuitos eléctricos dimensionados',
+      'Aerotermia por fancoils',
+      '10 circuitos eléctricos nuevos',
       'Instalación completa: fontanería, electricidad, climatización',
     ],
     tags: ['vivienda', 'reforma', 'aerotermia', 'logroño'],
@@ -64,7 +178,7 @@ export const PROJECTS: Project[] = [
   {
     slug: 'oficina-tecnica-efitar',
     title: 'Oficina Técnica EFITAR',
-    subtitle: 'Cambio de uso comercial → oficina técnica de ingeniería — Logroño',
+    subtitle: 'Cambio de uso comercial → oficina técnica · Logroño 2026',
     type: 'reforma-comercial',
     year: 2026,
     status: 'presupuesto',
@@ -93,7 +207,7 @@ export const PROJECTS: Project[] = [
   {
     slug: 'proyecto-luciano',
     title: 'Proyecto Luciano',
-    subtitle: 'Cambio de uso oficinas → 2 viviendas + oficina — Logroño',
+    subtitle: 'Cambio de uso oficinas → 2 viviendas + oficina · Logroño 2026',
     type: 'cambio-uso',
     year: 2026,
     status: 'anteproyecto',
@@ -122,18 +236,18 @@ export const PROJECTS: Project[] = [
   {
     slug: 'asesoria-climatizacion-haro',
     title: 'Asesoría climatización — Haro',
-    subtitle: 'Ahorro del 68% frente a presupuesto de instalador local',
+    subtitle: 'Ahorro del 68% frente a presupuesto de instalador local · 2026',
     type: 'asesoria-tecnica',
     year: 2026,
     status: 'completado',
     location: 'Haro, La Rioja',
-    cover: '/images/projects/berceo/plano.png', // placeholder — Haro no tiene foto (es asesoría)
+    cover: '/images/projects/efitar/fachada-02.jpg', // reuse fachada como placeholder
     gallery: [],
     featured: false,
     description:
       'Asesoría técnica para la sustitución del equipo de aire acondicionado de una vivienda unifamiliar en Haro. El instalador local proponía un Daikin Emura 1 (descatalogado) por 5.063€+IVA. Tras comparar opciones y analizar la necesidad real (5,8 kW para salón-comedor-cocina, ~40 m²), mi propuesta: Daikin Emura 3 actual por 1.615€+IVA. Resultado: 4.172€ de ahorro (-68%) para el cliente, equipo mejor y más nuevo.',
     facts: [
-      'Ahorro para el cliente: 4.172€ (-68%)',
+      'Ahorro para el cliente: 4.172 € (-68%)',
       'Equipo recomendado: Daikin Emura 3 (5,8 kW)',
       'Superficie climatizada: 40 m²',
       'Entrega: presupuesto + comparativa + memoria técnica',
@@ -147,7 +261,8 @@ export const PROJECT_TYPES: Record<Project['type'], string> = {
   'reforma-comercial': 'Reforma comercial',
   'cambio-uso': 'Cambio de uso',
   'asesoria-tecnica': 'Asesoría técnica',
-  consultoria: 'Consultoría',
+  'espacios-sociales': 'Espacios sociales',
+  residencial: 'Residencial',
 };
 
 export const PROJECT_STATUS: Record<Project['status'], string> = {
@@ -155,6 +270,7 @@ export const PROJECT_STATUS: Record<Project['status'], string> = {
   presupuesto: 'En presupuesto',
   completado: 'Completado',
   anteproyecto: 'Anteproyecto',
+  'historico-2020': '2020 · Histórico',
 };
 
 export const getFeaturedProjects = (): Project[] =>
