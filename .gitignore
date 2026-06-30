@@ -26,3 +26,4 @@ pnpm-debug.log*
 
 # temporary optimisation script
 *.cjs.bak
+*.hasta
