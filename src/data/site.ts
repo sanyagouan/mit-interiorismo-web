@@ -36,8 +36,7 @@ export const SITE = {
   experienceYears: 17, // 2008 → 2025 actual
   social: {
     linkedin: 'https://www.linkedin.com/in/mar%C3%ADaiturbe/',
-    // Instagram pendiente de confirmar con María
-    instagram: '',
+    instagram: 'https://www.instagram.com/mit.interiorismo/',
   },
   claims: [
     'Diseño que transforma. Técnica que construye.',
