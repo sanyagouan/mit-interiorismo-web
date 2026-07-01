@@ -1,0 +1,113 @@
+---
+/**
+ * /cookies — Política de cookies
+ * Cumplimiento RGPD + LSSI (España) — mínima sin tracking.
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../data/site';
+
+const updates = '1 de julio de 2026';
+---
+<BaseLayout
+  title={`Política de cookies — ${SITE.name}`}
+  description="Política de cookies de MIT Interiorismo. Cumplimiento RGPD."
+  noIndex
+>
+  <main class="legal-page">
+    <div class="wrap">
+      <p class="kicker">— Legal</p>
+      <h1>Política de cookies</h1>
+      <p class="updated">Última actualización: {updates}</p>
+
+      <h2>¿Qué son las cookies?</h2>
+      <p>Pequeños archivos que el sitio web almacena en tu navegador para recordar información entre visitas. El RGPD (UE 2016/679) y la LSSI (Ley 34/2002) obligan a informar y, cuando proceda, pedir consentimiento.</p>
+
+      <h2>Cookies que utilizamos</h2>
+      <p>Este sitio web <strong>no utiliza cookies de seguimiento ni de analítica</strong>. Tampoco incrusta contenido de terceros que deposite cookies (YouTube, Vimeo, Google Fonts, etc.) hasta que tú interactúes con ellos.</p>
+
+      <h3>Cookies estrictamente necesarias</h3>
+      <table>
+        <thead>
+          <tr><th>Cookie</th><th>Finalidad</th><th>Duración</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>mit-cookies-accepted</code></td><td>Recuerda que has aceptado o rechazado el banner de cookies, para no mostrártelo en cada visita.</td><td>1 año</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Gestión y desactivación</h2>
+      <p>Puedes eliminar o bloquear las cookies en cualquier momento desde la configuración de tu navegador. Si lo haces, este sitio seguirá funcionando correctamente.</p>
+
+      <h2>Datos del responsable</h2>
+      <address>
+        <strong>{SITE.legalName}</strong><br />
+        {SITE.address.street}, {SITE.address.postalCode} {SITE.address.city}<br />
+        {SITE.address.region}, {SITE.address.country}<br />
+        Email: <a href={`mailto:${SITE.email}`}>{SITE.email}</a><br />
+        Teléfono: {SITE.phone}
+      </address>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .legal-page{
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    padding: 160px 24px 80px;
+    min-height: 100vh;
+  }
+  .wrap{
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .kicker{
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--wine);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  h1{
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(40px, 5.5vw, 80px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px;
+  }
+  h2{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 22px;
+    margin: 48px 0 12px;
+    color: var(--ink);
+  }
+  h3{
+    font-size: 16px;
+    font-weight: 600;
+    margin: 24px 0 8px;
+    color: var(--wine);
+  }
+  .updated{
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--g500);
+    margin-bottom: 24px;
+  }
+  p{ font-size: 15px; line-height: 1.7; margin: 0 0 14px; color: var(--g700); }
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 13px;
+  }
+  th, td{ border-bottom: 1px solid var(--g100); padding: 12px 8px; text-align: left; vertical-align: top; }
+  th{ font-weight: 600; color: var(--ink); font-size: 11px; text-transform: uppercase; letter-spacing: 0.12em; }
+  code{ font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 2px 6px; background: var(--bone); border-radius: 2px; }
+  address{ font-style: normal; font-size: 14px; line-height: 1.7; color: var(--g700); }
+  a{ color: var(--wine); border-bottom: 1px solid currentColor; }
+</style>

@@ -1,0 +1,103 @@
+---
+/**
+ * CookieBanner — RGPD-compliant minimal banner
+ * Solo activa una cookie local de aceptación. No tracking.
+ */
+---
+
+<div class="cb" id="cookie-banner" hidden>
+  <div class="cb-inner">
+    <div class="cb-tx">
+      <p class="cb-title">Galletas</p>
+      <p class="cb-body">
+        Este sitio solo usa una cookie técnica para recordar que has visto este aviso. No hay seguimiento.
+        Más info en <a href="/cookies">política de cookies</a>.
+      </p>
+    </div>
+    <div class="cb-actions">
+      <button class="cb-btn cb-accept" id="cb-accept">Vale</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cb{
+    position: fixed;
+    left: 24px; bottom: 24px; right: 24px;
+    z-index: 150;
+    background: var(--ink);
+    color: var(--paper);
+    border: 1px solid rgba(246,244,237,0.12);
+    border-radius: 4px;
+    padding: 20px 24px;
+    box-shadow: 0 20px 60px rgba(10,10,9,0.25);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform .5s cubic-bezier(.2,.8,.2,1), opacity .5s ease;
+    max-width: 540px;
+    margin-left: auto;
+  }
+  .cb[hidden]{ display: none; }
+  .cb.show{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .cb-inner{
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+  .cb-tx{ flex: 1; }
+  .cb-title{
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--gold);
+    margin: 0 0 6px;
+    font-weight: 400;
+  }
+  .cb-body{
+    font-size: 13px;
+    color: var(--g300);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .cb-body a{ color: var(--gold); border-bottom: 1px solid currentColor; }
+  .cb-btn{
+    background: var(--paper);
+    color: var(--ink);
+    border: 0;
+    padding: 12px 20px;
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background .25s;
+  }
+  .cb-btn:hover{ background: var(--gold); }
+  @media (max-width: 600px){
+    .cb{ left: 12px; right: 12px; bottom: 12px; padding: 16px; }
+    .cb-inner{ flex-direction: column; align-items: stretch; gap: 16px; }
+    .cb-btn{ width: 100%; }
+  }
+</style>
+
+<script is:inline>
+  (function(){
+    var KEY = 'mit-cookies-accepted';
+    if (document.cookie.indexOf(KEY + '=1') !== -1) return;
+    var cb = document.getElementById('cookie-banner');
+    if (!cb) return;
+    cb.hidden = false;
+    requestAnimationFrame(function(){ cb.classList.add('show'); });
+    var btn = document.getElementById('cb-accept');
+    btn.addEventListener('click', function(){
+      document.cookie = KEY + '=1; path=/; max-age=' + (60*60*24*365);
+      cb.classList.remove('show');
+      setTimeout(function(){ cb.hidden = true; }, 500);
+    });
+  })();
+</script>

@@ -1,19 +1,19 @@
 ---
 import "../styles/editorial.css";
-import { SITE, SERVICES } from "../data/site";
+import "../styles/hero-transformation.css";
+import { SITE } from "../data/site";
 import { PROJECTS, getFeaturedProjects } from "../data/projects";
+import { SERVICIOS } from "../data/servicios";
 
 const site = SITE;
 const featured = getFeaturedProjects().slice(0, 6);
 
-// Mapa slug proyecto → carpeta física real
 const FOLDER: Record<string,string> = {
   "merendero-lapuebla": "lapuebla",
   "txoko-kripan": "kripan",
   "apartamentos-labastida": "labastida",
 };
 
-// Helper: limpia ruta absoluta de la galería (vienen como /images/projects/x/00.jpg)
 const pick = (p: typeof featured[number], idx: number = 0) => {
   const raw = p.gallery[idx] ?? "";
   return raw.startsWith("/") ? raw : `/images/projects/${FOLDER[p.slug] ?? p.slug}/${raw}`;
@@ -22,13 +22,11 @@ const strip = (p: typeof featured[number], ext: string, idx: number = 0) => {
   const raw = p.gallery[idx] ?? "";
   return raw.replace(/\.[a-z0-9]+$/i, `.${ext}`);
 };
-const heroImg = pick(lapueblaFor(featured));
-function lapueblaFor(arr: typeof featured) {
-  return arr.find(p => p.slug === "merendero-lapuebla")!;
-}
+const lapueblaFor = (arr: typeof featured) => arr.find(p => p.slug === "merendero-lapuebla")!;
 const mariaImg = "/team/maria.jpg";
-const services = SERVICES.slice(0, 6);
+const servicios = SERVICIOS;
 const year = new Date().getFullYear();
+const telefono = SITE.phoneDisplay;
 ---
 
 <!doctype html>
@@ -36,21 +34,41 @@ const year = new Date().getFullYear();
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>mit interiorismo — Yécora, Álava · desde 2020</title>
-<meta name="description" content="Estudio de interiorismo técnico en Yécora, Álava. Más de 15 años entre dibujo, obra y territorio." />
+<title>mit interiorismo — Donde el diseño encuentra a la obra · Yécora, Álava</title>
+<meta name="description" content="Estudio de interiorismo técnico en Yécora, Álava. Más de 17 años entre dibujo, obra y territorio." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <meta property="og:title" content="mit interiorismo" />
-<meta property="og:description" content="Interiorismo técnico en Yécora, Álava" />
+<meta property="og:description" content="Donde el diseño encuentra a la obra" />
 <meta property="og:image" content={`https://www.mitinteriorismo.studio${mariaImg}`} />
+<script type="application/ld+json" set:html={JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "mit interiorismo",
+  "legalName": SITE.legalName,
+  "description": site.tagline || site.shortDescription,
+  "image": "https://www.mitinteriorismo.studio" + mariaImg,
+  "url": "https://www.mitinteriorismo.studio",
+  "telephone": SITE.phone,
+  "email": SITE.email,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": SITE.address.street,
+    "postalCode": SITE.address.postalCode,
+    "addressLocality": SITE.address.city,
+    "addressRegion": SITE.address.region,
+    "addressCountry": SITE.address.country
+  },
+  "areaServed": ["Yécora", "Álava", "La Rioja", "Logroño", "Haro", "Vitoria", "País Vasco"],
+  "priceRange": "€€"
+})} />
 </head>
 <body>
 
-<!-- progress -->
 <div class="prog" id="prog"></div>
 
-<!-- nav -->
+<!-- nav principal -->
 <header class="nav" id="nav">
   <a href="/" class="nav-mark">
     <span class="nav-mark-i">mit</span>
@@ -59,52 +77,115 @@ const year = new Date().getFullYear();
   <nav class="nav-links">
     <a href="#proyectos" class="nav-l"><span>01</span>Proyectos</a>
     <a href="#estudio" class="nav-l"><span>02</span>Estudio</a>
-    <a href="#contacto" class="nav-l"><span>03</span>Contacto</a>
+    <a href="#servicios" class="nav-l"><span>03</span>Servicios</a>
+    <a href="#contacto" class="nav-l"><span>04</span>Contacto</a>
   </nav>
 </header>
 
+<!-- Índice lateral flotante (aparece tras scroll) -->
+<aside class="toc" id="toc" aria-hidden="true">
+  <p class="toc-label">Índice</p>
+  <ol>
+    <li><a href="#" class="toc-l" data-target="top">00 · Inicio</a></li>
+    <li><a href="#proyectos" class="toc-l" data-target="proyectos">01 · Proyectos</a></li>
+    <li><a href="#estudio" class="toc-l" data-target="estudio">02 · Estudio</a></li>
+    <li><a href="#servicios" class="toc-l" data-target="servicios">03 · Servicios</a></li>
+    <li><a href="#contacto" class="toc-l" data-target="contacto">04 · Contacto</a></li>
+  </ol>
+</aside>
+
 <main id="main">
 
-<!-- ===== HERO ===== -->
-<section class="hero">
-  <div class="hero-grid">
-    <div class="hero-left">
-      <div class="hairline"></div>
-      <p class="kicker">Estudio · Interiorismo técnico · fundado 2020</p>
-      <h1 class="display">
-        <span class="d-line"><span>Donde el&nbsp;</span></span>
-        <span class="d-line"><span><em>diseño</em></span></span>
-        <span class="d-line"><span>encuentra</span></span>
-        <span class="d-line"><span>a la&nbsp;<em>obra</em>.</span></span>
-      </h1>
-      <p class="hero-lede">
-        Yécora (Álava) sirve a La Rioja, el País Vasco y cualquier cliente
-        que entienda que un proyecto empieza con un replanteo, no con un render.
-      </p>
-      <div class="hero-meta">
-        <a href="#proyectos" class="btn-pri">Ver proyectos →</a>
-        <a href="#contacto" class="btn-ghost">Empezar conversación</a>
-      </div>
+<!-- ===== HERO CINEMATOGRÁFICO ===== -->
+<section class="hero-v2" id="top">
+
+  <span class="hero-v2-tag hero-v2-tag-l">00 · Boceto</span>
+  <span class="hero-v2-tag hero-v2-tag-r">01 · Realidad</span>
+
+  <div class="hero-v2-side hero-v2-sketch">
+    <svg class="sketch-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+      <!-- planta técnica esquemática representativa del proceso -->
+      <rect x="80" y="60" width="240" height="180"/>
+      <rect x="80" y="240" width="240" height="100"/>
+      <rect x="320" y="60" width="200" height="280"/>
+      <line x1="320" y1="60" x2="320" y2="340"/>
+      <line x1="200" y1="60" x2="200" y2="240"/>
+      <line x1="80" y1="180" x2="320" y2="180"/>
+      <!-- arcos de puertas -->
+      <path d="M 200 180 A 20 20 0 0 1 240 180"/>
+      <path d="M 200 240 A 20 20 0 0 0 200 200"/>
+      <!-- ventanas -->
+      <line x1="60" y1="80" x2="60" y2="160"/>
+      <line x1="60" y1="180" x2="60" y2="260"/>
+      <line x1="540" y1="80" x2="540" y2="180"/>
+      <line x1="540" y1="240" x2="540" y2="320"/>
+      <!-- cotas -->
+      <line x1="80" y1="360" x2="320" y2="360"/>
+      <line x1="78" y1="356" x2="78" y2="364"/>
+      <line x1="318" y1="356" x2="318" y2="364"/>
+      <text x="190" y="378" text-anchor="middle">5.40 m</text>
+      <line x1="60" y1="60" x2="60" y2="340"/>
+      <line x1="56" y1="58" x2="64" y2="58"/>
+      <line x1="56" y1="340" x2="64" y2="340"/>
+      <text x="44" y="200" text-anchor="middle" transform="rotate(-90 44 200)">4.20 m</text>
+      <!-- texto identificativo -->
+      <text x="80" y="48">MIT · PROYECTO TÉCNICO · ESC 1:50</text>
+      <text x="540" y="48" text-anchor="end">PLANO 01 · ESTADO PREVIO</text>
+    </svg>
+  </div>
+
+  <div class="hero-v2-side hero-v2-render" id="hero-render">
+    <div class="slide is-active" data-slide="0">
+      <picture>
+        <source srcset="/images/projects/kripan/03.avif" type="image/avif" />
+        <source srcset="/images/projects/kripan/03.webp" type="image/webp" />
+        <img src="/images/projects/kripan/03.jpg" alt="Txoko en Kripan · 2020" loading="eager" fetchpriority="high" />
+      </picture>
     </div>
-    <div class="hero-right">
-      <div class="hero-fr">
-        {heroImg && (
-          <picture>
-            <source srcset={strip(lapueblaFor(featured), "avif")} type="image/avif" />
-            <source srcset={strip(lapueblaFor(featured), "webp")} type="image/webp" />
-            <img src={heroImg} alt="Merendero en Lapuebla — interiorismo técnico mit" loading="eager" fetchpriority="high" />
-          </picture>
-        )}
-        <div class="hero-fr-cap">
-          <span>01 / 06</span>
-          <span>Merendero Lapuebla · 2020</span>
-        </div>
-      </div>
+    <div class="slide" data-slide="1">
+      <picture>
+        <source srcset="/images/projects/kripan/11.avif" type="image/avif" />
+        <source srcset="/images/projects/kripan/11.webp" type="image/webp" />
+        <img src="/images/projects/kripan/11.jpg" alt="Txoko en Kripan · 2020" loading="eager" />
+      </picture>
     </div>
+    <div class="slide" data-slide="2">
+      <picture>
+        <source srcset="/images/projects/luciano/foto-04-oficina-principal.avif" type="image/avif" />
+        <source srcset="/images/projects/luciano/foto-04-oficina-principal.webp" type="image/webp" />
+        <img src="/images/projects/luciano/foto-04-oficina-principal.jpg" alt="Proyecto Luciano · oficina técnica" loading="eager" />
+      </picture>
+    </div>
+
+    <!-- Thumbs control -->
+    <div class="hero-v2-thumbs">
+      <button class="hero-v2-thumb is-active" data-slide="0" style="background-image:url('/images/projects/kripan/03.jpg');" aria-label="Slide 1" data-n="01"></button>
+      <button class="hero-v2-thumb" data-slide="1" style="background-image:url('/images/projects/kripan/11.jpg');" aria-label="Slide 2" data-n="02"></button>
+      <button class="hero-v2-thumb" data-slide="2" style="background-image:url('/images/projects/luciano/foto-04-oficina-principal.jpg');" aria-label="Slide 3" data-n="03"></button>
+    </div>
+  </div>
+
+  <div class="hero-v2-content">
+    <p class="hero-v2-kicker">Estudio · Yécora, Álava · fundado 2020</p>
+    <h1 class="hero-v2-h">
+      Donde el&nbsp;<em>diseño</em><br/>
+      encuentra a la&nbsp;<em>obra</em>.
+    </h1>
+    <p class="hero-v2-sub">
+      De un plano a mano alzada a un espacio habitable. María Iturbe Sánchez
+      convierte la imaginación de sus clientes en realidad física, tangible y
+      normativa.
+    </p>
+    <a href="#contacto" class="hero-v2-cta">Pedir cita →</a>
+  </div>
+
+  <div class="hero-v2-scroll">
+    <span>Scroll</span>
+    <span class="arrow"></span>
   </div>
 </section>
 
-<!-- ===== MARQUEE ===== -->
+<!-- ===== TICKER ===== -->
 <section class="ticker" aria-hidden="true">
   <div class="ticker-track">
     <span>Interiorismo técnico · Reforma · Cambio de uso · Asesoría · Render · Yécora · Logroño · Haro · Álava · Rioja · </span>
@@ -113,7 +194,7 @@ const year = new Date().getFullYear();
 </section>
 
 <!-- ===== MANIFIESTO ===== -->
-<section class="manifest" id="estudio-scroll">
+<section class="manifest" id="manifiesto">
   <div class="manifest-grid">
     <aside class="manifest-meta">
       <p class="m-label">— Sobre el estudio</p>
@@ -121,9 +202,9 @@ const year = new Date().getFullYear();
     </aside>
     <article class="manifest-body">
       <p class="manifest-q reveal">
-        «No hacemos renders sin obra ni obras sin planos. Medimos la
-        luz que entra, lo que cabe en la normativa, lo que aguanta
-        el presupuesto. <em>El resto es vender humo.</em>»
+        «No hacemos renders sin obra ni obras sin planos.
+        Medimos la luz que entra, lo que cabe en la normativa,
+        lo que aguanta el presupuesto. <em>El resto es vender humo.</em>»
       </p>
       <p class="manifest-sig">— María Iturbe Sánchez, ESDIR ’20 · nota 8,41</p>
     </article>
@@ -183,8 +264,8 @@ const year = new Date().getFullYear();
         <span>Sánchez</span>
       </h2>
       <p class="est-lead">
-        Interiorista colegiada. 12 años en obra, 5 desde que abrió este estudio
-        en un pueblo de 250 habitantes al sur de Álava.
+        «Interiorista colegiada. 12 años en obra, 5 desde que abrió este estudio
+        en un pueblo de 250 habitantes al sur de Álava.»
       </p>
       <p class="est-tx">
         Antes: Echazarreta Construcciones (Logroño), Blurarquitectura (Bilbao),
@@ -200,30 +281,26 @@ const year = new Date().getFullYear();
   </div>
 </section>
 
-<!-- ===== NÚMEROS ===== -->
-<section class="nums">
-  <div class="nums-grid">
-    <div class="num"><p class="num-v">15<sup>+</sup></p><p class="num-l">Años en obra</p></div>
-    <div class="num"><p class="num-v">8<sup>,41</sup></p><p class="num-l">Nota final ESDIR</p></div>
-    <div class="num"><p class="num-v">40<sup>+</sup></p><p class="num-l">Proyectos dirigidos</p></div>
-    <div class="num"><p class="num-v">∞</p><p class="num-l">Cafés con clientes</p></div>
-  </div>
-</section>
-
 <!-- ===== SERVICIOS ===== -->
-<section class="srv">
+<section class="srv" id="servicios">
   <header class="srv-head">
-    <p class="kicker">04 · Ámbito</p>
-    <h2 class="display-2"><span>Qué </span><em>hace</em><span> el estudio</span></h2>
+    <div>
+      <p class="kicker">04 · Ámbito</p>
+      <h2 class="display-2"><span>Qué </span><em>hace</em><span> el estudio</span></h2>
+    </div>
+    <p class="srv-intro-tx">
+      Seis servicios vertebrados sobre una idea: ningún proyecto se entrega sin
+      la ingeniería resuelta. Si quieres saber qué incluye cada uno, entra al detalle.
+    </p>
   </header>
   <div class="srv-grid">
-    {services.map((s, i) => (
-      <article class="srv-c">
-        <p class="srv-n">0{i+1}</p>
+    {servicios.map((s, i) => (
+      <a href={`/servicios/${s.id}`} class="srv-c" data-hover>
+        <p class="srv-n">— 0{i+1}</p>
         <h3 class="srv-tt">{s.title}</h3>
         <p class="srv-d">{s.description}</p>
         <span class="srv-a">Saber más ↗</span>
-      </article>
+      </a>
     ))}
   </div>
 </section>
@@ -237,42 +314,59 @@ const year = new Date().getFullYear();
       <em>cuando</em> <span>tú digas?</span>
     </h2>
     <p class="cta-lede">
-      Una idea a medio gas ya es un proyecto. Escríbeme y quedamos
+      Una idea a medio gas ya es un proyecto. Escríbeme o llámame, y quedamos
       en Yécora, Logroño o donde te pille mejor. Sin compromiso.
     </p>
     <div class="cta-actions">
-      <a href="mailto:maria.iturbe.sanchez@gmail.com" class="btn-pri">Escribir a María</a>
-      <a href="https://www.linkedin.com/in/mar%C3%ADaiturbe/" target="_blank" rel="noopener" class="btn-ghost on-dark">LinkedIn ↗</a>
+      <a href={`mailto:${site.email}`} class="btn-pri">Escribir · {site.email}</a>
+      <a href={`tel:${SITE.phoneRaw}`} class="btn-ghost on-dark">Llamar · {telefono}</a>
+      <a href="https://wa.me/34637869890" target="_blank" rel="noopener" class="btn-ghost on-dark">WhatsApp ↗</a>
     </div>
     <dl class="cta-info">
-      <div><dt>Estudio</dt><dd>Yécora, Álava · CP 01322</dd></div>
-      <div><dt>Email</dt><dd>maria.iturbe.sanchez@gmail.com</dd></div>
+      <div><dt>Estudio</dt><dd>{SITE.address.street}, {SITE.address.postalCode} {SITE.address.city}</dd></div>
+      <div><dt>Email</dt><dd>{site.email}</dd></div>
+      <div><dt>Teléfono</dt><dd>{telefono}</dd></div>
       <div><dt>Ámbito</dt><dd>Álava · La Rioja · País Vasco</dd></div>
+      <div><dt>LinkedIn</dt><dd><a href={SITE.social.linkedin} target="_blank" rel="noopener">María Iturbe Sánchez ↗</a></dd></div>
+      {SITE.social.instagram && (
+        <div><dt>Instagram</dt><dd><a href={`https://www.instagram.com/${SITE.social.instagram.replace('@','')}/`} target="_blank" rel="noopener">@{SITE.social.instagram.replace('@','')} ↗</a></dd></div>
+      )}
     </dl>
   </div>
 </section>
 
-<!-- ===== FOOTER ===== -->
 <footer class="foot">
-  <p class="foot-m">
-    mit <em>interiorismo</em> — {year} · Yécora, Álava
-  </p>
-  <p class="foot-s">Diseñado en territorio. Construido con planos, normativa y obra.</p>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <p class="foot-m">mit <em>interiorismo</em> — {year} · Yécora, Álava</p>
+      <p class="foot-s">Diseñado en territorio. Construido con planos, normativa y obra.</p>
+    </div>
+    <ul class="foot-links">
+      <li><a href="/proyectos">Proyectos</a></li>
+      <li><a href="/sobre">Estudio</a></li>
+      <li><a href="/servicios/reforma-integral">Servicios</a></li>
+      <li><a href="/contacto">Contacto</a></li>
+    </ul>
+    <ul class="foot-links foot-legal">
+      <li><a href="/aviso-legal">Aviso legal</a></li>
+      <li><a href="/privacidad">Privacidad</a></li>
+      <li><a href="/cookies">Cookies</a></li>
+    </ul>
+  </div>
 </footer>
 
 </main>
 
 <script is:inline>
-// === body ready (fire hero title reveal)
+// body ready
 (function(){
   function go(){ document.body.classList.add('is-loaded'); }
   if (document.readyState === 'complete') go();
   else { window.addEventListener('load', go, {once:true}); }
-  // fallback safety
   setTimeout(go, 500);
 })();
 
-// === progress bar
+// progress bar
 (function(){
   var p = document.getElementById('prog');
   function upd(){
@@ -283,30 +377,24 @@ const year = new Date().getFullYear();
   upd();
 })();
 
-// === nav state on scroll
+// nav + toc state
 (function(){
-  var n = document.getElementById('nav');
-  if (!n) return;
-  function upd(){ if (window.scrollY > 60) n.classList.add('is-scrolled'); else n.classList.remove('is-scrolled'); }
+  var nav = document.getElementById('nav');
+  var toc = document.getElementById('toc');
+  function upd(){
+    if (window.scrollY > 60) {
+      if (nav) nav.classList.add('is-scrolled');
+      if (toc) toc.classList.add('is-visible');
+    } else {
+      if (nav) nav.classList.remove('is-scrolled');
+      if (toc) toc.classList.remove('is-visible');
+    }
+  }
   window.addEventListener('scroll', upd, {passive:true});
   upd();
 })();
 
-// === reveal on scroll
-(function(){
-  if (!('IntersectionObserver' in window)) {
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
-    return;
-  }
-  var io = new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    });
-  }, {threshold: 0.12, rootMargin: '0px 0px -60px 0px'});
-  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
-})();
-
-// === works: in-view flag + title split (unified)
+// reveal + works activation
 (function(){
   function splitTitle(h){
     if (!h || h.dataset.split) return;
@@ -318,21 +406,57 @@ const year = new Date().getFullYear();
   }
   function activate(el){
     el.classList.add('in');
-    var t = el.querySelector('.work-title');
-    splitTitle(t);
+    splitTitle(el.querySelector('.work-title'));
   }
   if (!('IntersectionObserver' in window)) {
-    document.querySelectorAll('.work').forEach(activate);
+    document.querySelectorAll('.work,.reveal').forEach(activate);
     return;
   }
-  // safety
-  setTimeout(function(){ document.querySelectorAll('.work:not(.in)').forEach(activate); }, 5000);
+  setTimeout(function(){ document.querySelectorAll('.work:not(.in),.reveal:not(.in)').forEach(activate); }, 5000);
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
       if (e.isIntersecting) { activate(e.target); io.unobserve(e.target); }
     });
   }, {threshold: 0.05, rootMargin: '0px 0px -50px 0px'});
-  document.querySelectorAll('.work').forEach(function(el){ io.observe(el); });
+  document.querySelectorAll('.work,.reveal').forEach(function(el){ io.observe(el); });
+})();
+
+// hero slider
+(function(){
+  var slides = document.querySelectorAll('.hero-v2-render .slide');
+  var thumbs = document.querySelectorAll('.hero-v2-thumb');
+  if (slides.length < 2) return;
+  var idx = 0;
+  var timer = null;
+  function show(n){
+    idx = (n + slides.length) % slides.length;
+    slides.forEach(function(s, i){
+      s.classList.toggle('is-active', i === idx);
+    });
+    thumbs.forEach(function(t, i){
+      t.classList.toggle('is-active', i === idx);
+    });
+  }
+  function loop(){
+    timer = setTimeout(function(){
+      show(idx + 1);
+      loop();
+    }, 5500);
+  }
+  // pause on hover of right side
+  var render = document.getElementById('hero-render');
+  if (render) {
+    render.addEventListener('mouseenter', function(){ if (timer) { clearTimeout(timer); timer = null; } });
+    render.addEventListener('mouseleave', function(){ loop(); });
+  }
+  thumbs.forEach(function(t){
+    t.addEventListener('click', function(){
+      show(parseInt(t.dataset.slide, 10));
+      if (timer) { clearTimeout(timer); timer = null; }
+      loop();
+    });
+  });
+  loop();
 })();
 </script>
 

@@ -1,9 +1,13 @@
 User-agent: *
 Allow: /
 
-# Disallow admin/private areas (si las hubiera)
+# Disallow admin/private areas
 Disallow: /api/
 Disallow: /_astro/
 
-# Sitemap
+# Sitemaps
 Sitemap: https://www.mitinteriorismo.studio/sitemap-index.xml
+Sitemap: https://www.mitinteriorismo.studio/sitemap-0.xml
+
+# Crawl-delay (opcional, recomendado para bots maleducados)
+Crawl-delay: 1

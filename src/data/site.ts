@@ -20,18 +20,24 @@ export const SITE = {
   url: 'https://www.mitinteriorismo.studio',
   ogImage: '/og/og-default.jpg',
   email: 'hola@mitinteriorismo.studio',
-  emailPersonal: 'maria.iturbe.sanchez@gmail.com',
-  phone: '', // Pendiente confirmar con María
-  whatsapp: '', // Pendiente confirmar con María
+  emailPersonal: 'info@mitinteriorismo.studio',
+  phone: '+34 637 86 98 90',
+  phoneDisplay: '637 86 98 90',
+  phoneRaw: '+34637869890',
+  whatsapp: '34637869890',
   address: {
+    street: 'Calle Mayor',
     city: 'Yécora',
     region: 'Álava · País Vasco',
+    postalCode: '01322',
     country: 'ES',
   },
   founded: 2008, // Inicio trayectoria profesional en Echazarreta Construcciones
   experienceYears: 17, // 2008 → 2025 actual
   social: {
     linkedin: 'https://www.linkedin.com/in/mar%C3%ADaiturbe/',
+    // Instagram pendiente de confirmar con María
+    instagram: '',
   },
   claims: [
     'Diseño que transforma. Técnica que construye.',
