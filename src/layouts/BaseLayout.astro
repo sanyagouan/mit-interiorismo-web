@@ -7,7 +7,11 @@
 
 import '../styles/globals.css';
 import CookieBanner from '../components/CookieBanner.astro';
+import ChatBot from '../components/ChatBot.astro';
 import { SITE } from '../data/site';
+import { SERVICIOS } from '../data/servicios';
+
+const serviciosMeta = SERVICIOS.map(s => ({ id: s.id, title: s.title, subtitle: s.subtitle }));
 
 interface Props {
   title?: string;
@@ -91,6 +95,12 @@ const structuredData = {
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalURL} />
 
+    <!-- Chatbot data (read by /components/ChatBot.astro) -->
+    <meta name="x-phone" content={SITE.phoneRaw} />
+    <meta name="x-email" content={SITE.email} />
+    <meta name="x-phone-display" content={SITE.phoneDisplay} />
+    <meta name="x-services" content={JSON.stringify(serviciosMeta)} />
+
     <!-- Favicon & PWA basics -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
@@ -162,6 +172,7 @@ const structuredData = {
       }
     </script>
     <CookieBanner />
+    <ChatBot />
   </body>
 </html>
 

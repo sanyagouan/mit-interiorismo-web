@@ -1,0 +1,293 @@
+/* =====================================================
+   HERO · TRANSFORMACIÓN
+   4 imágenes reales apiladas que se crossfadean con el scroll
+   · labastida/sketch   (BOCETO)
+   · efitar/moodboard-2 (MOODBOARD)
+   · kripan/06          (ANTEPROYECTO 3D)
+   · kripan/11          (ESPACIO TERMINADO)
+   ===================================================== */
+
+.hero-morph{
+  position:relative;
+  height:100vh;
+  min-height:760px;
+  background:#0a0a09;
+  color:#f4f1ea;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+/* marco arriba */
+.hero-morph-head{
+  position:absolute;
+  top:0; left:0; right:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  padding:28px 40px;
+  z-index:10;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.32em;
+  color:rgba(244,241,234,0.55);
+  pointer-events:none;
+}
+.hero-morph-tag{margin:0;}
+.hero-morph-year{font-family:'Fraunces',serif;font-style:italic;margin:0;}
+
+/* STAGE = canvas donde se apilan las 4 imágenes */
+.hero-morph-stage{
+  position:absolute;
+  inset:0;
+  overflow:hidden;
+  background:#0a0a09;
+}
+
+.hero-morph-layer{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  opacity:0;
+  transition:opacity 1.2s cubic-bezier(.2,.8,.2,1);
+  will-change:opacity;
+}
+.hero-morph-layer.is-on{ opacity:1; }
+.hero-morph-layer img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(0.95) contrast(1.04);
+}
+
+/* viñeta sutil que oscurece bordes para legibilidad del texto */
+.hero-morph-vignette{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg, rgba(10,10,9,0.55) 0%, rgba(10,10,9,0.0) 25%, rgba(10,10,9,0.0) 60%, rgba(10,10,9,0.85) 100%),
+    radial-gradient(ellipse at center, rgba(10,10,9,0.15) 30%, rgba(10,10,9,0.55) 100%);
+  pointer-events:none;
+  z-index:4;
+}
+
+/* Capa de “boceto” con look de papel técnico */
+.hero-morph-layer--sketch img{
+  filter:invert(0.96) sepia(0.12) saturate(0.3) hue-rotate(355deg) brightness(1.05) contrast(0.9);
+  mix-blend-mode:screen;
+  opacity:0.95;
+}
+
+/* Etiqueta que aparece en la foto activa */
+.hero-morph-label{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  z-index:6;
+  text-align:center;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .9s ease .15s;
+}
+.hero-morph-layer.is-on ~ .hero-morph-label{
+  opacity:1;
+}
+.hero-morph-label-num{
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  font-size:clamp(120px, 18vw, 220px);
+  line-height:0.9;
+  color:rgba(244,241,234,0.92);
+  font-weight:300;
+  letter-spacing:-0.04em;
+  text-shadow:0 12px 60px rgba(10,10,9,0.45);
+}
+.hero-morph-label-tt{
+  font-size:11px;
+  letter-spacing:0.4em;
+  text-transform:uppercase;
+  color:rgba(244,241,234,0.85);
+  margin-top:14px;
+  text-shadow:0 2px 12px rgba(10,10,9,0.55);
+}
+
+/* TEXTO superpuesto a la izquierda */
+.hero-morph-copy{
+  position:absolute;
+  z-index:7;
+  left:6vw;
+  bottom:14vh;
+  max-width:560px;
+  pointer-events:auto;
+}
+.hero-morph-kicker{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  font-size:11px;
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  color:#d4b78a;
+  margin:0 0 22px;
+}
+.hero-morph-kicker span{
+  display:inline-block;
+  width:38px; height:1px;
+  background:#d4b78a;
+}
+.hero-morph-title{
+  font-family:'Fraunces',serif;
+  font-weight:300;
+  font-size:clamp(48px, 6.8vw, 96px);
+  line-height:0.96;
+  margin:0 0 28px;
+  letter-spacing:-0.02em;
+  color:#f4f1ea;
+  text-shadow:0 8px 40px rgba(10,10,9,0.55);
+}
+.hero-morph-title em{ font-style:italic; color:#d4b78a; }
+.hero-morph-lede{
+  font-size:clamp(16px, 1.15vw, 19px);
+  line-height:1.55;
+  color:rgba(244,241,234,0.86);
+  max-width:480px;
+  margin:0 0 32px;
+  text-shadow:0 2px 16px rgba(10,10,9,0.55);
+}
+.hero-morph-actions{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.hm-cta-primary,
+.hm-cta-ghost{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 24px;
+  font-size:12px;
+  letter-spacing:0.24em;
+  text-transform:uppercase;
+  text-decoration:none;
+  border-radius:0;
+  transition:all .3s ease;
+  border:1px solid transparent;
+  cursor:pointer;
+}
+.hm-cta-primary{
+  background:#f4f1ea;
+  color:#0a0a09;
+  border-color:#f4f1ea;
+}
+.hm-cta-primary:hover{ background:#d4b78a; border-color:#d4b78a; }
+.hm-cta-ghost{
+  background:transparent;
+  color:#f4f1ea;
+  border-color:rgba(244,241,234,0.4);
+}
+.hm-cta-ghost:hover{ border-color:#f4f1ea; }
+
+/* Stepper inferior */
+.hero-morph-foot{
+  position:absolute;
+  right:6vw;
+  bottom:7vh;
+  z-index:8;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  text-align:right;
+  pointer-events:auto;
+}
+.mf-step{
+  font-size:10px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:rgba(244,241,234,0.45);
+  cursor:pointer;
+  transition:color .3s ease;
+  font-family:'Inter Tight',sans-serif;
+  border:0;
+  background:transparent;
+  padding:6px 0;
+  text-align:right;
+}
+.mf-step::before{
+  content:'';
+  display:inline-block;
+  width:24px;
+  height:1px;
+  background:currentColor;
+  margin-right:10px;
+  vertical-align:middle;
+  transition:width .35s ease, background .3s ease;
+}
+.mf-step.is-active{
+  color:#f4f1ea;
+}
+.mf-step.is-active::before{
+  width:48px;
+  background:#d4b78a;
+}
+.mf-step:hover{ color:#f4f1ea; }
+
+/* Hint scroll inferior izquierda */
+.hero-morph-scroll{
+  position:absolute;
+  left:6vw;
+  bottom:7vh;
+  z-index:8;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-size:10px;
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  color:rgba(244,241,234,0.55);
+}
+.hero-morph-scroll::after{
+  content:'';
+  width:1px;
+  height:42px;
+  background:linear-gradient(180deg, rgba(244,241,234,0.7) 0%, rgba(244,241,234,0) 100%);
+  animation:scrollLine 2.2s ease-in-out infinite;
+}
+@keyframes scrollLine{
+  0%   { transform:scaleY(0.3); transform-origin:top; opacity:0.3; }
+  50%  { transform:scaleY(1);   transform-origin:top; opacity:1; }
+  51%  { transform:scaleY(1);   transform-origin:bottom; }
+  100% { transform:scaleY(0.3); transform-origin:bottom; opacity:0.3; }
+}
+
+.mark{
+  position:absolute;
+  top:50%; right:6vw;
+  transform:translateY(-50%) rotate(90deg);
+  transform-origin:right center;
+  font-size:10px;
+  letter-spacing:0.5em;
+  color:rgba(244,241,234,0.35);
+  z-index:8;
+}
+
+/* ===== SCRIPT DE TRANSFORMACIÓN (controlado por scroll + autoplay) ===== */
+.hero-morph-stage.is-paused .hero-morph-layer{ transition:none; }
+
+/* Responsive */
+@media (max-width: 900px){
+  .hero-morph-head{ padding:18px 22px; font-size:9px; letter-spacing:0.24em; }
+  .hero-morph-copy{ left:5vw; right:5vw; bottom:18vh; max-width:none; }
+  .hero-morph-title{ font-size:clamp(40px, 11vw, 64px); }
+  .hero-morph-label-num{ font-size:clamp(80px, 30vw, 160px); }
+  .hero-morph-foot{ right:5vw; bottom:5vh; }
+  .hero-morph-scroll{ display:none; }
+  .mark{ display:none; }
+  .hero-morph-layer--sketch img{ mix-blend-mode:normal; opacity:0.85; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero-morph-layer{ transition:opacity .4s ease; }
+  .hero-morph-scroll::after{ animation:none; }
+}

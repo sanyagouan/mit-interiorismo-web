@@ -1,0 +1,673 @@
+---
+/**
+ * ChatBot inteligente
+ *  - Conversación real con IA (backend /api/chat)
+ *  - Detecta intención de lead → notifica a María automáticamente
+ *  - Fallback a respuestas guiadas si la IA no responde
+ *  - Quick actions contextuales según respuesta del bot
+ *  - Historial de mensajes en sessionStorage
+ */
+import { SITE } from '../data/site';
+import { SERVICIOS } from '../data/servicios';
+
+const services = SERVICIOS.map(s => ({ id: s.id, title: s.title, subtitle: s.subtitle }));
+const phoneRaw = SITE.phoneRaw;
+const email = SITE.email;
+const phoneDisplay = SITE.phoneDisplay;
+---
+<meta name="x-phone" content={phoneRaw} />
+<meta name="x-email" content={email} />
+<meta name="x-phone-display" content={phoneDisplay} />
+<meta name="x-services" content={JSON.stringify(services)} />
+
+<div class="cb-fab" id="cb-fab" aria-label="Abrir chat" aria-expanded="false">
+  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+  </svg>
+  <span class="cb-pulse"></span>
+</div>
+
+<aside class="cb-panel" id="cb-panel" hidden aria-label="Chat con el estudio">
+  <header class="cb-head">
+    <div>
+      <p class="cb-head-tt">Conversamos</p>
+      <p class="cb-head-st"><span class="cb-dot"></span> En línea · respondemos en &lt; 24 h</p>
+    </div>
+    <button class="cb-x" id="cb-close" aria-label="Cerrar">×</button>
+  </header>
+
+  <div class="cb-body" id="cb-body"></div>
+
+  <div class="cb-foot" id="cb-foot">
+    <div id="cb-input-wrap">
+      <input id="cb-input" type="text" placeholder="Escribe tu pregunta…" autocomplete="off" maxlength="600" />
+      <button id="cb-send" aria-label="Enviar">→</button>
+    </div>
+    <p class="cb-foot-note">Conversación atendida por IA + notifica a María · RGPD</p>
+  </div>
+</aside>
+
+<script is:inline>
+(function(){
+  const phoneRaw = (document.querySelector('meta[name="x-phone"]')||{}).content || '34637869890';
+  const email = (document.querySelector('meta[name="x-email"]')||{}).content || 'hola@mitinteriorismo.studio';
+  const phoneDisplay = (document.querySelector('meta[name="x-phone-display"]')||{}).content || '637 86 98 90';
+  let services = [];
+  try { services = JSON.parse((document.querySelector('meta[name="x-services"]')||{}).content || '[]'); } catch(e) {}
+
+  const fab = document.getElementById('cb-fab');
+  const panel = document.getElementById('cb-panel');
+  const closeBtn = document.getElementById('cb-close');
+  const body = document.getElementById('cb-body');
+  const input = document.getElementById('cb-input');
+  const sendBtn = document.getElementById('cb-send');
+  const inputWrap = document.getElementById('cb-input-wrap');
+
+  // === session ===
+  const SSKEY = 'mit_chat_v1';
+  let userId = null;
+  try {
+    userId = sessionStorage.getItem('mit_uid');
+    if (!userId) {
+      userId = 'u' + Math.random().toString(36).slice(2, 10);
+      sessionStorage.setItem('mit_uid', userId);
+    }
+  } catch(e) { userId = 'u' + Date.now(); }
+
+  let messages = [];
+  try {
+    const saved = sessionStorage.getItem(SSKEY);
+    if (saved) {
+      messages = JSON.parse(saved) || [];
+    }
+  } catch(e) { messages = []; }
+  function saveMsgs(){
+    try { sessionStorage.setItem(SSKEY, JSON.stringify(messages.slice(-20))); } catch(e) {}
+  }
+
+  // === UI helpers ===
+  function scrollDown(){
+    body.scrollTop = body.scrollHeight;
+  }
+  function addBot(html, opts){
+    const d = document.createElement('div');
+    d.className = 'cb-msg cb-bot';
+    d.innerHTML = html;
+    body.appendChild(d);
+    messages.push({ role: 'assistant', content: (opts && opts.text) || stripHtml(html) });
+    saveMsgs();
+    scrollDown();
+    if (opts && opts.typing) {
+      d.classList.add('cb-typing');
+      setTimeout(() => d.classList.remove('cb-typing'), 600);
+    }
+  }
+  function addUser(text){
+    const d = document.createElement('div');
+    d.className = 'cb-msg cb-user';
+    d.textContent = text;
+    body.appendChild(d);
+    messages.push({ role: 'user', content: text });
+    saveMsgs();
+    scrollDown();
+  }
+  function addTyping(){
+    const d = document.createElement('div');
+    d.className = 'cb-msg cb-bot cb-typing-dots';
+    d.id = 'cb-typing-now';
+    d.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(d);
+    scrollDown();
+    return d;
+  }
+  function removeTyping(){
+    const d = document.getElementById('cb-typing-now');
+    if (d) d.remove();
+  }
+  function stripHtml(s){
+    const div = document.createElement('div');
+    div.innerHTML = s;
+    return div.textContent || div.innerText || '';
+  }
+  function addQuickReplies(opts){
+    const wrap = document.createElement('div');
+    wrap.className = 'cb-quick';
+    opts.forEach(o => {
+      const b = document.createElement('button');
+      b.className = 'cb-q-btn';
+      b.textContent = o.label;
+      b.addEventListener('click', () => {
+        wrap.remove();
+        addUser(o.label);
+        handleAction(o.action, o.label, o);
+      });
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+    scrollDown();
+  }
+
+  // === panel lifecycle ===
+  function openPanel(){
+    panel.hidden = false;
+    requestAnimationFrame(() => panel.classList.add('is-open'));
+    fab.setAttribute('aria-expanded','true');
+    if (body.children.length === 0) {
+      seedConversation();
+    }
+    setTimeout(()=> input && input.focus(), 350);
+  }
+  function closePanel(){
+    panel.classList.remove('is-open');
+    setTimeout(()=> { panel.hidden = true; }, 380);
+    fab.setAttribute('aria-expanded','false');
+  }
+  fab.addEventListener('click', () => {
+    if (panel.hidden) openPanel(); else closePanel();
+  });
+  closeBtn.addEventListener('click', closePanel);
+
+  function seedConversation(){
+    addBot('Hola, soy el asistente del estudio. ¿Quieres información rápida o prefieres que te pase con María?');
+    addBot('Puedo responderte sobre <em>servicios</em>, <em>plazos</em>, <em>presupuestos</em>, <em>cambio de uso</em>, <em>visitas en Yécora/Logroño/Haro</em>, o pasarte con María directamente.');
+    addQuickReplies([
+      { label: 'Ver servicios', action: 'list_services' },
+      { label: 'Pedir presupuesto', action: 'lead_form' },
+      { label: 'Llamadme', action: 'lead_form_call' },
+      { label: 'Hablar con María', action: 'whatsapp' }
+    ]);
+  }
+
+  // === lead form ===
+  function addLeadForm(mode){
+    inputWrap.style.display = 'none';
+    const wrap = document.createElement('div');
+    wrap.className = 'cb-form';
+    wrap.innerHTML = `
+      <p class="cb-form-tt">${mode === 'call' ? 'Te llamamos nosotros' : 'Te contactamos'}</p>
+      <p class="cb-form-sub">${mode === 'call' ? 'Déjanos tu número y horario preferido.' : 'Déjanos tus datos y María te responde en menos de 24 h.'}</p>
+      <input class="cb-f-in" data-f="name" placeholder="Tu nombre">
+      <input class="cb-f-in" data-f="contact" placeholder="${mode === 'call' ? 'Teléfono' : 'Email o teléfono'}">
+      <textarea class="cb-f-in cb-f-ta" data-f="topic" placeholder="Cuéntanos brevemente qué necesitas (opcional)"></textarea>
+      <button class="cb-f-submit">Enviar</button>
+    `;
+    body.appendChild(wrap);
+    scrollDown();
+
+    wrap.querySelector('[data-f=name]').focus();
+    wrap.querySelector('[data-f=contact]').addEventListener('keydown', e => { if (e.key === 'Enter') wrap.querySelector('.cb-f-submit').click(); });
+
+    wrap.querySelector('.cb-f-submit').addEventListener('click', async () => {
+      const name = wrap.querySelector('[data-f=name]').value.trim();
+      const contact = wrap.querySelector('[data-f=contact]').value.trim();
+      const topic = wrap.querySelector('[data-f=topic]').value.trim();
+      if (!name || !contact) {
+        wrap.querySelector('[data-f=contact]').style.borderColor = '#c0392b';
+        wrap.querySelector('[data-f=contact]').focus();
+        return;
+      }
+      wrap.remove();
+      inputWrap.style.display = '';
+      addUser('Enviado · ' + name + ' · ' + contact);
+      addBot('Enviando a María…', { typing: true });
+      try {
+        const r = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name, contact, topic,
+            mode: mode,
+            source: 'chatbot-web',
+            page: location.pathname,
+            ts: new Date().toISOString()
+          })
+        });
+        const j = await r.json();
+        if (j.ok) {
+          addBot('Listo. María ha recibido tu mensaje y te responderá en &lt; 24 h a <strong>' + escapeHtml(contact) + '</strong>.');
+        } else {
+          addBot('Hubo un problema. Escríbenos directamente a <a href="mailto:' + email + '">' + email + '</a>.');
+        }
+      } catch(e) {
+        addBot('No he podido conectar. Escríbenos a <a href="mailto:' + email + '">' + email + '</a> o al <a href="tel:+' + phoneRaw + '">' + phoneDisplay + '</a>.');
+      }
+      addQuickReplies([
+        { label: 'Hablar también por WhatsApp', action: 'whatsapp' },
+        { label: 'Hacer otra pregunta', action: 'reset' }
+      ]);
+    });
+  }
+  function escapeHtml(s){ return String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+
+  // === action handlers ===
+  function handleAction(action, label, o){
+    if (action === 'list_services') {
+      addBot('Estos son los servicios que ofrece el estudio. Toca uno para saber más:');
+      const opts = services.slice(0, 6).map(s => ({ label: s.title, action: 'svc_' + s.id }));
+      addQuickReplies(opts);
+    } else if (action && action.startsWith('svc_')) {
+      const id = action.replace('svc_','');
+      const s = services.find(x => x.id === id);
+      if (!s) { addBot('No encuentro ese servicio. ¿Quieres ver la lista completa?'); return; }
+      addBot('<strong>' + s.title + '</strong><br>' + s.subtitle + '<br><br>¿Quieres ver la página completa, pedir presupuesto, o volver?');
+      addQuickReplies([
+        { label: 'Ver detalle', action: 'open_service', value: id },
+        { label: 'Pedir presupuesto', action: 'lead_form' },
+        { label: 'Volver a servicios', action: 'list_services' }
+      ]);
+    } else if (action === 'open_service') {
+      window.location.href = '/servicios/' + (o && o.value) + '/';
+    } else if (action === 'lead_form') {
+      addLeadForm('contact');
+    } else if (action === 'lead_form_call') {
+      addLeadForm('call');
+    } else if (action === 'whatsapp') {
+      const msg = encodeURIComponent('Hola María, vengo de la web de mit interiorismo. Me gustaría información sobre un proyecto. ¿Podemos hablar?');
+      const url = 'https://wa.me/' + phoneRaw + '?text=' + msg;
+      addBot('Te paso al WhatsApp Business de María con un mensaje pre-rellenado.');
+      addQuickReplies([{ label: 'Abrir WhatsApp →', action: 'open_wa', value: url }]);
+    } else if (action === 'open_wa') {
+      window.open((o && o.value) || ('https://wa.me/' + phoneRaw), '_blank', 'noopener');
+      addBot('Se ha abierto WhatsApp en una pestaña nueva.');
+    } else if (action === 'reset') {
+      body.innerHTML = '';
+      messages = [];
+      saveMsgs();
+      seedConversation();
+    } else if (action === 'call') {
+      window.location.href = 'tel:+' + phoneRaw;
+    }
+  }
+
+  // === backend chat (IA) ===
+  let busy = false;
+  async function sendToBot(text){
+    if (busy) return;
+    busy = true;
+    input.disabled = true;
+    sendBtn.disabled = true;
+    const t = addTyping();
+    try {
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: messages.slice(-12),
+          page: location.pathname,
+          userId: userId
+        })
+      });
+      removeTyping();
+      if (!r.ok) {
+        addBot('Disculpa, no he podido conectar. ¿Quieres que te pase con María?');
+        addQuickReplies([
+          { label: 'Hablar con María', action: 'whatsapp' },
+          { label: 'Pedir presupuesto', action: 'lead_form' }
+        ]);
+        return;
+      }
+      const j = await r.json();
+      const reply = (j.reply || '').trim();
+      addBot(reply);
+
+      // Map suggested_actions → botones
+      const map = {
+        'pedir_datos': { label: 'Dejar mis datos', action: 'lead_form' },
+        'abrir_whatsapp': { label: 'Hablar con María', action: 'whatsapp' },
+        'ir_a_servicios': { label: 'Ver servicios', action: 'list_services' },
+        'ir_a_proyectos': { label: 'Ver proyectos', action: 'open_service', value: '' },
+        'ver_reforma_integral': { label: 'Reforma integral', action: 'open_service', value: 'reforma-integral' },
+        'ver_cambio_uso': { label: 'Cambio de uso', action: 'open_service', value: 'cambio-uso' },
+        'ver_consultoria': { label: 'Consultoría', action: 'open_service', value: 'consultoria' },
+        'llamar': { label: 'Llamar', action: 'call' }
+      };
+      if (Array.isArray(j.suggested_actions) && j.suggested_actions.length) {
+        const opts = j.suggested_actions
+          .map(a => map[a])
+          .filter(Boolean)
+          .filter((v, i, arr) => arr.findIndex(x => x.label === v.label) === i)
+          .slice(0, 3);
+        if (opts.length) addQuickReplies(opts);
+      }
+    } catch (e) {
+      removeTyping();
+      addBot('Sin conexión ahora mismo. ¿Quieres que te pase con María por WhatsApp?');
+      addQuickReplies([
+        { label: 'Hablar con María', action: 'whatsapp' },
+        { label: 'Dejar mis datos', action: 'lead_form' }
+      ]);
+    } finally {
+      busy = false;
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  }
+
+  function sendInput(){
+    const text = input.value.trim();
+    if (!text || busy) return;
+    input.value = '';
+    addUser(text);
+    sendToBot(text);
+  }
+  if (input) {
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') sendInput(); });
+  }
+  if (sendBtn) sendBtn.addEventListener('click', sendInput);
+
+  // Wiggle de bienvenida
+  setTimeout(function(){
+    try {
+      if (!sessionStorage.getItem('cb_shown') && fab) {
+        sessionStorage.setItem('cb_shown','1');
+        fab.classList.add('cb-wiggle');
+        setTimeout(()=> fab.classList.remove('cb-wiggle'), 1800);
+      }
+    } catch(e){}
+  }, 11000);
+})();
+</script>
+
+<style>
+.cb-fab{
+  position:fixed;
+  right:24px; bottom:24px;
+  width:58px; height:58px;
+  border-radius:50%;
+  background:var(--ink,#0a0a09);
+  color:#f4f1ea;
+  border:1px solid rgba(244,241,234,0.18);
+  display:grid; place-items:center;
+  cursor:pointer;
+  z-index:200;
+  box-shadow:0 14px 40px rgba(10,10,9,0.25);
+  transition:transform .25s ease, background .25s;
+}
+.cb-fab:hover{ background:#5c1f2e; transform:translateY(-2px); }
+.cb-pulse{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:2px solid #5c1f2e;
+  opacity:0;
+  animation:pulse 2.4s ease-out infinite;
+  pointer-events:none;
+}
+@keyframes pulse{
+  0%{ opacity:.7; transform:scale(1); }
+  100%{ opacity:0; transform:scale(1.6); }
+}
+.cb-fab.cb-wiggle{ animation:wiggle .4s 4 ease-in-out; }
+@keyframes wiggle{
+  0%,100%{ transform:rotate(0); }
+  25%{ transform:rotate(-10deg); }
+  75%{ transform:rotate(10deg); }
+}
+
+.cb-panel{
+  position:fixed;
+  right:24px; bottom:96px;
+  width:min(400px, calc(100vw - 32px));
+  height:560px;
+  max-height:calc(100vh - 130px);
+  background:#0a0a09;
+  color:#f4f1ea;
+  border:1px solid rgba(244,241,234,0.16);
+  border-radius:6px;
+  z-index:199;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  transform:translateY(20px) scale(0.96);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1);
+  font-family:var(--sans,'Inter Tight',sans-serif);
+  box-shadow:0 24px 80px rgba(10,10,9,0.35);
+}
+.cb-panel[hidden]{ display:none; }
+.cb-panel.is-open{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.cb-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 20px;
+  border-bottom:1px solid rgba(244,241,234,0.1);
+  background:linear-gradient(180deg, rgba(244,241,234,0.04), rgba(244,241,234,0));
+}
+.cb-head-tt{
+  margin:0;
+  font-family:'Fraunces',serif;
+  font-size:18px;
+  font-weight:400;
+  color:#f4f1ea;
+}
+.cb-head-st{
+  margin:4px 0 0;
+  font-size:10px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:rgba(244,241,234,0.6);
+  display:flex; align-items:center; gap:8px;
+}
+.cb-dot{
+  display:inline-block;
+  width:6px; height:6px; border-radius:50%;
+  background:#5cbd8c;
+  box-shadow:0 0 0 2px rgba(92,189,140,0.2);
+}
+.cb-x{
+  background:transparent;
+  border:0;
+  color:rgba(244,241,234,0.6);
+  font-size:24px;
+  cursor:pointer;
+  width:32px; height:32px;
+  border-radius:50%;
+  display:grid; place-items:center;
+  transition:background .2s;
+}
+.cb-x:hover{ background:rgba(244,241,234,0.08); color:#f4f1ea; }
+
+.cb-body{
+  flex:1;
+  overflow-y:auto;
+  padding:18px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(244,241,234,0.2) transparent;
+}
+.cb-body::-webkit-scrollbar{ width:6px; }
+.cb-body::-webkit-scrollbar-thumb{ background:rgba(244,241,234,0.18); border-radius:3px; }
+
+.cb-msg{
+  max-width:86%;
+  padding:10px 14px;
+  font-size:14px;
+  line-height:1.5;
+  border-radius:14px;
+  word-wrap:break-word;
+  animation:cbIn .25s ease;
+}
+@keyframes cbIn{
+  from{ opacity:0; transform:translateY(6px); }
+  to{ opacity:1; transform:translateY(0); }
+}
+.cb-bot{
+  align-self:flex-start;
+  background:rgba(244,241,234,0.08);
+  color:#f4f1ea;
+  border-bottom-left-radius:4px;
+}
+.cb-user{
+  align-self:flex-end;
+  background:#5c1f2e;
+  color:#f4f1ea;
+  border-bottom-right-radius:4px;
+}
+.cb-bot em{ color:#d4b78a; font-style:normal; font-weight:500; }
+.cb-bot strong{ color:#f4f1ea; }
+.cb-bot a{ color:#d4b78a; text-decoration:underline; }
+
+.cb-typing-dots{
+  align-self:flex-start;
+  display:inline-flex;
+  gap:4px;
+  padding:14px 16px;
+  background:rgba(244,241,234,0.08);
+  border-radius:14px;
+  border-bottom-left-radius:4px;
+}
+.cb-typing-dots span{
+  display:inline-block;
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(244,241,234,0.6);
+  animation:cbDot 1.2s infinite;
+}
+.cb-typing-dots span:nth-child(2){ animation-delay:.15s; }
+.cb-typing-dots span:nth-child(3){ animation-delay:.3s; }
+@keyframes cbDot{
+  0%, 60%, 100%{ transform:translateY(0); opacity:.5; }
+  30%{ transform:translateY(-4px); opacity:1; }
+}
+
+.cb-quick{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  align-self:flex-start;
+  max-width:92%;
+  margin-top:2px;
+}
+.cb-q-btn{
+  background:transparent;
+  color:#f4f1ea;
+  border:1px solid rgba(244,241,234,0.3);
+  border-radius:20px;
+  padding:8px 14px;
+  font-size:12px;
+  font-family:inherit;
+  cursor:pointer;
+  transition:all .2s;
+}
+.cb-q-btn:hover{
+  background:rgba(244,241,234,0.08);
+  border-color:#d4b78a;
+  color:#d4b78a;
+}
+
+.cb-form{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:14px;
+  background:rgba(244,241,234,0.05);
+  border:1px solid rgba(244,241,234,0.12);
+  border-radius:10px;
+  align-self:stretch;
+  animation:cbIn .25s ease;
+}
+.cb-form-tt{
+  margin:0;
+  font-family:'Fraunces',serif;
+  font-size:15px;
+  color:#f4f1ea;
+}
+.cb-form-sub{
+  margin:0 0 6px;
+  font-size:12px;
+  color:rgba(244,241,234,0.6);
+  line-height:1.4;
+}
+.cb-f-in{
+  background:rgba(10,10,9,0.4);
+  border:1px solid rgba(244,241,234,0.18);
+  border-radius:6px;
+  padding:10px 12px;
+  color:#f4f1ea;
+  font-size:13px;
+  font-family:inherit;
+  outline:none;
+  transition:border-color .2s;
+}
+.cb-f-in:focus{ border-color:#d4b78a; }
+.cb-f-ta{
+  min-height:60px;
+  resize:vertical;
+  font-family:inherit;
+}
+.cb-f-submit{
+  background:#d4b78a;
+  color:#0a0a09;
+  border:0;
+  padding:10px;
+  font-size:12px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  font-weight:500;
+  font-family:inherit;
+  cursor:pointer;
+  border-radius:6px;
+  transition:background .2s;
+}
+.cb-f-submit:hover{ background:#e0c69a; }
+
+.cb-foot{
+  border-top:1px solid rgba(244,241,234,0.1);
+  background:rgba(0,0,0,0.3);
+}
+#cb-input-wrap{
+  display:flex;
+  align-items:center;
+  padding:10px 12px;
+  gap:8px;
+}
+#cb-input{
+  flex:1;
+  background:rgba(244,241,234,0.06);
+  border:1px solid rgba(244,241,234,0.14);
+  border-radius:20px;
+  padding:10px 14px;
+  color:#f4f1ea;
+  font-size:13px;
+  font-family:inherit;
+  outline:none;
+  transition:border-color .2s;
+}
+#cb-input:focus{ border-color:#d4b78a; }
+#cb-input:disabled{ opacity:.5; }
+#cb-send{
+  background:#d4b78a;
+  color:#0a0a09;
+  border:0;
+  width:36px; height:36px;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:16px;
+  display:grid; place-items:center;
+  transition:background .2s;
+}
+#cb-send:hover{ background:#e0c69a; }
+#cb-send:disabled{ opacity:.5; cursor:wait; }
+.cb-foot-note{
+  margin:0;
+  padding:0 14px 10px;
+  font-size:9px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(244,241,234,0.4);
+  text-align:center;
+}
+
+@media (max-width: 600px){
+  .cb-fab{ right:14px; bottom:14px; width:52px; height:52px; }
+  .cb-panel{ right:10px; bottom:80px; width:calc(100vw - 20px); height:calc(100vh - 110px); }
+}
+</style>

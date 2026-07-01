@@ -1,6 +1,7 @@
 ---
 import "../styles/editorial.css";
-import "../styles/hero-transformation.css";
+import "../styles/hero-morph.css";
+import ChatBot from "../components/ChatBot.astro";
 import { SITE } from "../data/site";
 import { PROJECTS, getFeaturedProjects } from "../data/projects";
 import { SERVICIOS } from "../data/servicios";
@@ -42,6 +43,11 @@ const telefono = SITE.phoneDisplay;
 <meta property="og:title" content="mit interiorismo" />
 <meta property="og:description" content="Donde el diseño encuentra a la obra" />
 <meta property="og:image" content={`https://www.mitinteriorismo.studio${mariaImg}`} />
+<!-- Chatbot data -->
+<meta name="x-phone" content={SITE.phoneRaw} />
+<meta name="x-email" content={SITE.email} />
+<meta name="x-phone-display" content={SITE.phoneDisplay} />
+<meta name="x-services" content={JSON.stringify(servicios.map(s => ({ id: s.id, title: s.title, subtitle: s.subtitle })))} />
 <script type="application/ld+json" set:html={JSON.stringify({
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
@@ -82,108 +88,179 @@ const telefono = SITE.phoneDisplay;
   </nav>
 </header>
 
-<!-- Índice lateral flotante (aparece tras scroll) -->
-<aside class="toc" id="toc" aria-hidden="true">
-  <p class="toc-label">Índice</p>
-  <ol>
-    <li><a href="#" class="toc-l" data-target="top">00 · Inicio</a></li>
-    <li><a href="#proyectos" class="toc-l" data-target="proyectos">01 · Proyectos</a></li>
-    <li><a href="#estudio" class="toc-l" data-target="estudio">02 · Estudio</a></li>
-    <li><a href="#servicios" class="toc-l" data-target="servicios">03 · Servicios</a></li>
-    <li><a href="#contacto" class="toc-l" data-target="contacto">04 · Contacto</a></li>
-  </ol>
-</aside>
-
 <main id="main">
 
-<!-- ===== HERO CINEMATOGRÁFICO ===== -->
-<section class="hero-v2" id="top">
+<!-- ===== HERO · TRANSFORMACIÓN DE UN ESPACIO =====
+     4 imágenes reales apiladas + crossfade con scroll + autoplay
+     I  · Boceto a mano alzada
+     II · Moodboard / materiales
+     III· Anteproyecto 3D
+     IV · Espacio terminado
+-->
+<section class="hero-morph" id="top" data-hero="transform">
 
-  <span class="hero-v2-tag hero-v2-tag-l">00 · Boceto</span>
-  <span class="hero-v2-tag hero-v2-tag-r">01 · Realidad</span>
-
-  <div class="hero-v2-side hero-v2-sketch">
-    <svg class="sketch-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
-      <!-- planta técnica esquemática representativa del proceso -->
-      <rect x="80" y="60" width="240" height="180"/>
-      <rect x="80" y="240" width="240" height="100"/>
-      <rect x="320" y="60" width="200" height="280"/>
-      <line x1="320" y1="60" x2="320" y2="340"/>
-      <line x1="200" y1="60" x2="200" y2="240"/>
-      <line x1="80" y1="180" x2="320" y2="180"/>
-      <!-- arcos de puertas -->
-      <path d="M 200 180 A 20 20 0 0 1 240 180"/>
-      <path d="M 200 240 A 20 20 0 0 0 200 200"/>
-      <!-- ventanas -->
-      <line x1="60" y1="80" x2="60" y2="160"/>
-      <line x1="60" y1="180" x2="60" y2="260"/>
-      <line x1="540" y1="80" x2="540" y2="180"/>
-      <line x1="540" y1="240" x2="540" y2="320"/>
-      <!-- cotas -->
-      <line x1="80" y1="360" x2="320" y2="360"/>
-      <line x1="78" y1="356" x2="78" y2="364"/>
-      <line x1="318" y1="356" x2="318" y2="364"/>
-      <text x="190" y="378" text-anchor="middle">5.40 m</text>
-      <line x1="60" y1="60" x2="60" y2="340"/>
-      <line x1="56" y1="58" x2="64" y2="58"/>
-      <line x1="56" y1="340" x2="64" y2="340"/>
-      <text x="44" y="200" text-anchor="middle" transform="rotate(-90 44 200)">4.20 m</text>
-      <!-- texto identificativo -->
-      <text x="80" y="48">MIT · PROYECTO TÉCNICO · ESC 1:50</text>
-      <text x="540" y="48" text-anchor="end">PLANO 01 · ESTADO PREVIO</text>
-    </svg>
+  <div class="hero-morph-head">
+    <p class="hero-morph-tag">ESTUDIO · YÉCORA, ÁLAVA</p>
+    <p class="hero-morph-year">MMXX—MMXXVI</p>
   </div>
 
-  <div class="hero-v2-side hero-v2-render" id="hero-render">
-    <div class="slide is-active" data-slide="0">
+  <div class="hero-morph-stage" id="hero-morph-stage">
+
+    <div class="hero-morph-layer hero-morph-layer--sketch is-on" data-step="1">
       <picture>
-        <source srcset="/images/projects/kripan/03.avif" type="image/avif" />
-        <source srcset="/images/projects/kripan/03.webp" type="image/webp" />
-        <img src="/images/projects/kripan/03.jpg" alt="Txoko en Kripan · 2020" loading="eager" fetchpriority="high" />
+        <source srcset="/images/projects/labastida/sketch.avif" type="image/avif" />
+        <source srcset="/images/projects/labastida/sketch.webp" type="image/webp" />
+        <img src="/images/projects/labastida/sketch.jpg" alt="Boceto a mano alzada del proyecto" loading="eager" fetchpriority="high" />
       </picture>
     </div>
-    <div class="slide" data-slide="1">
+
+    <div class="hero-morph-layer" data-step="2">
+      <picture>
+        <source srcset="/images/projects/efitar/moodboard-2.avif" type="image/avif" />
+        <source srcset="/images/projects/efitar/moodboard-2.webp" type="image/webp" />
+        <img src="/images/projects/efitar/moodboard-2.png" alt="Moodboard de materiales y paleta" loading="lazy" />
+      </picture>
+    </div>
+
+    <div class="hero-morph-layer" data-step="3">
+      <picture>
+        <source srcset="/images/projects/kripan/06.avif" type="image/avif" />
+        <source srcset="/images/projects/kripan/06.webp" type="image/webp" />
+        <img src="/images/projects/kripan/06.jpg" alt="Anteproyecto 3D del espacio" loading="lazy" />
+      </picture>
+    </div>
+
+    <div class="hero-morph-layer" data-step="4">
       <picture>
         <source srcset="/images/projects/kripan/11.avif" type="image/avif" />
         <source srcset="/images/projects/kripan/11.webp" type="image/webp" />
-        <img src="/images/projects/kripan/11.jpg" alt="Txoko en Kripan · 2020" loading="eager" />
-      </picture>
-    </div>
-    <div class="slide" data-slide="2">
-      <picture>
-        <source srcset="/images/projects/luciano/foto-04-oficina-principal.avif" type="image/avif" />
-        <source srcset="/images/projects/luciano/foto-04-oficina-principal.webp" type="image/webp" />
-        <img src="/images/projects/luciano/foto-04-oficina-principal.jpg" alt="Proyecto Luciano · oficina técnica" loading="eager" />
+        <img src="/images/projects/kripan/11.jpg" alt="Espacio terminado" loading="lazy" />
       </picture>
     </div>
 
-    <!-- Thumbs control -->
-    <div class="hero-v2-thumbs">
-      <button class="hero-v2-thumb is-active" data-slide="0" style="background-image:url('/images/projects/kripan/03.jpg');" aria-label="Slide 1" data-n="01"></button>
-      <button class="hero-v2-thumb" data-slide="1" style="background-image:url('/images/projects/kripan/11.jpg');" aria-label="Slide 2" data-n="02"></button>
-      <button class="hero-v2-thumb" data-slide="2" style="background-image:url('/images/projects/luciano/foto-04-oficina-principal.jpg');" aria-label="Slide 3" data-n="03"></button>
-    </div>
+    <div class="hero-morph-vignette"></div>
+
   </div>
 
-  <div class="hero-v2-content">
-    <p class="hero-v2-kicker">Estudio · Yécora, Álava · fundado 2020</p>
-    <h1 class="hero-v2-h">
-      Donde el&nbsp;<em>diseño</em><br/>
-      encuentra a la&nbsp;<em>obra</em>.
+  <div class="hero-morph-copy">
+    <p class="hero-morph-kicker"><span></span>El estudio de María Iturbe Sánchez</p>
+    <h1 class="hero-morph-title">
+      <span class="hm-line hm-l1"><span>Donde el&nbsp;</span></span>
+      <span class="hm-line hm-l2"><span>diseño encuentra</span></span>
+      <span class="hm-line hm-l3"><span>a la&nbsp;<em>obra.</em></span></span>
     </h1>
-    <p class="hero-v2-sub">
+    <p class="hero-morph-lede">
       De un plano a mano alzada a un espacio habitable. María Iturbe Sánchez
       convierte la imaginación de sus clientes en realidad física, tangible y
-      normativa.
+      normativa — desde Yécora, Álava, al resto del territorio.
     </p>
-    <a href="#contacto" class="hero-v2-cta">Pedir cita →</a>
+    <div class="hero-morph-actions">
+      <a href="#contacto" class="hm-cta-primary">Pedir cita</a>
+      <a href="#proyectos" class="hm-cta-ghost">Ver proyectos</a>
+    </div>
   </div>
 
-  <div class="hero-v2-scroll">
-    <span>Scroll</span>
-    <span class="arrow"></span>
+  <div class="hero-morph-foot" id="hero-morph-foot">
+    <button type="button" class="mf-step is-active" data-step="1">I · El boceto</button>
+    <button type="button" class="mf-step" data-step="2">II · Los materiales</button>
+    <button type="button" class="mf-step" data-step="3">III · El anteproyecto</button>
+    <button type="button" class="mf-step" data-step="4">IV · El espacio</button>
   </div>
+
+  <div class="hero-morph-scroll" aria-hidden="true">
+    <span>Desplaza para transformar</span>
+  </div>
+
+  <p class="mark">mit</p>
+
 </section>
+
+<script is:inline>
+(function(){
+  // HERO · TRANSFORMACIÓN
+  // · 4 imágenes apiladas
+  // · crossfade autoplay (6.5s por paso)
+  // · controlable por scroll (rueda) y por click en steps
+  // · pausa si el hero no está visible
+  const stage = document.getElementById('hero-morph-stage');
+  const hero  = document.getElementById('top');
+  if (!stage || !hero) return;
+
+  const layers = stage.querySelectorAll('.hero-morph-layer');
+  const steps  = document.querySelectorAll('#hero-morph-foot .mf-step');
+  const N = layers.length;
+  let current = 0;       // 0..N-1
+  let autoplay = null;
+  let paused   = false;
+  const DELAY = 6500;
+
+  function go(i){
+    i = (i + N) % N;
+    if (i === current) return;
+    layers[current].classList.remove('is-on');
+    layers[i].classList.add('is-on');
+    steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
+    current = i;
+  }
+
+  function next(){ go(current + 1); }
+  function prev(){ go(current - 1); }
+
+  function start(){
+    stop();
+    if (paused) return;
+    autoplay = setInterval(next, DELAY);
+  }
+  function stop(){
+    if (autoplay){ clearInterval(autoplay); autoplay = null; }
+  }
+
+  // Click en step
+  steps.forEach((s, k) => s.addEventListener('click', () => {
+    go(k);
+    start(); // reinicia contador
+  }));
+
+  // Scroll wheel sobre el hero = avanza/retrocede paso
+  function onWheel(e){
+    // sólo si el hero ocupa la pantalla
+    const r = hero.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight * 0.4) return;
+    if (Math.abs(e.deltaY) < 8) return;
+    e.preventDefault();
+    if (e.deltaY > 0) next(); else prev();
+    start();
+  }
+  hero.addEventListener('wheel', onWheel, { passive: false });
+
+  // Pausa si el hero no está visible
+  if ('IntersectionObserver' in window){
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        paused = !en.isIntersecting;
+        if (paused) stop(); else start();
+      });
+    }, { threshold: 0.2 });
+    io.observe(hero);
+  }
+
+  // Pausa al hacer hover sobre el CTA
+  hero.querySelectorAll('.hm-cta-primary, .hm-cta-ghost').forEach(b => {
+    b.addEventListener('mouseenter', stop);
+    b.addEventListener('mouseleave', start);
+  });
+
+  // Pausa con teclado
+  document.addEventListener('keydown', e => {
+    const r = hero.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    if (e.key === 'ArrowRight') { next(); start(); }
+    if (e.key === 'ArrowLeft')  { prev(); start(); }
+  });
+
+  start();
+})();
+</script>
 
 <!-- ===== TICKER ===== -->
 <section class="ticker" aria-hidden="true">
@@ -328,9 +405,6 @@ const telefono = SITE.phoneDisplay;
       <div><dt>Teléfono</dt><dd>{telefono}</dd></div>
       <div><dt>Ámbito</dt><dd>Álava · La Rioja · País Vasco</dd></div>
       <div><dt>LinkedIn</dt><dd><a href={SITE.social.linkedin} target="_blank" rel="noopener">María Iturbe Sánchez ↗</a></dd></div>
-      {SITE.social.instagram && (
-        <div><dt>Instagram</dt><dd><a href={`https://www.instagram.com/${SITE.social.instagram.replace('@','')}/`} target="_blank" rel="noopener">@{SITE.social.instagram.replace('@','')} ↗</a></dd></div>
-      )}
     </dl>
   </div>
 </section>
@@ -377,17 +451,14 @@ const telefono = SITE.phoneDisplay;
   upd();
 })();
 
-// nav + toc state
+// nav scroll state
 (function(){
   var nav = document.getElementById('nav');
-  var toc = document.getElementById('toc');
   function upd(){
     if (window.scrollY > 60) {
       if (nav) nav.classList.add('is-scrolled');
-      if (toc) toc.classList.add('is-visible');
     } else {
       if (nav) nav.classList.remove('is-scrolled');
-      if (toc) toc.classList.remove('is-visible');
     }
   }
   window.addEventListener('scroll', upd, {passive:true});
@@ -421,44 +492,103 @@ const telefono = SITE.phoneDisplay;
   document.querySelectorAll('.work,.reveal').forEach(function(el){ io.observe(el); });
 })();
 
-// hero slider
+// hero morph animation (wireframe → photo)
 (function(){
-  var slides = document.querySelectorAll('.hero-v2-render .slide');
-  var thumbs = document.querySelectorAll('.hero-v2-thumb');
-  if (slides.length < 2) return;
-  var idx = 0;
-  var timer = null;
-  function show(n){
-    idx = (n + slides.length) % slides.length;
-    slides.forEach(function(s, i){
-      s.classList.toggle('is-active', i === idx);
-    });
-    thumbs.forEach(function(t, i){
-      t.classList.toggle('is-active', i === idx);
-    });
+  var stage = document.getElementById('hero-morph-stage');
+  var photo = document.getElementById('hero-morph-photo');
+  var cursor = document.getElementById('hero-morph-cursor');
+  var cursorLabel = document.getElementById('hero-morph-cursor-label');
+  var lines = document.querySelectorAll('.hero-morph-title .hm-line span');
+  var steps = document.querySelectorAll('.mf-step');
+  if (!stage || !photo) return;
+
+  function setStep(n){
+    steps.forEach(function(s){ s.classList.toggle('is-active', parseInt(s.dataset.step,10) === n); });
   }
-  function loop(){
-    timer = setTimeout(function(){
-      show(idx + 1);
-      loop();
-    }, 5500);
+
+  function step1_plano(){
+    setStep(1);
+    // wireframe ya visible
+    // cursor aparece en el centro
+    if (cursor) {
+      cursor.style.transition = 'none';
+      cursor.style.left = '50%';
+      cursor.style.top = '50%';
+      cursor.style.opacity = '0';
+      requestAnimationFrame(function(){
+        if (cursor) {
+          cursor.style.transition = 'opacity .6s ease';
+          cursor.style.opacity = '1';
+        }
+      });
+    }
+    if (cursorLabel) cursorLabel.textContent = 'N 42°37.4\' — W 2°28.1\'';
   }
-  // pause on hover of right side
-  var render = document.getElementById('hero-render');
-  if (render) {
-    render.addEventListener('mouseenter', function(){ if (timer) { clearTimeout(timer); timer = null; } });
-    render.addEventListener('mouseleave', function(){ loop(); });
+
+  function step2_gesto(){
+    setStep(2);
+    if (cursorLabel) cursorLabel.textContent = 'TRAZANDO LÍNEAS DE LUZ';
+    // cursor se mueve (gesto)
+    if (cursor) {
+      cursor.style.transition = 'left 2.4s cubic-bezier(.6,.1,.3,1), top 2.4s cubic-bezier(.6,.1,.3,1)';
+      cursor.style.left = '32%';
+      cursor.style.top = '38%';
+    }
   }
-  thumbs.forEach(function(t){
-    t.addEventListener('click', function(){
-      show(parseInt(t.dataset.slide, 10));
-      if (timer) { clearTimeout(timer); timer = null; }
-      loop();
+
+  function step3_luz(){
+    setStep(3);
+    if (cursorLabel) cursorLabel.textContent = 'AÑADIENDO TEXTURA';
+    if (cursor) {
+      cursor.style.transition = 'left 2s ease-in-out, top 2s ease-in-out';
+      cursor.style.left = '68%';
+      cursor.style.top = '58%';
+    }
+    // elementos decorativos aparecen
+    var decor = document.querySelector('.wire-decor');
+    if (decor) {
+      decor.style.transition = 'opacity 1.2s ease';
+      decor.style.opacity = '1';
+    }
+  }
+
+  function step4_espacio(){
+    setStep(4);
+    if (cursorLabel) cursorLabel.textContent = 'RESULTADO';
+    if (cursor) {
+      cursor.style.transition = 'opacity .6s ease';
+      cursor.style.opacity = '0';
+    }
+    // foto se expande clip-path (morfismo desde wireframe)
+    photo.classList.add('is-revealing');
+    setTimeout(function(){ photo.classList.add('is-final'); }, 50);
+  }
+
+  function start(){
+    var t0 = Date.now();
+    // título aparece escalonado una vez cargado el wireframe
+    lines.forEach(function(s, i){
+      s.style.transition = 'transform 1s cubic-bezier(.2,.8,.2,1) '+(i*0.12+1.4)+'s';
+      s.style.transform = 'translateY(0)';
     });
-  });
-  loop();
+    setTimeout(step1_plano, 1000);
+    setTimeout(step2_gesto,   3000);
+    setTimeout(step3_luz,      6000);
+    setTimeout(step4_espacio,  9000);
+  }
+
+  // pre-estado del título (oculto bajo)
+  lines.forEach(function(s){ s.style.transform = 'translateY(110%)'; });
+  // pre-estado de la foto (clip minúsculo en el centro)
+  photo.classList.add('is-pre');
+
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, {once:true});
 })();
 </script>
+
+<!-- ChatBot embebido -->
+<ChatBot />
 
 </body>
 </html>
