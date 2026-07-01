@@ -1,278 +1,340 @@
 ---
-/**
- * Home — index.astro
- *
- * ACTUALIZADO 30 jun 2026 con TODO el contenido real encontrado en
- * GeneraIA-Yago/WEB-MARIA + proyectos activos 2026:
- *
- * - 7 proyectos (4 activos + 3 históricos 2020) — galería con fotos reales
- * - Foto de María en sección de estudio
- * - Trayectoria completa (Echazarreta, COOK, Blurarq, mit)
- * - Formación ESDIR 8,41
- * - Stack técnico (AutoCAD, SketchUp, V-Ray 5, Presto, InDesign, Photoshop)
- * - Servicios con evidencias
- */
+import "../styles/editorial.css";
+import { SITE, SERVICES } from "../data/site";
+import { PROJECTS, getFeaturedProjects } from "../data/projects";
 
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import ProjectCard from '../components/ProjectCard.astro';
-import ProcessStep from '../components/ProcessStep.astro';
-import Footer from '../components/Footer.astro';
-import { SITE, SERVICES, PROCESS_STEPS, DIFFERENTIATORS, MARIA } from '../data/site';
-import { getFeaturedProjects, PROJECT_TYPES } from '../data/projects';
+const site = SITE;
+const featured = getFeaturedProjects().slice(0, 6);
 
-// Hero
-const heroImage = '/images/projects/lapuebla/02.jpg';
-const featured = getFeaturedProjects();
+// Mapa slug proyecto → carpeta física real
+const FOLDER: Record<string,string> = {
+  "merendero-lapuebla": "lapuebla",
+  "txoko-kripan": "kripan",
+  "apartamentos-labastida": "labastida",
+};
+
+// Helper: limpia ruta absoluta de la galería (vienen como /images/projects/x/00.jpg)
+const pick = (p: typeof featured[number], idx: number = 0) => {
+  const raw = p.gallery[idx] ?? "";
+  return raw.startsWith("/") ? raw : `/images/projects/${FOLDER[p.slug] ?? p.slug}/${raw}`;
+};
+const strip = (p: typeof featured[number], ext: string, idx: number = 0) => {
+  const raw = p.gallery[idx] ?? "";
+  return raw.replace(/\.[a-z0-9]+$/i, `.${ext}`);
+};
+const heroImg = pick(lapueblaFor(featured));
+function lapueblaFor(arr: typeof featured) {
+  return arr.find(p => p.slug === "merendero-lapuebla")!;
+}
+const mariaImg = "/team/maria.jpg";
+const services = SERVICES.slice(0, 6);
+const year = new Date().getFullYear();
 ---
 
-<BaseLayout
-  title={`${SITE.name} — ${SITE.title}`}
-  description={SITE.description}
->
-  <main id="main-content">
-    <Hero
-      image={heroImage}
-      imageAlt="Merendero Lapuebla — espacio social con diseño contemporáneo"
-      eyebrow={`Estudio boutique · ${SITE.address.city} (${SITE.address.region}) · ${SITE.experienceYears} años`}
-    />
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>mit interiorismo — Yécora, Álava · desde 2020</title>
+<meta name="description" content="Estudio de interiorismo técnico en Yécora, Álava. Más de 15 años entre dibujo, obra y territorio." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<meta property="og:title" content="mit interiorismo" />
+<meta property="og:description" content="Interiorismo técnico en Yécora, Álava" />
+<meta property="og:image" content={`https://www.mitinteriorismo.studio${mariaImg}`} />
+</head>
+<body>
 
-    <!-- INTRO — Manifiesto editorial -->
-    <section class="bg-cream py-section">
-      <div class="mx-auto max-w-wide px-gutter">
-        <div class="grid gap-12 md:grid-cols-12 md:gap-16">
-          <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">
-              Sobre el estudio
-            </p>
-          </div>
-          <div class="md:col-span-8">
-            <h2 class="font-display text-display-lg text-ink">
-              <span class="italic text-teal">Diseño</span> + <span class="italic text-teal">técnica</span>. Una sola autoría, de principio a fin.
-            </h2>
-            <div class="mt-8 max-w-2xl space-y-4 text-lg text-ink-muted">
-              <p>
-                mit interiorismo es un estudio boutique de Yécora (Álava) dirigido por María Iturbe Sánchez. Diseño + instalaciones + normativa, todo bajo un mismo proyecto.
-              </p>
-              <p>
-                La mayoría de interioristas trabajan solo con la estética. mit interiorismo proyecta también las instalaciones — eléctricas, climatización, fontanería — y las tramita con la normativa vigente (CTE, REBT, RITE). Esto permite defender técnicamente a cada cliente frente a gremios, proveedores y sorpresas de obra.
-              </p>
-              <p class="font-display italic text-teal-deep">
-                Defensa técnica del cliente, siempre.
-              </p>
-            </div>
-          </div>
+<!-- progress -->
+<div class="prog" id="prog"></div>
+
+<!-- nav -->
+<header class="nav" id="nav">
+  <a href="/" class="nav-mark">
+    <span class="nav-mark-i">mit</span>
+    <span class="nav-mark-s">Interiorismo · Yécora</span>
+  </a>
+  <nav class="nav-links">
+    <a href="#proyectos" class="nav-l"><span>01</span>Proyectos</a>
+    <a href="#estudio" class="nav-l"><span>02</span>Estudio</a>
+    <a href="#contacto" class="nav-l"><span>03</span>Contacto</a>
+  </nav>
+</header>
+
+<main id="main">
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <div class="hairline"></div>
+      <p class="kicker">Estudio · Interiorismo técnico · fundado 2020</p>
+      <h1 class="display">
+        <span class="d-line"><span>Donde el&nbsp;</span></span>
+        <span class="d-line"><span><em>diseño</em></span></span>
+        <span class="d-line"><span>encuentra</span></span>
+        <span class="d-line"><span>a la&nbsp;<em>obra</em>.</span></span>
+      </h1>
+      <p class="hero-lede">
+        Yécora (Álava) sirve a La Rioja, el País Vasco y cualquier cliente
+        que entienda que un proyecto empieza con un replanteo, no con un render.
+      </p>
+      <div class="hero-meta">
+        <a href="#proyectos" class="btn-pri">Ver proyectos →</a>
+        <a href="#contacto" class="btn-ghost">Empezar conversación</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-fr">
+        {heroImg && (
+          <picture>
+            <source srcset={strip(lapueblaFor(featured), "avif")} type="image/avif" />
+            <source srcset={strip(lapueblaFor(featured), "webp")} type="image/webp" />
+            <img src={heroImg} alt="Merendero en Lapuebla — interiorismo técnico mit" loading="eager" fetchpriority="high" />
+          </picture>
+        )}
+        <div class="hero-fr-cap">
+          <span>01 / 06</span>
+          <span>Merendero Lapuebla · 2020</span>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <!-- SOBRE MARÍA — imagen + bio + trayectoria condensada -->
-    <section class="bg-cream-warm py-section">
-      <div class="mx-auto max-w-wide px-gutter">
-        <div class="grid gap-12 md:grid-cols-12">
-          <div class="md:col-span-5">
-            <img
-              src={MARIA.photo}
-              alt={MARIA.fullName}
-              class="aspect-[4/5] w-full object-cover"
-              loading="lazy"
-              width="528"
-              height="660"
-            />
-          </div>
-          <div class="md:col-span-7">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal mb-6">María Iturbe Sánchez</p>
-            <h2 class="font-display text-display-md text-ink mb-8">
-              Interior Design Specialist.
-            </h2>
-            <p class="text-lg text-ink-muted mb-6" set:html={MARIA.bio}></p>
-            <dl class="grid grid-cols-2 gap-x-8 gap-y-6 border-t border-ink/10 pt-6">
-              <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Formación</dt>
-                <dd class="mt-1 font-display text-base text-ink">ESDIR La Rioja (2015-2020) · 8,41</dd>
-              </div>
-              <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Trayectoria</dt>
-                <dd class="mt-1 text-sm text-ink-muted">Echazarreta · COOK · Blurarq · mit interiorismo</dd>
-              </div>
-              <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Software</dt>
-                <dd class="mt-1 text-sm text-ink-muted">AutoCAD · SketchUp · V-Ray 5 · Presto · InDesign · Photoshop</dd>
-              </div>
-              <div>
-                <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Normativa</dt>
-                <dd class="mt-1 text-sm text-ink-muted">CTE · REBT · RITE · DB-SI · DB-HR · DB-HE</dd>
-              </div>
-            </dl>
-            <a
-              href="/sobre"
-              class="group mt-8 inline-flex items-center gap-2 border-b border-ink pb-1 text-sm font-medium text-ink transition-colors hover:text-teal"
-            >
-              Sobre María y la trayectoria completa
-              <span class="transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
-            </a>
-          </div>
-        </div>
+<!-- ===== MARQUEE ===== -->
+<section class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Interiorismo técnico · Reforma · Cambio de uso · Asesoría · Render · Yécora · Logroño · Haro · Álava · Rioja · </span>
+    <span>Interiorismo técnico · Reforma · Cambio de uso · Asesoría · Render · Yécora · Logroño · Haro · Álava · Rioja · </span>
+  </div>
+</section>
+
+<!-- ===== MANIFIESTO ===== -->
+<section class="manifest" id="estudio-scroll">
+  <div class="manifest-grid">
+    <aside class="manifest-meta">
+      <p class="m-label">— Sobre el estudio</p>
+      <p class="m-folio">Nº 01 · Manifiesto</p>
+    </aside>
+    <article class="manifest-body">
+      <p class="manifest-q reveal">
+        «No hacemos renders sin obra ni obras sin planos. Medimos la
+        luz que entra, lo que cabe en la normativa, lo que aguanta
+        el presupuesto. <em>El resto es vender humo.</em>»
+      </p>
+      <p class="manifest-sig">— María Iturbe Sánchez, ESDIR ’20 · nota 8,41</p>
+    </article>
+  </div>
+</section>
+
+<!-- ===== PROYECTOS ===== -->
+<section class="works" id="proyectos">
+  <header class="works-head">
+    <div>
+      <p class="kicker">02 · Trabajo seleccionado</p>
+      <h2 class="display-2">
+        <span>Pro</span><em>yec</em><span>tos</span>
+      </h2>
+    </div>
+    <a href="/proyectos" class="all-link">Ver los 7 proyectos ↗</a>
+  </header>
+
+  {featured.map((p, i) => (
+    <a href={`/proyectos/${p.slug}`} class={`work ${i % 2 === 1 ? 'work-rev' : ''}`}>
+      <figure class="work-fig">
+        <picture>
+          <source srcset={strip(p, "avif", 0)} type="image/avif" />
+          <source srcset={strip(p, "webp", 0)} type="image/webp" />
+          <img src={pick(p, 0)} alt={p.title} loading={i < 2 ? "eager" : "lazy"} />
+        </picture>
+        <figcaption class="work-cap">
+          <span>0{i+1} / 0{featured.length}</span>
+          <span>{p.year} · {p.location || 'Yécora'}</span>
+        </figcaption>
+      </figure>
+      <div class="work-info">
+        <p class="work-cat">{p.type === 'residential' ? 'Residencial' : p.type === 'commercial' ? 'Comercial' : p.type === 'office' ? 'Oficina' : 'Espacio social'}</p>
+        <h3 class="work-title">{p.title}</h3>
+        <p class="work-desc">{p.subtitle || ''}</p>
+        <span class="work-go">Ver proyecto →</span>
       </div>
-    </section>
+    </a>
+  ))}
+</section>
 
-    <!-- PROYECTOS DESTACADOS -->
-    <section class="bg-cream py-section">
-      <div class="mx-auto max-w-wide px-gutter">
-        <div class="mb-16 flex items-end justify-between">
-          <div>
-            <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
-              Selección — {featured.length} proyectos
-            </p>
-            <h2 class="font-display text-display-lg text-ink">
-              Trabajos destacados
-            </h2>
-          </div>
-          <a
-            href="/proyectos"
-            class="group hidden items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-teal md:inline-flex"
-          >
-            Ver todos ({7} proyectos en archivo)
-            <span class="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
-          </a>
-        </div>
+<!-- ===== ESTUDIO ===== -->
+<section class="estudio" id="estudio">
+  <div class="est-grid">
+    <figure class="est-fig">
+      <picture>
+        <source srcset="/team/maria.avif" type="image/avif" />
+        <source srcset="/team/maria.webp" type="image/webp" />
+        <img src="/team/maria.jpg" alt="María Iturbe Sánchez" loading="lazy" />
+      </picture>
+      <span class="est-fig-tag">María, 2024 · Yécora</span>
+    </figure>
+    <div class="est-body">
+      <p class="kicker">03 · El estudio</p>
+      <h2 class="display-2">
+        <span>María</span> <em>Iturbe</em><br/>
+        <span>Sánchez</span>
+      </h2>
+      <p class="est-lead">
+        Interiorista colegiada. 12 años en obra, 5 desde que abrió este estudio
+        en un pueblo de 250 habitantes al sur de Álava.
+      </p>
+      <p class="est-tx">
+        Antes: Echazarreta Construcciones (Logroño), Blurarquitectura (Bilbao),
+        COOK Cocina &amp; Baño. Hoy: dirección de proyectos residenciales,
+        comerciales y de cambio de uso — con planos, normativa y obra alineados.
+      </p>
+      <ul class="est-tools">
+        <li>AutoCAD</li><li>SketchUp · V-Ray 5</li><li>Presto</li>
+        <li>Photoshop</li><li>InDesign</li><li>CTE · REBT · RITE</li>
+      </ul>
+      <a href="/sobre" class="btn-pri">Trayectoria completa →</a>
+    </div>
+  </div>
+</section>
 
-        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-12">
-          {featured.slice(0, 6).map((project, idx) => (
-            <ProjectCard
-              slug={project.slug}
-              title={project.title}
-              type={PROJECT_TYPES[project.type]}
-              year={project.year}
-              location={project.location}
-              cover={project.cover}
-              index={idx}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+<!-- ===== NÚMEROS ===== -->
+<section class="nums">
+  <div class="nums-grid">
+    <div class="num"><p class="num-v">15<sup>+</sup></p><p class="num-l">Años en obra</p></div>
+    <div class="num"><p class="num-v">8<sup>,41</sup></p><p class="num-l">Nota final ESDIR</p></div>
+    <div class="num"><p class="num-v">40<sup>+</sup></p><p class="num-l">Proyectos dirigidos</p></div>
+    <div class="num"><p class="num-v">∞</p><p class="num-l">Cafés con clientes</p></div>
+  </div>
+</section>
 
-    <!-- SERVICIOS -->
-    <section class="bg-cream-warm py-section">
-      <div class="mx-auto max-w-wide px-gutter">
-        <div class="mb-16 grid gap-12 md:grid-cols-12">
-          <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">Servicios</p>
-          </div>
-          <div class="md:col-span-8">
-            <h2 class="font-display text-display-lg text-ink">
-              Lo que <span class="italic text-teal">hacemos</span>
-            </h2>
-            <p class="mt-6 max-w-2xl text-lg text-ink-muted">
-              Siete servicios definidos por los proyectos reales de María, no por lo que se estila anunciar en webs de interiorismo.
-            </p>
-          </div>
-        </div>
+<!-- ===== SERVICIOS ===== -->
+<section class="srv">
+  <header class="srv-head">
+    <p class="kicker">04 · Ámbito</p>
+    <h2 class="display-2"><span>Qué </span><em>hace</em><span> el estudio</span></h2>
+  </header>
+  <div class="srv-grid">
+    {services.map((s, i) => (
+      <article class="srv-c">
+        <p class="srv-n">0{i+1}</p>
+        <h3 class="srv-tt">{s.title}</h3>
+        <p class="srv-d">{s.description}</p>
+        <span class="srv-a">Saber más ↗</span>
+      </article>
+    ))}
+  </div>
+</section>
 
-        <div class="grid gap-px overflow-hidden border border-ink/10 bg-ink/10 md:grid-cols-2 lg:grid-cols-3">
-          {
-            SERVICES.map((service) => (
-              <article class="group bg-cream p-8 transition-colors duration-500 hover:bg-cream-warm md:p-10">
-                <h3 class="mb-3 font-display text-2xl text-ink md:text-3xl">
-                  {service.title}
-                </h3>
-                <p class="text-ink-muted">{service.description}</p>
-                {service.evidence && (
-                  <p class="mt-4 border-t border-ink/10 pt-4 text-xs uppercase tracking-[0.2em] text-ink-light">
-                    {service.evidence}
-                  </p>
-                )}
-              </article>
-            ))
-          }
-        </div>
-      </div>
-    </section>
+<!-- ===== CONTACTO ===== -->
+<section class="cta" id="contacto">
+  <div class="cta-inner">
+    <p class="kicker kicker-on-dark">05 · Contacto</p>
+    <h2 class="display-2 cta-h">
+      <span>¿Empezamos</span><br/>
+      <em>cuando</em> <span>tú digas?</span>
+    </h2>
+    <p class="cta-lede">
+      Una idea a medio gas ya es un proyecto. Escríbeme y quedamos
+      en Yécora, Logroño o donde te pille mejor. Sin compromiso.
+    </p>
+    <div class="cta-actions">
+      <a href="mailto:maria.iturbe.sanchez@gmail.com" class="btn-pri">Escribir a María</a>
+      <a href="https://www.linkedin.com/in/mar%C3%ADaiturbe/" target="_blank" rel="noopener" class="btn-ghost on-dark">LinkedIn ↗</a>
+    </div>
+    <dl class="cta-info">
+      <div><dt>Estudio</dt><dd>Yécora, Álava · CP 01322</dd></div>
+      <div><dt>Email</dt><dd>maria.iturbe.sanchez@gmail.com</dd></div>
+      <div><dt>Ámbito</dt><dd>Álava · La Rioja · País Vasco</dd></div>
+    </dl>
+  </div>
+</section>
 
-    <!-- DIFERENCIADORES -->
-    <section class="bg-cream py-section">
-      <div class="mx-auto max-w-wide px-gutter">
-        <div class="mb-12 grid gap-12 md:grid-cols-12">
-          <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">Por qué mit interiorismo</p>
-          </div>
-          <div class="md:col-span-8">
-            <h2 class="font-display text-display-lg text-ink">
-              Cinco razones, todas <span class="italic text-teal">demostrables</span>.
-            </h2>
-          </div>
-        </div>
-        <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {DIFFERENTIATORS.map((d, idx) => (
-            <div class="border-t-2 border-teal pt-6">
-              <p class="font-display text-xl text-teal mb-3">0{idx + 1}</p>
-              <h3 class="font-display text-xl text-ink mb-3">{d.title}</h3>
-              <p class="text-sm text-ink-muted" set:html={d.body}></p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+<!-- ===== FOOTER ===== -->
+<footer class="foot">
+  <p class="foot-m">
+    mit <em>interiorismo</em> — {year} · Yécora, Álava
+  </p>
+  <p class="foot-s">Diseñado en territorio. Construido con planos, normativa y obra.</p>
+</footer>
 
-    <!-- PROCESO -->
-    <section class="bg-cream-warm py-section">
-      <div class="mx-auto max-w-wide px-gutter">
-        <div class="mb-16 grid gap-12 md:grid-cols-12">
-          <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">El proceso</p>
-          </div>
-          <div class="md:col-span-8">
-            <h2 class="font-display text-display-lg text-ink">
-              Cómo <span class="italic text-teal">trabajamos</span>
-            </h2>
-          </div>
-        </div>
+</main>
 
-        <div class="space-y-12">
-          {PROCESS_STEPS.map((step) => (
-            <ProcessStep
-              number={step.number}
-              title={step.title}
-              description={step.description}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+<script is:inline>
+// === body ready (fire hero title reveal)
+(function(){
+  function go(){ document.body.classList.add('is-loaded'); }
+  if (document.readyState === 'complete') go();
+  else { window.addEventListener('load', go, {once:true}); }
+  // fallback safety
+  setTimeout(go, 500);
+})();
 
-    <!-- CTA FINAL -->
-    <section class="bg-teal py-section text-cream">
-      <div class="mx-auto max-w-3xl px-gutter text-center">
-        <h2 class="font-display text-display-lg">
-          ¿Tienes un proyecto en mente?
-        </h2>
-        <p class="mt-6 text-lg text-cream/85">
-          Hablemos. La primera consulta es siempre sin compromiso.
-        </p>
-        <a
-          href={SITE.social.linkedin}
-          target="_blank"
-          rel="noopener"
-          class="mt-8 inline-flex items-center gap-2 border-b border-cream/30 pb-1 text-sm tracking-wider text-cream/85 hover:text-cream"
-        >
-          LinkedIn → linkedin.com/in/maríaiturbe
-        </a>
-        <div class="mt-12">
-          <a
-            href="/contacto"
-            class="group inline-flex items-center gap-2 bg-cream px-8 py-4 text-sm font-medium text-teal transition-all duration-300 hover:bg-cream-warm"
-          >
-            Empezar un proyecto
-            <span
-              class="inline-block transition-transform duration-300 group-hover:translate-x-1"
-              aria-hidden="true">→</span
-            >
-          </a>
-        </div>
-      </div>
-    </section>
-  </main>
+// === progress bar
+(function(){
+  var p = document.getElementById('prog');
+  function upd(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    if (h > 0 && p) p.style.width = (window.scrollY / h * 100) + '%';
+  }
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+})();
 
-  <Footer />
-</BaseLayout>
+// === nav state on scroll
+(function(){
+  var n = document.getElementById('nav');
+  if (!n) return;
+  function upd(){ if (window.scrollY > 60) n.classList.add('is-scrolled'); else n.classList.remove('is-scrolled'); }
+  window.addEventListener('scroll', upd, {passive:true});
+  upd();
+})();
+
+// === reveal on scroll
+(function(){
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold: 0.12, rootMargin: '0px 0px -60px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
+
+// === works: in-view flag + title split (unified)
+(function(){
+  function splitTitle(h){
+    if (!h || h.dataset.split) return;
+    h.dataset.split = '1';
+    var t = h.textContent || '';
+    h.innerHTML = t.split(' ').map(function(w, i){
+      return '<span class="wt-w" style="transition-delay:'+(i*50)+'ms"><span class="wt-i">'+w+'</span></span>';
+    }).join(' ');
+  }
+  function activate(el){
+    el.classList.add('in');
+    var t = el.querySelector('.work-title');
+    splitTitle(t);
+  }
+  if (!('IntersectionObserver' in window)) {
+    document.querySelectorAll('.work').forEach(activate);
+    return;
+  }
+  // safety
+  setTimeout(function(){ document.querySelectorAll('.work:not(.in)').forEach(activate); }, 5000);
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if (e.isIntersecting) { activate(e.target); io.unobserve(e.target); }
+    });
+  }, {threshold: 0.05, rootMargin: '0px 0px -50px 0px'});
+  document.querySelectorAll('.work').forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+</body>
+</html>
