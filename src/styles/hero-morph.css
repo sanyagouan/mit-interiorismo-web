@@ -72,11 +72,16 @@
   z-index:4;
 }
 
-/* Capa de “boceto” con look de papel técnico */
+/* Capa 1 (espacio vacío) — tratamiento sutil que recuerde a "antes" */
 .hero-morph-layer--sketch img{
-  filter:invert(0.96) sepia(0.12) saturate(0.3) hue-rotate(355deg) brightness(1.05) contrast(0.9);
-  mix-blend-mode:screen;
-  opacity:0.95;
+  filter:brightness(0.9) saturate(0.85) contrast(0.98);
+}
+.hero-morph-layer--sketch::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg, rgba(180,140,90,0.06) 0%, rgba(10,10,9,0.25) 100%);
+  pointer-events:none;
 }
 
 /* Etiqueta que aparece en la foto activa */

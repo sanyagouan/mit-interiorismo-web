@@ -179,44 +179,72 @@ const phoneDisplay = SITE.phoneDisplay;
   }
 
   // === lead form ===
+  // El form de captura tiene: nombre + email + teléfono (separados)
+  // — así María puede contactar al cliente en el canal que prefiera.
   function addLeadForm(mode){
     inputWrap.style.display = 'none';
     const wrap = document.createElement('div');
     wrap.className = 'cb-form';
     wrap.innerHTML = `
-      <p class="cb-form-tt">${mode === 'call' ? 'Te llamamos nosotros' : 'Te contactamos'}</p>
-      <p class="cb-form-sub">${mode === 'call' ? 'Déjanos tu número y horario preferido.' : 'Déjanos tus datos y María te responde en menos de 24 h.'}</p>
-      <input class="cb-f-in" data-f="name" placeholder="Tu nombre">
-      <input class="cb-f-in" data-f="contact" placeholder="${mode === 'call' ? 'Teléfono' : 'Email o teléfono'}">
-      <textarea class="cb-f-in cb-f-ta" data-f="topic" placeholder="Cuéntanos brevemente qué necesitas (opcional)"></textarea>
-      <button class="cb-f-submit">Enviar</button>
+      <p class="cb-form-tt">${mode === 'call' ? '📞 Te llamamos nosotros' : '📋 Dejamos tus datos'}</p>
+      <p class="cb-form-sub">María te responde en menos de 24 h por el canal que prefieras.</p>
+      <label class="cb-f-lbl">Nombre *</label>
+      <input class="cb-f-in" data-f="name" placeholder="Tu nombre" autocomplete="name">
+      <label class="cb-f-lbl">Email</label>
+      <input class="cb-f-in" data-f="email" type="email" placeholder="tu@email.com" autocomplete="email">
+      <label class="cb-f-lbl">Teléfono ${mode === 'call' ? '*' : '(opcional)'}</label>
+      <input class="cb-f-in" data-f="phone" type="tel" placeholder="+34 600 000 000" autocomplete="tel" ${mode === 'call' ? 'required' : ''}>
+      <label class="cb-f-lbl">Cuéntanos brevemente</label>
+      <textarea class="cb-f-in cb-f-ta" data-f="topic" placeholder="Qué tipo de proyecto, ubicación, plazos…"></textarea>
+      <button class="cb-f-submit">${mode === 'call' ? 'Quiero que me llaméis' : 'Enviar mis datos'}</button>
+      <p class="cb-f-legal">Tus datos solo se usan para responderte. RGPD · ver política de privacidad.</p>
     `;
     body.appendChild(wrap);
     scrollDown();
 
     wrap.querySelector('[data-f=name]').focus();
-    wrap.querySelector('[data-f=contact]').addEventListener('keydown', e => { if (e.key === 'Enter') wrap.querySelector('.cb-f-submit').click(); });
+
+    // enviar con Enter desde cualquier input
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') wrap.querySelector('.cb-f-submit').click(); });
+    });
 
     wrap.querySelector('.cb-f-submit').addEventListener('click', async () => {
       const name = wrap.querySelector('[data-f=name]').value.trim();
-      const contact = wrap.querySelector('[data-f=contact]').value.trim();
+      const email = wrap.querySelector('[data-f=email]').value.trim();
+      const phone = wrap.querySelector('[data-f=phone]').value.trim();
       const topic = wrap.querySelector('[data-f=topic]').value.trim();
-      if (!name || !contact) {
-        wrap.querySelector('[data-f=contact]').style.borderColor = '#c0392b';
-        wrap.querySelector('[data-f=contact]').focus();
+
+      // Validación
+      if (!name) { highlight(wrap, 'name'); return; }
+      if (mode === 'call' && !phone) { highlight(wrap, 'phone'); return; }
+      if (!email && !phone) {
+        // al menos uno
+        highlight(wrap, 'email');
+        highlight(wrap, 'phone');
         return;
       }
+      if (email && !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+        highlight(wrap, 'email');
+        return;
+      }
+
       wrap.remove();
       inputWrap.style.display = '';
-      addUser('Enviado · ' + name + ' · ' + contact);
+      const contactLine = [email, phone].filter(Boolean).join(' · ');
+      addUser('Enviado · ' + name + ' · ' + contactLine);
       addBot('Enviando a María…', { typing: true });
       try {
         const r = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            name, contact, topic,
-            mode: mode,
+            name,
+            contact: contactLine,
+            email,
+            phone,
+            topic,
+            mode,
             source: 'chatbot-web',
             page: location.pathname,
             ts: new Date().toISOString()
@@ -224,20 +252,27 @@ const phoneDisplay = SITE.phoneDisplay;
         });
         const j = await r.json();
         if (j.ok) {
-          addBot('Listo. María ha recibido tu mensaje y te responderá en &lt; 24 h a <strong>' + escapeHtml(contact) + '</strong>.');
+          addBot('✅ Recibido. María te responderá en menos de 24 h. Tu ID de seguimiento es <strong>' + j.id + '</strong>.');
+          addBot('¿Quieres que te pase también por WhatsApp para una respuesta más rápida?');
+          addQuickReplies([
+            { label: '📱 Abrir WhatsApp', action: 'whatsapp' },
+            { label: 'Hacer otra pregunta', action: 'reset' }
+          ]);
         } else {
-          addBot('Hubo un problema. Escríbenos directamente a <a href="mailto:' + email + '">' + email + '</a>.');
+          addBot('Hubo un problema técnico. Escríbenos directamente a <a href="mailto:' + email + '">' + email + '</a> o por WhatsApp al <strong>' + phoneDisplay + '</strong>.');
         }
       } catch(e) {
-        addBot('No he podido conectar. Escríbenos a <a href="mailto:' + email + '">' + email + '</a> o al <a href="tel:+' + phoneRaw + '">' + phoneDisplay + '</a>.');
+        addBot('Sin conexión ahora mismo. Escríbenos a <a href="mailto:' + email + '">' + email + '</a> o al <a href="tel:+' + phoneRaw + '">' + phoneDisplay + '</a>.');
       }
-      addQuickReplies([
-        { label: 'Hablar también por WhatsApp', action: 'whatsapp' },
-        { label: 'Hacer otra pregunta', action: 'reset' }
-      ]);
     });
   }
-  function escapeHtml(s){ return String(s).replace(/[<>&"]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c])); }
+  function highlight(wrap, field){
+    const el = wrap.querySelector('[data-f=' + field + ']');
+    if (el) {
+      el.style.borderColor = '#c0392b';
+      el.focus();
+    }
+  }
 
   // === action handlers ===
   function handleAction(action, label, o){
@@ -312,14 +347,15 @@ const phoneDisplay = SITE.phoneDisplay;
 
       // Map suggested_actions → botones
       const map = {
-        'pedir_datos': { label: 'Dejar mis datos', action: 'lead_form' },
-        'abrir_whatsapp': { label: 'Hablar con María', action: 'whatsapp' },
+        'pedir_datos': { label: '📋 Dejar mis datos', action: 'lead_form' },
+        'abrir_whatsapp': { label: '📱 Hablar por WhatsApp', action: 'whatsapp' },
+        'primera_llamada_gratis': { label: '📞 Primera llamada gratis', action: 'lead_form_call' },
         'ir_a_servicios': { label: 'Ver servicios', action: 'list_services' },
         'ir_a_proyectos': { label: 'Ver proyectos', action: 'open_service', value: '' },
         'ver_reforma_integral': { label: 'Reforma integral', action: 'open_service', value: 'reforma-integral' },
         'ver_cambio_uso': { label: 'Cambio de uso', action: 'open_service', value: 'cambio-uso' },
         'ver_consultoria': { label: 'Consultoría', action: 'open_service', value: 'consultoria' },
-        'llamar': { label: 'Llamar', action: 'call' }
+        'llamar': { label: '📞 Llamar ahora', action: 'call' }
       };
       if (Array.isArray(j.suggested_actions) && j.suggested_actions.length) {
         const opts = j.suggested_actions
@@ -586,6 +622,15 @@ const phoneDisplay = SITE.phoneDisplay;
   color:rgba(244,241,234,0.6);
   line-height:1.4;
 }
+.cb-f-lbl{
+  display:block;
+  font-size:10px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:rgba(244,241,234,0.55);
+  margin:6px 0 -2px;
+  font-weight:500;
+}
 .cb-f-in{
   background:rgba(10,10,9,0.4);
   border:1px solid rgba(244,241,234,0.18);
@@ -602,6 +647,14 @@ const phoneDisplay = SITE.phoneDisplay;
   min-height:60px;
   resize:vertical;
   font-family:inherit;
+}
+.cb-f-legal{
+  margin:6px 0 0;
+  font-size:9px;
+  letter-spacing:0.04em;
+  color:rgba(244,241,234,0.4);
+  line-height:1.4;
+  text-align:center;
 }
 .cb-f-submit{
   background:#d4b78a;
