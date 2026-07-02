@@ -417,6 +417,22 @@ const telefono = SITE.phoneDisplay;
       <li><a href="/servicios/reforma-integral">Servicios</a></li>
       <li><a href="/contacto">Contacto</a></li>
     </ul>
+    <ul class="foot-links foot-social" aria-label="Redes sociales">
+      {SITE.social?.instagram && (
+        <li>
+          <a href={SITE.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            Instagram
+          </a>
+        </li>
+      )}
+      {SITE.social?.linkedin && (
+        <li>
+          <a href={SITE.social.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            LinkedIn
+          </a>
+        </li>
+      )}
+    </ul>
     <ul class="foot-links foot-legal">
       <li><a href="/aviso-legal">Aviso legal</a></li>
       <li><a href="/privacidad">Privacidad</a></li>
