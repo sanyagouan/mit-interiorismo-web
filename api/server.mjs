@@ -151,10 +151,6 @@ PROYECTOS EJEMPLO (úsalo cuando tenga sentido):
 - Txoko en Kripan, Álava 2020 — espacio social con txoko, biga vista, mesa roble
 - Apartamentos vacacionales en Labastida, Álava 2020 — dos apartamentos en edificio del s. XIX
 - Merendero en Lapuebla, Álava 2020 — espacio social rural
-- Vivienda Gonzalo en Berceo, La Rioja 2026 — reforma integral con aerotermia (en curso)
-- Oficina Técnica EFITAR, La Rioja 2026 — cambio de uso comercial → oficina (en curso)
-- Proyecto Luciano, La Rioja 2026 — cambio de uso oficinas → 2 viviendas + oficina (en curso)
-- Asesoría climatización Haro, La Rioja 2026 — consultoría técnica (en curso)
 
 CUÁNDO PEDIR DATOS:
 Cuando el cliente muestra intención real (dice "es para mi casa", "estoy

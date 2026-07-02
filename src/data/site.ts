@@ -129,7 +129,7 @@ export const SERVICES = [
     description:
       'Dirección completa del proyecto: distribución, instalaciones (climatización, electricidad, fontanería), materiales, mobiliario y coordinación de gremios. Cumplimiento normativo CTE, REBT y RITE.',
     icon: 'home',
-    evidence: 'Vivienda Gonzalo de Berceo (Logroño) — reforma 80 m² con aerotermia.',
+    evidence: 'Apartamentos en Labastida (Álava 2020) — reforma residencial vacacional con fachada y diseño integral de baños.',
   },
   {
     id: 'reforma-comercial',
@@ -138,7 +138,7 @@ export const SERVICES = [
       'Transformación de locales y oficinas técnicas. Cambios de uso, licencias, instalaciones industriales y diseño de mobiliario corporativo a medida.',
     icon: 'building',
     evidence:
-      'Oficina técnica EFITAR (Logroño) — 107 m². Cambio de uso comercial → oficina técnica de ingeniería.',
+      'Espacios sociales en Álava — merenderos, txokos, apartamentos. Diseño integral con instalaciones resueltas.',
   },
   {
     id: 'cambio-uso',
@@ -147,7 +147,7 @@ export const SERVICES = [
       'Tramitación y proyecto para transformar locales u oficinas en viviendas. Cumplimiento del CTE 2026, gestión con comunidades de propietarios y licencias municipales.',
     icon: 'key',
     evidence:
-      'Proyecto Luciano (Logroño) — oficinas → 2 viviendas + oficina. 133 m².',
+      'Apartamentos vacacionales en Labastida (Álava 2020) — reconversión residencial con normativa y diseño de baños.',
   },
   {
     id: 'asesoria-tecnica',
@@ -156,7 +156,7 @@ export const SERVICES = [
       'Comparativa de presupuestos de instaladores, supervisión de ofertas, defensa técnica del cliente frente a propuestas abusivas. Traducción de normativa CTE/REBT/RITE.',
     icon: 'compass',
     evidence:
-      'Vivienda en Haro — ahorro 68% (4.172€) al comparar presupuesto de instalador.',
+      'Proyecto histórico en Álava — supervisión de ofertas y comparativa de presupuestos para clientes residenciales.',
   },
   {
     id: 'renderizacion',
@@ -164,7 +164,7 @@ export const SERVICES = [
     description:
       'Renders fotorrealistas (V-Ray 5), memorias técnicas, presupuestos desglosados (Presto) y planos ejecutivos (AutoCAD + SketchUp). Visualiza el proyecto antes de ejecutar.',
     icon: 'image',
-    evidence: 'Memorias técnicas, presupuestos y planos ejecutivos para todos los proyectos activos.',
+    evidence: 'Memorias técnicas, presupuestos y planos ejecutivos para cada proyecto entregado.',
   },
   {
     id: 'espacios-sociales',
@@ -218,7 +218,7 @@ export const DIFFERENTIATORS = [
   },
   {
     title: 'Presupuestos transparentes',
-    body: 'Cada partida, cada medición, cada proveedor. Si un instalador te cobra de más, te lo digo y te ahorro el dinero (ver caso Haro — 68% de ahorro frente a presupuesto de instalador local).',
+    body: 'Cada partida, cada medición, cada proveedor. Si un instalador te cobra de más, te lo digo y te ahorro el dinero — defensa técnica del cliente de principio a fin.',
   },
   {
     title: 'Defensa técnica del cliente',
