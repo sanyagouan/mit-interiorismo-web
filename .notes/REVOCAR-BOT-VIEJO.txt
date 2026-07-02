@@ -1,0 +1,17 @@
+ACCIÓN PENDIENTE: Revocar token del bot viejo @mitinteriorismo_bot
+Programada para: 3 jul 2026 ~14:00 (24h desde el switch a producción)
+Token a revocar: 8963320312:*** (bot viejo)
+
+CÓMO REVOCAR:
+1. Hablar con @BotFather en Telegram
+2. /revoke → seleccionar @mitinteriorismo_bot
+3. Confirmar revocación
+
+O por API (más rápido, automático):
+POST https://api.telegram.org/bot{TOKEN}/revokeWebhook (no funciona para token)
+La única forma de revocar un token de bot es vía @BotFather.
+
+MIENTRAS TANTO:
+- El bot viejo sigue técnicamente vivo pero NO se usa
+- El chatbot de la web usa el bot de María (@mitinteriorismostudio_bot)
+- Si algo falla, podemos volver al bot viejo cambiando .env.local

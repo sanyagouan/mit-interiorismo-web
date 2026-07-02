@@ -521,18 +521,18 @@ function espoBase() {
 }
 
 async function espoFindExistingLead({ email, phone }) {
-  // Busca por email O phone. Limita a 5 resultados.
+  // Busca por email O phone. IMPORTANTE: el operador `=` de EspoCRM en los
+  // campos emailAddress/phoneNumber es FUZZY (no exacto) y devuelve falsos
+  // positivos. Solución: traer los candidatos (limitado) y comparar
+  // en cliente.
   if (!espoEnabled()) return null;
-  const filters = [];
-  if (email) filters.push(`emailAddress=${encodeURIComponent(email)}`);
-  if (phone) {
-    const cleanPhone = phone.replace(/[^\d+]/g, '');
-    if (cleanPhone) filters.push(`phoneNumber=${encodeURIComponent(cleanPhone)}`);
-  }
-  if (filters.length === 0) return null;
-  const where = filters.join(') OR (');
-  const primaryFilter = filters[0].split('=')[0];
-  const url = `${espoBase()}/api/v1/Lead?select=id,firstName,lastName,source,status,description&where=((${where}))&maxSize=5`;
+  const cleanEmail = email ? String(email).trim().toLowerCase() : '';
+  const cleanPhone = phone ? String(phone).replace(/[^\d+]/g, '') : '';
+  if (!cleanEmail && !cleanPhone) return null;
+
+  // Traer todos los leads de la web (no muchos, son leads recientes)
+  // Filtrar a los que tengan email/phone para reducir la lista
+  const url = `${espoBase()}/api/v1/Lead?select=id,firstName,lastName,emailAddress,phoneNumber,source,status,description&where=(source='Web Site')&maxSize=200`;
   try {
     const r = await fetch(url, {
       method: 'GET',
@@ -545,10 +545,18 @@ async function espoFindExistingLead({ email, phone }) {
     }
     const j = await r.json();
     const list = Array.isArray(j.list) ? j.list : [];
-    if (list.length === 0) return null;
+    // Comparar en cliente (exacto, case-insensitive para email)
+    const matches = list.filter(l => {
+      const lEmail = l.emailAddress ? String(l.emailAddress).trim().toLowerCase() : '';
+      const lPhone = l.phoneNumber ? String(l.phoneNumber).replace(/[^\d+]/g, '') : '';
+      if (cleanEmail && lEmail && lEmail === cleanEmail) return true;
+      if (cleanPhone && lPhone && lPhone === cleanPhone) return true;
+      return false;
+    });
+    if (matches.length === 0) return null;
     // Preferir el más reciente
-    list.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-    return list[0];
+    matches.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    return matches[0];
   } catch (e) {
     log('ESPO_FIND_ERR', e.message);
     return null;
