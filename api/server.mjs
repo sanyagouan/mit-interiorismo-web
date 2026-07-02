@@ -1,5 +1,5 @@
 // MIT Interiorismo · API de contacto + CHAT INTELIGENTE
-// Recibe leads del chatbot → envía a María vía email + Telegram
+// Recibe leads del chatbot → envía a María vía email + Telegram + EspoCRM
 // Endpoint /api/chat responde preguntas de clientes con IA (OpenRouter)
 // Endpoint /api/contact guarda leads y notifica a María
 // Sin dependencia de BD: usa archivos JSON como log de leads.
@@ -12,7 +12,11 @@
 //   MAIL_TO                  - email destino María
 //   MAIL_FROM                - email remitente
 //   TELEGRAM_BOT_TOKEN       - token bot Telegram
-//   TELEGRAM_CHAT_ID         - chat id destino María
+//   TELEGRAM_CHAT_ID         - chat id destino María (o Yago en dev)
+//   ESPOCRM_BASE_URL         - URL interna de EspoCRM (sin /api/v1)
+//   ESPOCRM_ADMIN_USER       - usuario admin de EspoCRM
+//   ESPOCRM_ADMIN_PASSWORD   - password admin
+//   ESPOCRM_ENABLED          - '1' activa push a EspoCRM (default: '1' si hay credenciales)
 //   ADMIN_KEY                - para listar leads vía GET /api/leads
 
 import express from 'express';
@@ -23,6 +27,31 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Cargar .env.local si existe (para credenciales no pasadas por env de Coolify)
+try {
+  const envLocal = path.join(__dirname, '.env.local');
+  if (fs.existsSync(envLocal)) {
+    fs.readFileSync(envLocal, 'utf8').split('\n').forEach(line => {
+      line = line.trim();
+      if (!line || line.startsWith('#') || !line.includes('=')) return;
+      const eq = line.indexOf('=');
+      const k = line.slice(0, eq).trim();
+      let v = line.slice(eq + 1).trim();
+      // Quitar comillas si las lleva
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+        v = v.slice(1, -1);
+      }
+      // Solo asignar si NO está ya en process.env (prioridad al env del contenedor)
+      if (process.env[k] === undefined) {
+        process.env[k] = v;
+      }
+    });
+    console.log('[env] .env.local cargado');
+  }
+} catch (e) {
+  console.error('[env] error cargando .env.local:', e.message);
+}
 
 const PORT = parseInt(process.env.PORT || '3100', 10);
 const LEADS_FILE = path.join(__dirname, 'leads.jsonl');
@@ -297,7 +326,10 @@ app.post('/api/chat', async (req, res) => {
       };
       try { fs.appendFileSync(LEADS_FILE, JSON.stringify(lead) + '\n'); } catch(e) {}
       log('LEAD_FROM_CHAT', lead.id, userId);
-      try { await notifyMaria(lead); } catch(e) { log('NOTIFY_FAIL', e.message); }
+      // Resumir con IA y notificar (incluye push a EspoCRM). No bloquea.
+      summarizeLead({ messages, lead })
+        .then(summary => notifyMaria(lead, summary))
+        .catch(e => log('NOTIFY_FAIL', e.message));
     }
 
     return res.json({
@@ -353,8 +385,12 @@ app.post('/api/contact', async (req, res) => {
 
   log('LEAD', { id: lead.id, name, email: !!email, phone: !!phone, topic: topic.slice(0, 80) });
 
-  // Notificar a María (no bloquea respuesta)
-  notifyMaria(lead).catch(e => log('NOTIFY_FAIL', e.message));
+  // Resumir con IA (si hay messages en el body) y notificar (Telegram + EspoCRM)
+  // No bloquea el response.
+  const conversationMessages = Array.isArray(data.messages) ? data.messages : [];
+  summarizeLead({ messages: conversationMessages, lead })
+    .then(summary => notifyMaria(lead, summary))
+    .catch(e => log('NOTIFY_FAIL', e.message));
 
   return res.json({ ok: true, id: lead.id, received: true });
 });
@@ -376,10 +412,240 @@ app.get('/api/leads', (req, res) => {
   }
 });
 
-async function notifyMaria(lead) {
+// ===== LEAD ENRICHMENT (resumen con IA) =====
+async function summarizeLead({ messages, lead }) {
+  // Si no hay IA o no hay mensajes, fallback a topic crudo
+  if (!process.env.OPENROUTER_API_KEY || !Array.isArray(messages) || messages.length === 0) {
+    return {
+      summary: (lead.topic || 'Sin detalles').slice(0, 400),
+      intent: lead.intent || 'lead',
+      urgency: 'media',
+      suggested_action: 'Llamar esta semana para cualificar',
+      is_qualified: false
+    };
+  }
+  const model = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
+  const convo = messages.slice(-20).map(m => {
+    const role = m.role === 'user' ? 'Cliente' : 'María IA';
+    return `${role}: ${String(m.content || '').slice(0, 500)}`;
+  }).join('\n');
+  const sys = `Eres el asistente de María (interiorista). Acabas de mantener una conversación
+con un posible cliente en la web. Tu trabajo es generar un resumen EJECUTIVO
+para que María sepa de un vistazo si vale la pena llamar y por qué.
+
+REGLAS:
+- Resume en máximo 3 líneas (no copies la conversación literal).
+- Habla en 3ª persona ("El cliente quiere...", "Pidió presupuesto para...").
+- Si hay dudas técnicas, no las resuelvas: di "queda pendiente confirmar X".
+- Si detectas urgencia (dice "es para ya", "tengo prisa", "necesito cuanto antes"),
+  marca urgency="alta".
+- Si el cliente solo preguntó algo general sin intención real, marca
+  is_qualified=false y urgency="baja".
+- suggested_action debe ser ACCIONABLE: "Llamar el martes 18h" o
+  "Pedir fotos del espacio por WhatsApp" o "Pasarle presupuesto orientativo".
+
+FORMATO JSON ESTRICTO (sin markdown, sin explicaciones fuera del JSON):
+{
+  "summary": "<3 líneas máximo, hechos concretos>",
+  "intent": "<info|lead|handoff|greeting|other>",
+  "urgency": "<alta|media|baja>",
+  "suggested_action": "<1 frase accionable>",
+  "is_qualified": <true|false>,
+  "topic_short": "<2-4 palabras: 'reforma cocina Vitoria', 'cambio uso local Bilbao', etc.>"
+}`;
+  try {
+    const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://www.mitinteriorismo.studio',
+        'X-Title': 'mit interiorismo lead-summary'
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: sys },
+          { role: 'user', content: `Conversación:\n\n${convo}\n\nNombre: ${lead.name || 'Anónimo'}\nContacto: ${lead.email || lead.phone || '—'}` }
+        ],
+        response_format: { type: 'json_object' },
+        max_tokens: 300,
+        temperature: 0.3
+      })
+    });
+    if (!r.ok) {
+      const err = await r.text();
+      log('SUMMARIZE_API_FAIL', r.status, err.slice(0, 200));
+      return { summary: lead.topic || 'Sin resumen', intent: 'lead', urgency: 'media', suggested_action: 'Revisar chat', is_qualified: true, topic_short: 'lead web' };
+    }
+    const j = await r.json();
+    const raw = j.choices?.[0]?.message?.content || '{}';
+    let parsed;
+    try { parsed = JSON.parse(raw); }
+    catch (e) {
+      // A veces la IA envuelve el JSON en ```json ... ```. Limpiar.
+      const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+      try { parsed = JSON.parse(cleaned); }
+      catch (e2) {
+        parsed = { summary: raw.slice(0, 400) };
+      }
+    }
+    return {
+      summary: String(parsed.summary || lead.topic || 'Sin resumen').slice(0, 600),
+      intent: String(parsed.intent || 'lead').slice(0, 30),
+      urgency: ['alta', 'media', 'baja'].includes(parsed.urgency) ? parsed.urgency : 'media',
+      suggested_action: String(parsed.suggested_action || 'Revisar chat').slice(0, 200),
+      is_qualified: !!parsed.is_qualified,
+      topic_short: String(parsed.topic_short || 'lead web').slice(0, 60)
+    };
+  } catch (e) {
+    log('SUMMARIZE_FAIL', e.message);
+    return { summary: lead.topic || 'Sin resumen', intent: 'lead', urgency: 'media', suggested_action: 'Revisar chat', is_qualified: true, topic_short: 'lead web' };
+  }
+}
+
+// ===== ESPOCRM PUSH (con dedup) =====
+function espoEnabled() {
+  if (process.env.ESPOCRM_ENABLED === '0') return false;
+  return !!(process.env.ESPOCRM_BASE_URL && process.env.ESPOCRM_ADMIN_USER && process.env.ESPOCRM_ADMIN_PASSWORD);
+}
+
+function espoAuthHeader() {
+  const user = process.env.ESPOCRM_ADMIN_USER;
+  const pass = process.env.ESPOCRM_ADMIN_PASSWORD;
+  return 'Basic ' + Buffer.from(`${user}:${pass}`).toString('base64');
+}
+
+function espoBase() {
+  return process.env.ESPOCRM_BASE_URL.replace(/\/+$/, '');
+}
+
+async function espoFindExistingLead({ email, phone }) {
+  // Busca por email O phone. Limita a 5 resultados.
+  if (!espoEnabled()) return null;
+  const filters = [];
+  if (email) filters.push(`emailAddress=${encodeURIComponent(email)}`);
+  if (phone) {
+    const cleanPhone = phone.replace(/[^\d+]/g, '');
+    if (cleanPhone) filters.push(`phoneNumber=${encodeURIComponent(cleanPhone)}`);
+  }
+  if (filters.length === 0) return null;
+  const where = filters.join(') OR (');
+  const primaryFilter = filters[0].split('=')[0];
+  const url = `${espoBase()}/api/v1/Lead?select=id,firstName,lastName,source,status,description&where=((${where}))&maxSize=5`;
+  try {
+    const r = await fetch(url, {
+      method: 'GET',
+      headers: { 'Authorization': espoAuthHeader(), 'Accept': 'application/json' },
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!r.ok) {
+      log('ESPO_FIND_FAIL', r.status, (await r.text()).slice(0, 200));
+      return null;
+    }
+    const j = await r.json();
+    const list = Array.isArray(j.list) ? j.list : [];
+    if (list.length === 0) return null;
+    // Preferir el más reciente
+    list.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    return list[0];
+  } catch (e) {
+    log('ESPO_FIND_ERR', e.message);
+    return null;
+  }
+}
+
+async function espoCreateLead({ name, email, phone, topic, summary, topic_short, urgency, source, page }) {
+  const parts = String(name || '').trim().split(/\s+/);
+  const firstName = parts[0] || 'Anónimo';
+  const lastName = parts.slice(1).join(' ') || '(chat web)';
+  const description = [
+    summary ? `📋 Resumen IA: ${summary}` : null,
+    topic ? `💬 Mensaje original: ${topic}` : null,
+    topic_short ? `🏷️ Tema: ${topic_short}` : null,
+    urgency ? `🔥 Urgencia: ${urgency}` : null,
+    page ? `🌐 Página: ${page}` : null
+  ].filter(Boolean).join('\n');
+  const payload = {
+    firstName: firstName.slice(0, 100),
+    lastName: lastName.slice(0, 100),
+    source: 'Web Site',
+    status: 'New',
+    description: description.slice(0, 2000)
+  };
+  if (email) payload.emailAddress = String(email).slice(0, 200);
+  if (phone) payload.phoneNumber = String(phone).slice(0, 50);
+  const r = await fetch(`${espoBase()}/api/v1/Lead`, {
+    method: 'POST',
+    headers: { 'Authorization': espoAuthHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(8000)
+  });
+  if (!r.ok) {
+    const errText = await r.text();
+    log('ESPO_CREATE_FAIL', r.status, errText.slice(0, 200));
+    throw new Error(`EspoCRM POST Lead → ${r.status}: ${errText.slice(0, 100)}`);
+  }
+  return await r.json();
+}
+
+async function espoUpdateLead(id, patch) {
+  const r = await fetch(`${espoBase()}/api/v1/Lead/${id}`, {
+    method: 'PATCH',
+    headers: { 'Authorization': espoAuthHeader(), 'Content-Type': 'application/json' },
+    body: JSON.stringify(patch),
+    signal: AbortSignal.timeout(8000)
+  });
+  if (!r.ok) {
+    log('ESPO_UPDATE_FAIL', r.status, (await r.text()).slice(0, 200));
+    throw new Error(`EspoCRM PATCH Lead → ${r.status}`);
+  }
+  return await r.json();
+}
+
+async function pushToEspoCRM(lead, summary) {
+  if (!espoEnabled()) {
+    log('ESPO_SKIP', 'disabled or missing creds');
+    return { ok: false, reason: 'disabled' };
+  }
+  // DEDUP
+  const existing = await espoFindExistingLead({ email: lead.email, phone: lead.phone });
+  if (existing && existing.id) {
+    // Append al description en lugar de machacar
+    const appendText = [
+      '',
+      `--- ${new Date().toISOString().slice(0, 19).replace('T', ' ')} ---`,
+      summary?.summary ? `Resumen: ${summary.summary}` : null,
+      lead.topic ? `Mensaje: ${lead.topic.slice(0, 300)}` : null
+    ].filter(Boolean).join('\n');
+    const newDescription = String(existing.description || '').slice(0, 1500) + appendText;
+    await espoUpdateLead(existing.id, { description: newDescription.slice(0, 2000) });
+    log('ESPO_UPDATED', existing.id, lead.id);
+    return { ok: true, action: 'updated', id: existing.id };
+  }
+  // CREATE nuevo
+  const created = await espoCreateLead({
+    name: lead.name,
+    email: lead.email,
+    phone: lead.phone,
+    topic: lead.topic,
+    summary: summary?.summary,
+    topic_short: summary?.topic_short,
+    urgency: summary?.urgency,
+    source: lead.source,
+    page: lead.page
+  });
+  log('ESPO_CREATED', created.id, lead.id);
+  return { ok: true, action: 'created', id: created.id };
+}
+
+async function notifyMaria(lead, summary) {
+  // Si hay resumen IA, enriquecer el lead con el texto executive
+  const enrichedLead = summary ? { ...lead, _summary: summary } : lead;
+
   if (process.env.SMTP_URL && process.env.MAIL_TO) {
     try {
-      await sendEmail(lead);
+      await sendEmail(enrichedLead);
       log('EMAIL_OK', lead.id);
     } catch (e) {
       log('EMAIL_FAIL', lead.id, e.message);
@@ -387,11 +653,18 @@ async function notifyMaria(lead) {
   }
   if (process.env.TELEGRAM_BOT_TOKEN && process.env.TELEGRAM_CHAT_ID) {
     try {
-      await sendTelegram(lead);
+      await sendTelegram(enrichedLead);
       log('TELEGRAM_OK', lead.id);
     } catch (e) {
       log('TELEGRAM_FAIL', lead.id, e.message);
     }
+  }
+  // Push a EspoCRM (no bloquea el response)
+  try {
+    const result = await pushToEspoCRM(lead, summary);
+    log('ESPO_RESULT', lead.id, JSON.stringify(result));
+  } catch (e) {
+    log('ESPO_FAIL', lead.id, e.message);
   }
 }
 
@@ -407,18 +680,29 @@ async function sendEmail(lead) {
   form.set('from', from);
   form.set('to', to);
   form.set('subject', `[mit interiorismo] Nuevo lead · ${lead.name}`);
+  const summary = lead._summary;
   const lines = [
     'Nuevo contacto desde la web',
     '',
     'Nombre: ' + lead.name,
     'Email: ' + (lead.email || '—'),
-    'Teléfono: ' + (lead.phone || '—'),
-    'Qué necesita: ' + (lead.topic || '—'),
+    'Teléfono: ' + (lead.phone || '—')
+  ];
+  if (summary && summary.summary) {
+    lines.push('', '--- Resumen IA ---', summary.summary);
+    if (summary.topic_short) lines.push('Tema: ' + summary.topic_short);
+    if (summary.urgency) lines.push('Urgencia: ' + summary.urgency);
+    if (summary.suggested_action) lines.push('Acción sugerida: ' + summary.suggested_action);
+  }
+  lines.push(
+    '',
+    '--- Detalle ---',
+    'Qué necesita (texto original): ' + (lead.topic || '—'),
     'Modo: ' + lead.mode,
     'Página: ' + (lead.page || '—'),
     'Hora: ' + lead.ts,
     'ID: ' + lead.id
-  ];
+  );
   form.set('text', lines.join('\n'));
   const r = await fetch(`https://${host}/v3/${host.split('.')[0]}/messages`, {
     method: 'POST',
@@ -434,14 +718,30 @@ async function sendEmail(lead) {
 async function sendTelegram(lead) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chat = process.env.TELEGRAM_CHAT_ID;
-  const text = `🆕 *Nuevo lead · mit interiorismo*\n\n` +
-    `*Nombre:* ${escapeMd(lead.name)}\n` +
-    `*Email:* ${escapeMd(lead.email || '—')}\n` +
-    `*Teléfono:* ${escapeMd(lead.phone || '—')}\n` +
-    `*Qué necesita:* ${escapeMd((lead.topic || '—').slice(0, 400))}\n` +
-    `*Modo:* ${escapeMd(lead.mode)}\n` +
-    `*Página:* ${escapeMd(lead.page || '—')}\n` +
-    `*Hora:* ${lead.ts}`;
+  const summary = lead._summary;
+  let text;
+  if (summary && summary.summary) {
+    // Mensaje ejecutivo cuando hay resumen IA
+    const urgencyIcon = summary.urgency === 'alta' ? '🔥🔥🔥' : summary.urgency === 'media' ? '🔥' : '·';
+    text = `📩 *Nuevo lead · mit interiorismo* ${urgencyIcon}\n\n` +
+      `*Resumen IA:*\n${escapeMd(summary.summary)}\n\n` +
+      `*Cliente:* ${escapeMd(lead.name)}\n` +
+      `*Email:* ${escapeMd(lead.email || '—')}\n` +
+      `*Teléfono:* ${escapeMd(lead.phone || '—')}\n` +
+      `*Tema:* ${escapeMd(summary.topic_short || '—')}\n` +
+      `*Acción sugerida:* ${escapeMd(summary.suggested_action || 'Revisar chat')}\n` +
+      `\n_(original: ${escapeMd((lead.topic || '').slice(0, 200))})_`;
+  } else {
+    // Fallback: formato antiguo
+    text = `🆕 *Nuevo lead · mit interiorismo*\n\n` +
+      `*Nombre:* ${escapeMd(lead.name)}\n` +
+      `*Email:* ${escapeMd(lead.email || '—')}\n` +
+      `*Teléfono:* ${escapeMd(lead.phone || '—')}\n` +
+      `*Qué necesita:* ${escapeMd((lead.topic || '—').slice(0, 400))}\n` +
+      `*Modo:* ${escapeMd(lead.mode)}\n` +
+      `*Página:* ${escapeMd(lead.page || '—')}\n` +
+      `*Hora:* ${lead.ts}`;
+  }
   const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -459,5 +759,5 @@ function escapeMd(s) {
 }
 
 app.listen(PORT, '0.0.0.0', () => {
-  log(`API on port ${PORT} · AI=${!!process.env.OPENROUTER_API_KEY} · SMTP=${!!process.env.SMTP_URL} · Telegram=${!!process.env.TELEGRAM_BOT_TOKEN}`);
+  log(`API on port ${PORT} · AI=${!!process.env.OPENROUTER_API_KEY} · SMTP=${!!process.env.SMTP_URL} · Telegram=${!!process.env.TELEGRAM_BOT_TOKEN} · EspoCRM=${espoEnabled()}`);
 });
