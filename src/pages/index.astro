@@ -1,6 +1,6 @@
 ---
 import "../styles/editorial.css";
-import "../styles/hero-morph.css";
+import "../styles/hero-static.css";
 import ChatBot from "../components/ChatBot.astro";
 import { SITE } from "../data/site";
 import { PROJECTS, getFeaturedProjects } from "../data/projects";
@@ -91,172 +91,57 @@ const telefono = SITE.phoneDisplay;
 <main id="main">
 
 <!-- ===== HERO · DE UN ESPACIO VACÍO A UN HOGAR CON ALMA =====
-     4 imágenes REALES del Instagram @mit.interiorismo de María Iturbe Sánchez
-     I  · El espacio vacío (vigas, arcos, el lienzo en blanco)
-     II · La materia prima (espacio en blanco y negro, en plena transformación)
-     III · El proyecto (render 3D del comedor)
-     IV · La realidad (cocina reformada terminada)
+     Imagen grande real del proyecto terminado de María.
+     Hardcodeado: textos, copy, CTA fijos. Sin variables, sin CMS.
 -->
-<section class="hero-morph" id="top" data-hero="transform">
+<section class="hero-static" id="top" aria-label="Hero — MIT Interiorismo">
 
-  <div class="hero-morph-head">
-    <p class="hero-morph-tag">estudio de interiorismo · Yécora, Álava</p>
-  </div>
+  <!-- Imagen de fondo: el espacio terminado (proyecto real de María) -->
+  <picture class="hero-static-bg">
+    <source srcset="/images/hero/04-espacio-terminado.avif" type="image/avif" />
+    <source srcset="/images/hero/04-espacio-terminado.webp" type="image/webp" />
+    <img
+      src="/images/hero/04-espacio-terminado.jpg"
+      alt="Reforma integral terminada — proyecto real de María Iturbe Sánchez en Yécora, Álava"
+      class="hero-static-img"
+      loading="eager"
+      fetchpriority="high"
+      decoding="async"
+      width="1920"
+      height="1080"
+    />
+  </picture>
 
-  <div class="hero-morph-stage" id="hero-morph-stage">
+  <!-- Gradiente para legibilidad del texto -->
+  <div class="hero-static-overlay" aria-hidden="true"></div>
 
-    <div class="hero-morph-layer hero-morph-layer--sketch is-on" data-step="1">
-      <picture>
-        <source srcset="/images/instagram/ig-01-espacio-vacio.avif" type="image/avif" />
-        <source srcset="/images/instagram/ig-01-espacio-vacio.webp" type="image/webp" />
-        <img src="/images/instagram/ig-01-espacio-vacio.jpg" alt="El espacio vacío con vigas de madera — proyecto real de María Iturbe Sánchez" loading="eager" fetchpriority="high" />
-      </picture>
-    </div>
+  <!-- Contenido del hero -->
+  <div class="hero-static-content">
+    <p class="hero-static-kicker">Estudio de interiorismo · Yécora, Álava</p>
 
-    <div class="hero-morph-layer" data-step="2">
-      <picture>
-        <source srcset="/images/instagram/ig-02-boceto.avif" type="image/avif" />
-        <source srcset="/images/instagram/ig-02-boceto.webp" type="image/webp" />
-        <img src="/images/instagram/ig-02-boceto.jpg" alt="Espacio en plena fase de demolición — antes de la intervención" loading="lazy" />
-      </picture>
-    </div>
-
-    <div class="hero-morph-layer" data-step="3">
-      <picture>
-        <source srcset="/images/instagram/ig-03-anteproyecto.avif" type="image/avif" />
-        <source srcset="/images/instagram/ig-03-anteproyecto.webp" type="image/webp" />
-        <img src="/images/instagram/ig-03-anteproyecto.jpg" alt="Render 3D del proyecto — la visión de María" loading="lazy" />
-      </picture>
-    </div>
-
-    <div class="hero-morph-layer" data-step="4">
-      <picture>
-        <source srcset="/images/instagram/ig-04-realidad.avif" type="image/avif" />
-        <source srcset="/images/instagram/ig-04-realidad.webp" type="image/webp" />
-        <img src="/images/instagram/ig-04-realidad.jpg" alt="El espacio terminado — reforma final con pared de piedra original" loading="lazy" />
-      </picture>
-    </div>
-
-    <div class="hero-morph-vignette"></div>
-
-  </div>
-
-  <div class="hero-morph-copy">
-    <p class="hero-morph-kicker"><span></span>El estudio de María Iturbe Sánchez</p>
-    <h1 class="hero-morph-title">
-      <span class="hm-line hm-l1"><span>De un espacio</span></span>
-      <span class="hm-line hm-l2"><span>vacío a un&nbsp;</span></span>
-      <span class="hm-line hm-l3"><span>hogar con&nbsp;<em>alma.</em></span></span>
+    <h1 class="hero-static-title">
+      De un espacio vacío<br />
+      a un hogar <em>con alma.</em>
     </h1>
-    <p class="hero-morph-lede">
-      Estudio boutique de interiorismo en Yécora, Álava. María une diseño
-      e ingeniería —CTE, REBT, RITE— para entregar reformas habitables,
-      normativas y con la luz bien puesta. Sobre La Rioja, Álava y País Vasco.
+
+    <p class="hero-static-lede">
+      María une diseño e ingeniería —CTE, REBT, RITE— para entregar
+      reformas habitables, normativas y con la luz bien puesta.
+      Sobre La Rioja, Álava y País Vasco.
     </p>
-    <div class="hero-morph-actions">
-      <a href="#contacto" class="hm-cta-primary">Pedir cita</a>
-      <a href="#proyectos" class="hm-cta-ghost">Ver proyectos</a>
+
+    <div class="hero-static-actions">
+      <a href="#proyectos" class="hs-cta hs-cta-primary">Ver proyectos</a>
+      <a href="#contacto" class="hs-cta hs-cta-ghost">Empezar un proyecto</a>
     </div>
   </div>
 
-  <div class="hero-morph-foot" id="hero-morph-foot">
-    <button type="button" class="mf-step is-active" data-step="1">I · El espacio</button>
-    <button type="button" class="mf-step" data-step="2">II · Los materiales</button>
-    <button type="button" class="mf-step" data-step="3">III · El proyecto</button>
-    <button type="button" class="mf-step" data-step="4">IV · La realidad</button>
+  <!-- Indicador de scroll (estético, sin lógica) -->
+  <div class="hero-static-scroll" aria-hidden="true">
+    <span>Desplaza</span>
   </div>
-
-  <div class="hero-morph-scroll" aria-hidden="true">
-    <span>Desplaza para transformar</span>
-  </div>
-
-  <p class="mark">mit</p>
 
 </section>
-
-<script is:inline>
-(function(){
-  // HERO · TRANSFORMACIÓN
-  // · 4 imágenes apiladas
-  // · crossfade autoplay (6.5s por paso)
-  // · controlable por scroll (rueda) y por click en steps
-  // · pausa si el hero no está visible
-  const stage = document.getElementById('hero-morph-stage');
-  const hero  = document.getElementById('top');
-  if (!stage || !hero) return;
-
-  const layers = stage.querySelectorAll('.hero-morph-layer');
-  const steps  = document.querySelectorAll('#hero-morph-foot .mf-step');
-  const N = layers.length;
-  let current = 0;       // 0..N-1
-  let autoplay = null;
-  let paused   = false;
-  const DELAY = 8000;
-
-  function go(i){
-    i = (i + N) % N;
-    if (i === current) return;
-    layers[current].classList.remove('is-on');
-    layers[i].classList.add('is-on');
-    steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
-    current = i;
-  }
-
-  function next(){ go(current + 1); }
-  function prev(){ go(current - 1); }
-
-  function start(){
-    stop();
-    if (paused) return;
-    autoplay = setInterval(next, DELAY);
-  }
-  function stop(){
-    if (autoplay){ clearInterval(autoplay); autoplay = null; }
-  }
-
-  // === HERO scroll ===
-  // El usuario hace scroll normal de página. La rueda/touch trackpad
-  // en el hero transforma el proyecto. No bloqueamos el scroll vertical
-  // (eso es UX terrible). En su lugar: en cuanto el hero deja de estar
-  // visible al hacer scroll, la transformación se ha completado.
-  // Para control fino: las teclas ←/→ y los botones del stepper.
-
-  // En este modelo la "transformación" se desarrolla con autoplay + tiempo
-  // que el usuario pasa en el hero. Si scroll-y > 0 dentro del hero,
-  // aceleramos. Si scroll-y > 100px (saliendo), saltamos al final.
-
-  function onScroll(){
-    const r = hero.getBoundingClientRect();
-    // cuánto ha scrolleado el usuario dentro del hero (en px)
-    const scrolled = Math.max(0, -r.top);
-    if (scrolled > 0 && scrolled < 40) {
-      // acaba de empezar a salir → fuerza la última capa
-      if (current !== N - 1) go(N - 1);
-    }
-    // si vuelve al hero, vuelve a la primera
-    if (r.top > 50 && current !== 0) {
-      go(0);
-    }
-  }
-  window.addEventListener('scroll', onScroll, { passive: true });
-
-  // Pausa con teclado (control fino)
-  document.addEventListener('keydown', e => {
-    const r = hero.getBoundingClientRect();
-    if (r.bottom < 0 || r.top > innerHeight) return;
-    if (e.key === 'ArrowRight') { next(); start(); e.preventDefault(); }
-    if (e.key === 'ArrowLeft')  { prev(); start(); e.preventDefault(); }
-  });
-
-  // Click en step — el click PAUSA el autoplay
-  steps.forEach((s, k) => s.addEventListener('click', () => {
-    go(k);
-    stop(); // pausa hasta que el usuario vuelva a interactuar
-  }));
-
-  start();
-})();
-</script>
 
 <!-- ===== TICKER ===== -->
 <section class="ticker" aria-hidden="true">
@@ -488,100 +373,9 @@ const telefono = SITE.phoneDisplay;
   document.querySelectorAll('.work,.reveal').forEach(function(el){ io.observe(el); });
 })();
 
-// hero morph animation (wireframe → photo)
-(function(){
-  var stage = document.getElementById('hero-morph-stage');
-  var photo = document.getElementById('hero-morph-photo');
-  var cursor = document.getElementById('hero-morph-cursor');
-  var cursorLabel = document.getElementById('hero-morph-cursor-label');
-  var lines = document.querySelectorAll('.hero-morph-title .hm-line span');
-  var steps = document.querySelectorAll('.mf-step');
-  if (!stage || !photo) return;
-
-  function setStep(n){
-    steps.forEach(function(s){ s.classList.toggle('is-active', parseInt(s.dataset.step,10) === n); });
-  }
-
-  function step1_plano(){
-    setStep(1);
-    // wireframe ya visible
-    // cursor aparece en el centro
-    if (cursor) {
-      cursor.style.transition = 'none';
-      cursor.style.left = '50%';
-      cursor.style.top = '50%';
-      cursor.style.opacity = '0';
-      requestAnimationFrame(function(){
-        if (cursor) {
-          cursor.style.transition = 'opacity .6s ease';
-          cursor.style.opacity = '1';
-        }
-      });
-    }
-    if (cursorLabel) cursorLabel.textContent = 'N 42°37.4\' — W 2°28.1\'';
-  }
-
-  function step2_gesto(){
-    setStep(2);
-    if (cursorLabel) cursorLabel.textContent = 'TRAZANDO LÍNEAS DE LUZ';
-    // cursor se mueve (gesto)
-    if (cursor) {
-      cursor.style.transition = 'left 2.4s cubic-bezier(.6,.1,.3,1), top 2.4s cubic-bezier(.6,.1,.3,1)';
-      cursor.style.left = '32%';
-      cursor.style.top = '38%';
-    }
-  }
-
-  function step3_luz(){
-    setStep(3);
-    if (cursorLabel) cursorLabel.textContent = 'AÑADIENDO TEXTURA';
-    if (cursor) {
-      cursor.style.transition = 'left 2s ease-in-out, top 2s ease-in-out';
-      cursor.style.left = '68%';
-      cursor.style.top = '58%';
-    }
-    // elementos decorativos aparecen
-    var decor = document.querySelector('.wire-decor');
-    if (decor) {
-      decor.style.transition = 'opacity 1.2s ease';
-      decor.style.opacity = '1';
-    }
-  }
-
-  function step4_espacio(){
-    setStep(4);
-    if (cursorLabel) cursorLabel.textContent = 'RESULTADO';
-    if (cursor) {
-      cursor.style.transition = 'opacity .6s ease';
-      cursor.style.opacity = '0';
-    }
-    // foto se expande clip-path (morfismo desde wireframe)
-    photo.classList.add('is-revealing');
-    setTimeout(function(){ photo.classList.add('is-final'); }, 50);
-  }
-
-  function start(){
-    var t0 = Date.now();
-    // título aparece escalonado una vez cargado el wireframe
-    lines.forEach(function(s, i){
-      s.style.transition = 'transform 1s cubic-bezier(.2,.8,.2,1) '+(i*0.12+1.4)+'s';
-      s.style.transform = 'translateY(0)';
-    });
-    setTimeout(step1_plano, 1000);
-    setTimeout(step2_gesto,   3000);
-    setTimeout(step3_luz,      6000);
-    setTimeout(step4_espacio,  9000);
-  }
-
-  // pre-estado del título (oculto bajo)
-  lines.forEach(function(s){ s.style.transform = 'translateY(110%)'; });
-  // pre-estado de la foto (clip minúsculo en el centro)
-  photo.classList.add('is-pre');
-
-  if (document.readyState === 'complete') start();
-  else window.addEventListener('load', start, {once:true});
-})();
-</script>
+// hero morph animation (wireframe → photo) — REMOVIDO 2 jul 2026
+// (Santi decidió que el morph no comunicaba la transformación.
+// Reemplazado por hero estático con imagen + texto + CTA. Ver hero-static.css.)
 
 <!-- ChatBot embebido -->
 <ChatBot />
