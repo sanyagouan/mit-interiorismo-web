@@ -58,6 +58,16 @@ const LEADS_FILE = path.join(__dirname, 'leads.jsonl');
 const LOG_FILE = path.join(__dirname, 'api.log');
 const CHAT_LOG = path.join(__dirname, 'chat.jsonl');
 
+// ===== BUFFER DE LEADS PENDIENTES (1 envío por conversación) =====
+// Cada usuario (identificado por userId del frontend) acumula mensajes en
+// un buffer. Cuando el bot detecta cierre (intent=other) o pasan
+// INACTIVITY_MS sin nuevos mensajes, se vacía el buffer y se manda
+// UN SOLO lead a María + UN SOLO registro en EspoCRM.
+//
+// Estructura: Map<userId, { lead, messages, timer, lastTs }>
+const INACTIVITY_MS = 2 * 60 * 1000; // 2 minutos
+const pendingLeads = new Map();
+
 function log(...args) {
   const line = `[${new Date().toISOString()}] ` + args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ');
   console.log(line);
@@ -311,25 +321,43 @@ app.post('/api/chat', async (req, res) => {
       }) + '\n');
     } catch (e) {}
 
-    // Si el bot detecta intención de lead, notificar a María proactivamente
-    if (parsed.intent === 'lead' && (process.env.SMTP_URL || process.env.TELEGRAM_BOT_TOKEN)) {
-      const lastUser = messages[messages.length - 1]?.content || '';
-      const lead = {
-        id: 'C' + Date.now().toString(36),
-        name: 'Anónimo (chat)',
-        contact: userId,
-        topic: `[Chat] ${lastUser.slice(0, 200)}`,
-        mode: 'chat-intent',
-        source: 'chatbot-web',
-        page,
-        ts: new Date().toISOString()
-      };
-      try { fs.appendFileSync(LEADS_FILE, JSON.stringify(lead) + '\n'); } catch(e) {}
-      log('LEAD_FROM_CHAT', lead.id, userId);
-      // Resumir con IA y notificar (incluye push a EspoCRM). No bloquea.
-      summarizeLead({ messages, lead })
-        .then(summary => notifyMaria(lead, summary))
-        .catch(e => log('NOTIFY_FAIL', e.message));
+    // Acumular en buffer por usuario. NO notificamos todavía — esperamos a
+    // que la conversación se cierre (intent=other) o a 2 min de inactividad.
+    const lastUser = messages[messages.length - 1]?.content || '';
+    const existing = pendingLeads.get(userId);
+    const combinedMessages = existing
+      ? [...existing.messages, ...messages.slice(-2)] // último user+assistant frescos
+      : messages.slice(-12);
+    const lead = existing?.lead || {
+      id: 'C' + Date.now().toString(36),
+      name: 'Anónimo (chat)',
+      contact: userId,
+      topic: '',
+      mode: 'chat-session',
+      source: 'chatbot-web',
+      page,
+      ts: new Date().toISOString()
+    };
+    // El último mensaje del cliente es siempre el "topic" actual
+    lead.topic = lastUser.slice(0, 500);
+    lead.page = page || lead.page;
+    lead.lastUpdate = new Date().toISOString();
+
+    // Resetear timer de inactividad
+    if (existing?.timer) clearTimeout(existing.timer);
+    const timer = setTimeout(() => {
+      log('INACTIVITY_FLUSH', userId, lead.id);
+      flushPendingLead(userId);
+    }, INACTIVITY_MS);
+
+    pendingLeads.set(userId, { lead, messages: combinedMessages, timer, lastTs: Date.now() });
+
+    // Si el bot detecta CIERRE (intent=other = despedida/gracias/off-topic),
+    // vaciar el buffer AHORA y mandar el lead.
+    if (parsed.intent === 'other') {
+      log('CONVERSATION_CLOSED', userId, lead.id);
+      clearTimeout(timer);
+      flushPendingLead(userId);
     }
 
     return res.json({
@@ -357,6 +385,7 @@ app.post('/api/contact', async (req, res) => {
   const source = String(data.source || 'web').trim();
   const page = String(data.page || '').trim().slice(0, 500);
   const ts = data.ts || new Date().toISOString();
+  const incomingUserId = String(data.userId || '').slice(0, 100);
 
   // Compose contact (compat con version anterior que sólo mandaba contact)
   const composedContact = contact || [email, phone].filter(Boolean).join(' · ');
@@ -364,6 +393,15 @@ app.post('/api/contact', async (req, res) => {
   if (!name || !composedContact) {
     log('VALIDATION_FAIL', { name, contact: composedContact });
     return res.status(400).json({ ok: false, error: 'Faltan campos obligatorios (nombre, email o teléfono).' });
+  }
+
+  // Si hay buffer pendiente para este userId del chat, vaciarlo: el form con
+  // datos del cliente ya es la "notificación final", no queremos duplicar.
+  if (incomingUserId && pendingLeads.has(incomingUserId)) {
+    const entry = pendingLeads.get(incomingUserId);
+    if (entry.timer) clearTimeout(entry.timer);
+    pendingLeads.delete(incomingUserId);
+    log('FLUSH_BUFFERED_BY_FORM', incomingUserId);
   }
 
   const lead = {
@@ -674,6 +712,29 @@ async function notifyMaria(lead, summary) {
   } catch (e) {
     log('ESPO_FAIL', lead.id, e.message);
   }
+}
+
+// ===== BUFFER FLUSH (vacía buffer y manda 1 lead consolidado) =====
+async function flushPendingLead(userId) {
+  const entry = pendingLeads.get(userId);
+  if (!entry) return;
+  pendingLeads.delete(userId);
+  const { lead, messages: allMessages } = entry;
+
+  // Persistir y notificar SOLO si hay conversación real (>=1 mensaje del cliente)
+  const userMessages = allMessages.filter(m => m.role === 'user');
+  if (userMessages.length === 0) {
+    log('FLUSH_SKIP_EMPTY', userId, lead.id);
+    return;
+  }
+
+  try { fs.appendFileSync(LEADS_FILE, JSON.stringify(lead) + '\n'); }
+  catch (e) { log('PERSIST_FAIL', e.message); }
+  log('LEAD_FROM_CHAT_CONSOLIDATED', lead.id, userId, 'msgs=' + userMessages.length);
+
+  summarizeLead({ messages: allMessages, lead })
+    .then(summary => notifyMaria(lead, summary))
+    .catch(e => log('NOTIFY_FAIL', e.message));
 }
 
 async function sendEmail(lead) {

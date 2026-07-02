@@ -245,6 +245,7 @@ const phoneDisplay = SITE.phoneDisplay;
             phone,
             topic,
             mode,
+            userId: (typeof userId !== 'undefined' && userId) ? userId : null,
             source: 'chatbot-web',
             page: location.pathname,
             ts: new Date().toISOString()
