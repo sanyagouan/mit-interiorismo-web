@@ -601,10 +601,17 @@ async function espoFindExistingLead({ email, phone }) {
   }
 }
 
-async function espoCreateLead({ name, email, phone, topic, summary, topic_short, urgency, source, page }) {
+async function espoCreateLead({ name, email, phone, topic, summary, topic_short, urgency, source, page, contact }) {
   const parts = String(name || '').trim().split(/\s+/);
   const firstName = parts[0] || 'Anónimo';
-  const lastName = parts.slice(1).join(' ') || '(chat web)';
+  // Si no hay apellido real (chats anónimos tipo "Anónimo (chat)"), usamos
+  // el userId/contact como sufijo para evitar 409 al crear múltiples leads
+  // con nombre "Anónimo (chat)" desde sesiones distintas.
+  const givenLast = parts.slice(1).join(' ').trim();
+  const isPlaceholder = !givenLast || /^\(chat/i.test(givenLast);
+  const lastName = isPlaceholder
+    ? (contact && contact !== 'anon' ? `(chat web) ${contact}` : '(chat web)')
+    : givenLast;
   const description = [
     summary ? `📋 Resumen IA: ${summary}` : null,
     topic ? `💬 Mensaje original: ${topic}` : null,
@@ -679,7 +686,8 @@ async function pushToEspoCRM(lead, summary) {
     topic_short: summary?.topic_short,
     urgency: summary?.urgency,
     source: lead.source,
-    page: lead.page
+    page: lead.page,
+    contact: lead.contact
   });
   log('ESPO_CREATED', created.id, lead.id);
   return { ok: true, action: 'created', id: created.id };
