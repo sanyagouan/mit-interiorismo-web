@@ -292,6 +292,15 @@
   .hero-morph-layer--sketch img{ mix-blend-mode:normal; opacity:0.85; }
 }
 
+/* Móvil pequeño (≤520px): corrige overflow horizontal causado por
+   label-num de 80-160px + foot demasiado pegado al borde */
+@media (max-width:520px){
+  .hero-morph-label-num{ font-size:clamp(48px, 18vw, 72px); }
+  .hero-morph-foot{ right:6vw; bottom:6vh; gap:6px; }
+  .hero-morph-copy{ left:6vw; right:6vw; bottom:14vh; }
+  .hero-morph-title{ font-size:clamp(34px, 9vw, 48px); }
+}
+
 @media (prefers-reduced-motion: reduce){
   .hero-morph-layer{ transition:opacity .4s ease; }
   .hero-morph-scroll::after{ animation:none; }

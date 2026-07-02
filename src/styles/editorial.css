@@ -570,6 +570,17 @@ em{font-style:italic;}
   .display-2{font-size:40px;}
   .hero{padding:110px 22px 50px;}
   .hero-lede{font-size:18px;}
-  .nav{padding:16px 18px;}
-  .nav-mark-i{font-size:18px;}
+  .nav{padding:14px 18px;}
+  .nav-mark-i{font-size:16px;}
+  /* nav mobile: oculta los 3 enlaces secundarios, deja visible solo Contacto (CTA)
+     evita overflow horizontal a 390px y mantiene el destino principal accesible */
+  .nav-links{gap:14px;align-items:center;}
+  .nav-l{font-size:9px;letter-spacing:.12em;}
+  .nav-l span{display:none;}
+  .nav-l[href="#proyectos"],
+  .nav-l[href="#estudio"],
+  .nav-l[href="#servicios"]{display:none;}
+  .nav-l[href="#contacto"]{font-size:10px;letter-spacing:.14em;}
+  /* reducir padding lateral de secciones para ganar ancho útil */
+  .manifest,.nums,.cta,.works,.srv,.estudio{padding-left:18px;padding-right:18px;}
 }
