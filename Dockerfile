@@ -36,6 +36,10 @@ LABEL org.opencontainers.image.title="MIT Interiorismo Web" \
 # Copiar build estático de Astro a nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
+# Asegurar permisos de lectura para el worker nginx (uid 101 en alpine)
+# Evita 403 en robots.txt, favicon.svg, sitemap-*.xml, site.webmanifest
+RUN chmod -R a+rX /usr/share/nginx/html
+
 # Configuración custom de nginx (cache + compresión Brotli/Gzip)
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
