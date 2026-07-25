@@ -113,4 +113,4 @@ npm run build && nginx serve dist/
 
 ## Licencia
 
-Código propietario de MIT Interiorismo. Todos los derechos reservados.
+Código propietario de MIT Interiorismo. Todos los derechos reservados.# test
