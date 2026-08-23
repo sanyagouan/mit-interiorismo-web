@@ -15,10 +15,7 @@ const phoneRaw = SITE.phoneRaw;
 const email = SITE.email;
 const phoneDisplay = SITE.phoneDisplay;
 ---
-<meta name="x-phone" content={phoneRaw} />
-<meta name="x-email" content={email} />
-<meta name="x-phone-display" content={phoneDisplay} />
-<meta name="x-services" content={JSON.stringify(services)} />
+<!-- chatbot config inyectado por BaseLayout como <script type=application/json id=chatbot-config> -->
 
 <div class="cb-fab" id="cb-fab" aria-label="Abrir chat" aria-expanded="false">
   <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
@@ -49,11 +46,18 @@ const phoneDisplay = SITE.phoneDisplay;
 
 <script is:inline>
 (function(){
-  const phoneRaw = (document.querySelector('meta[name="x-phone"]')||{}).content || '34637869890';
-  const email = (document.querySelector('meta[name="x-email"]')||{}).content || 'hola@mitinteriorismo.studio';
-  const phoneDisplay = (document.querySelector('meta[name="x-phone-display"]')||{}).content || '637 86 98 90';
-  let services = [];
-  try { services = JSON.parse((document.querySelector('meta[name="x-services"]')||{}).content || '[]'); } catch(e) {}
+  let phoneRaw='34637869890', email='hola@mitinteriorismo.studio', phoneDisplay='637 86 98 90';
+  let services=[];
+  try {
+    const cfgEl = document.getElementById('chatbot-config');
+    if (cfgEl && cfgEl.textContent) {
+      const cfg = JSON.parse(cfgEl.textContent);
+      if (cfg.phone) phoneRaw = cfg.phone;
+      if (cfg.email) email = cfg.email;
+      if (cfg.phoneDisplay) phoneDisplay = cfg.phoneDisplay;
+      if (Array.isArray(cfg.services)) services = cfg.services;
+    }
+  } catch(e) { console.warn('[chatbot] config parse failed', e); }
 
   const fab = document.getElementById('cb-fab');
   const panel = document.getElementById('cb-panel');

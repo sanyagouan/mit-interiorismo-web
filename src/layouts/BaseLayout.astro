@@ -95,11 +95,7 @@ const structuredData = {
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonicalURL} />
 
-    <!-- Chatbot data (read by /components/ChatBot.astro) -->
-    <meta name="x-phone" content={SITE.phoneRaw} />
-    <meta name="x-email" content={SITE.email} />
-    <meta name="x-phone-display" content={SITE.phoneDisplay} />
-    <meta name="x-services" content={JSON.stringify(serviciosMeta)} />
+    <!-- Canonical ya inyectado arriba -->
 
     <!-- Favicon & PWA basics -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -117,12 +113,12 @@ const structuredData = {
     <meta property="og:locale" content="es_ES" />
     <meta property="og:site_name" content={SITE.name} />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={title} />
-    <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={ogImageURL} />
+    <!-- Twitter (requiere name=, no property=) -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalURL} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
 
     <!-- Tipografía variable: Instrument Serif (display) + Inter (sans) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -151,6 +147,14 @@ const structuredData = {
     <a href="#main-content" class="skip-to-content">
       Saltar al contenido principal
     </a>
+
+    <!-- Chatbot config: cargado por JS, no crawlable por buscadores -->
+    <script type="application/json" id="chatbot-config" data-internal="true" set:html={JSON.stringify({
+      phone: SITE.phoneRaw,
+      phoneDisplay: SITE.phoneDisplay,
+      email: SITE.email,
+      services: serviciosMeta
+    })} />
 
     <slot />
 
