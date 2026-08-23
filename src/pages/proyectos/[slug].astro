@@ -35,7 +35,7 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
 <BaseLayout
   title={`${project.title} — ${project.subtitle} | ${SITE.name}`}
   description={project.description}
-  ogImage={project.cover}
+  ogImage={`/images/og/og-proyecto-${project.slug === 'merendero-lapuebla' ? 'lapuebla' : project.slug === 'txoko-kripan' ? 'kripan' : project.slug === 'apartamentos-labastida' ? 'labastida' : project.slug}.jpg`}
 >
   <main id="main-content" class="bg-cream">
     <article>

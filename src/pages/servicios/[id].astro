@@ -20,6 +20,7 @@ const num = String(idx + 1).padStart(2, '0');
 <BaseLayout
   title={`${servicio.title} — ${Astro.locals.SITE?.name ?? 'mit interiorismo'}`}
   description={servicio.description.slice(0, 160)}
+  ogImage={`/images/og/og-servicio-${servicio.id}.jpg`}
 >
   <main class="srv-page">
     <a href="/#servicios" class="srv-back">← Volver a servicios</a>
