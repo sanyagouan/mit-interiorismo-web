@@ -3,9 +3,9 @@
   "errors": [],
   "failed": [],
   "desktop": {
-    "loaderMs": 1707,
+    "loaderMs": 1570,
     "vitals": {
-      "lcpMs": 360,
+      "lcpMs": 420,
       "lcpElement": "img",
       "cls": 0
     },
@@ -18,10 +18,10 @@
     "smallTargets": [
       "Saltar al contenido prin 225x19",
       "mit\nINTERIORISMO · YÉCOR 202x23",
-      "I · EL ESPACIO 191x23",
-      "II · LOS MATERIALES 191x23",
-      "III · EL PROYECTO 191x23",
-      "IV · LA REALIDAD 191x23",
+      "I · EL ESPACIO 475x23",
+      "II · LA OBRA 475x23",
+      "III · LAS INSTALACIONES 475x23",
+      "IV · EL RESULTADO 475x23",
       "VER LOS 3 PROYECTOS ↗ 193x24",
       "María Iturbe Sánchez ↗ 148x16"
     ],
@@ -29,17 +29,17 @@
     "title": "mit interiorismo — De un espacio vacío a un hogar con alma",
     "glOn": false,
     "scrollFps": {
-      "fps": 58,
-      "worstFrameMs": 33
+      "fps": 48,
+      "worstFrameMs": 83
     },
     "idleMotion": true,
-    "idleAt": "70%"
+    "idleAt": "top"
   },
   "mobile": {
     "throttled": true,
-    "loaderMs": 6036,
+    "loaderMs": 5797,
     "vitals": {
-      "lcpMs": 1464,
+      "lcpMs": 1480,
       "lcpElement": "h1.hero-morph-title",
       "cls": 0
     },
@@ -52,10 +52,10 @@
     "smallTargets": [
       "Saltar al contenido prin 225x19",
       "mit 20x16",
-      "I · EL ESPACIO 191x23",
-      "II · LOS MATERIALES 191x23",
-      "III · EL PROYECTO 191x23",
-      "IV · LA REALIDAD 191x23",
+      "I · EL ESPACIO 367x23",
+      "II · LA OBRA 367x23",
+      "III · LAS INSTALACIONES 367x23",
+      "IV · EL RESULTADO 367x23",
       "VER LOS 3 PROYECTOS ↗ 193x24",
       "María Iturbe Sánchez ↗ 148x16"
     ],
@@ -63,8 +63,8 @@
     "title": "mit interiorismo — De un espacio vacío a un hogar con alma",
     "glOn": false,
     "scrollFps": {
-      "fps": 57,
-      "worstFrameMs": 83
+      "fps": 53,
+      "worstFrameMs": 100
     }
   },
   "files": [
@@ -117,12 +117,12 @@
       "a \"ESTUDIO\"",
       "a \"SERVICIOS\"",
       "a \"CONTACTO\"",
+      "button \"Arrastrar para avanzar la obra\"",
       "a \"PEDIR CITA\"",
       "a \"VER PROYECTOS\"",
       "button \"I · EL ESPACIO\"",
-      "button \"II · LOS MATERIALES\"",
-      "button \"III · EL PROYECTO\"",
-      "button \"IV · LA REALIDAD\""
+      "button \"II · LA OBRA\"",
+      "button \"III · LAS INSTALACIONES\""
     ],
     "skipLinkFirst": false,
     "noVisibleFocus": [],
@@ -146,7 +146,7 @@
       },
       {
         "shot": "h-02",
-        "label": "button \"III · El proyecto\"",
+        "label": "button \"II · La obra\"",
         "interactive": true,
         "primary": true,
         "react": "color",
@@ -232,7 +232,7 @@
     "noHoverChange": [],
     "colorOnly": [
       "h-01 button \"I · El espacio\"",
-      "h-02 button \"III · El proyecto\"",
+      "h-02 button \"II · La obra\"",
       "h-04 a \"Pedir cita\"",
       "h-05 a \"Ver proyectos\"",
       "h-06 a \"Ver los 3 proyectos ↗\""
@@ -246,6 +246,6 @@
   "a11y": {
     "violations": [],
     "serious": 0,
-    "contrastNeedsReview": 62
+    "contrastNeedsReview": 63
   }
 }
