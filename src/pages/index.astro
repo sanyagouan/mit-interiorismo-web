@@ -158,13 +158,7 @@ const telefono = SITE.phoneDisplay;
     <div class="hero-morph-vignette"></div>
 
     <!-- Manejador de arrastre: avanza la obra con la mano -->
-    <div class="hero-scrub" id="hero-scrub" aria-hidden="true">
-      <div class="hero-scrub-track"><span class="hero-scrub-fill" id="hero-scrub-fill"></span></div>
-      <button type="button" class="hero-scrub-handle" id="hero-scrub-handle" aria-label="Arrastrar para avanzar la obra">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
-      </button>
-    </div>
-
+  </div>
   </div>
 
   <div class="hero-morph-copy">
@@ -203,23 +197,37 @@ const telefono = SITE.phoneDisplay;
 
 <script is:inline>
 (function(){
-  // HERO · AUTOPLAY PURO (sin clic, sin arrastre, sin barra, sin scrub)
-  // · crossfade de 4 fotos IA: vacío → obra → instalaciones → resultado
-  // · cada STEP_MS se cambia la opacidad con un transition CSS
+  // HERO · AUTOPLAY + botones I·II·III·IV
+  // · ciclo completo ~10s: cada fase dura 2.5s, crossfade suave de 2s
+  // · pulsar un botón salta a esa fase y reinicia el ciclo
   const stage = document.getElementById('hero-morph-stage');
   if (!stage) return;
   const layers = Array.from(stage.querySelectorAll('.hero-morph-layer'));
+  const steps  = Array.from(document.querySelectorAll('#hero-morph-foot .mf-step'));
   const N = layers.length;
   if (N === 0) return;
-  const STEP_MS = 2400;   // 2.4s por foto (≈9.6s el ciclo completo)
-  // Estado inicial: solo la primera visible
-  for (let i = 0; i < N; i++) layers[i].style.opacity = i === 0 ? '1' : '0';
+  const PHASE_MS = 2500;  // 2.5s por fase → ciclo de 10s con las 4
+  // crossfade suave de 2s (ease-in-out), inyectado desde aquí para tenerlo junto al resto
+  const style = document.createElement('style');
+  style.textContent = '.hero-morph-layer{transition:opacity 2s ease-in-out;}';
+  document.head.appendChild(style);
+
   let idx = 0;
-  setInterval(() => {
-    layers[idx].style.opacity = '0';
-    idx = (idx + 1) % N;
-    layers[idx].style.opacity = '1';
-  }, STEP_MS);
+  function show(i){
+    for (let k = 0; k < N; k++) layers[k].style.opacity = k === i ? '1' : '0';
+    steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
+    idx = i;
+  }
+  show(0);
+
+  let timer = setInterval(() => show((idx + 1) % N), PHASE_MS);
+
+  steps.forEach((s, k) => s.addEventListener('click', () => {
+    if (k === idx) return;
+    clearInterval(timer);          // evita que el ciclo pise el salto manual
+    show(k);
+    timer = setInterval(() => show((idx + 1) % N), PHASE_MS);  // reanuda desde la nueva fase
+  }));
 })();
 </script>
 
