@@ -203,63 +203,77 @@ const telefono = SITE.phoneDisplay;
 
 <script is:inline>
 (function(){
-  // HERO · REFORMA EN MANO — scrub por arrastre sobre 4 estados de la obra
+  // HERO · REFORMA AUTOMÁTICA — autoplay continuo (loop 1→4→1), scrub manual opcional
   const stage = document.getElementById('hero-morph-stage');
   const hero  = document.getElementById('top');
   if (!stage || !hero) return;
   const layers = Array.from(stage.querySelectorAll('.hero-morph-layer'));
-  const steps  = document.querySelectorAll('#hero-morph-foot .mf-step');
+  const steps  = Array.from(document.querySelectorAll('#hero-morph-foot .mf-step'));
   const handle = document.getElementById('hero-scrub-handle');
-  const scrubEl = document.getElementById('hero-scrub');
   const fill   = document.getElementById('hero-scrub-fill');
+  const scrubEl = document.getElementById('hero-scrub');
   const N = layers.length;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const HIDDEN = () => document.hidden || hero.getBoundingClientRect().bottom < 0 || hero.getBoundingClientRect().top > innerHeight;
 
-  let pos = 0, target = 0, dragging = false;
+  // Posición 0..(N-1), real (puede ser fraccionaria). Velocidad en pos/s.
+  let pos = 0, vel = reduced ? 0 : 0.12; // 8s por fase, 24s el ciclo completo
+  let dragging = false, last = performance.now();
+  let needsRender = true;
 
   function clamp(v){ return Math.max(0, Math.min(N - 1, v)); }
+  function wrap(v){ v = v % (2 * (N - 1)); return v < (N - 1) ? v : 2 * (N - 1) - v; }
 
   function render(){
-    for (let i = 0; i < N; i++){
-      const op = Math.max(0, 1 - Math.abs(pos - i));
-      const l = layers[i];
-      l.style.opacity = op.toFixed(3);
-      l.classList.toggle('is-on', op > 0.5);
-      l.style.transform = 'scale(' + (1 + 0.028 * (1 - op)).toFixed(4) + ')';
-    }
     const t = pos / (N - 1);
     if (fill) fill.style.width = (t * 100).toFixed(1) + '%';
     if (handle) handle.style.left = (t * 100).toFixed(1) + '%';
     const active = Math.round(pos);
     steps.forEach((s, k) => s.classList.toggle('is-active', k === active));
+    for (let i = 0; i < N; i++){
+      const op = Math.max(0, 1 - Math.abs(pos - i));
+      const l = layers[i];
+      l.style.opacity = op.toFixed(3);
+      l.classList.toggle('is-on', op > 0.5);
+      l.style.transform = 'scale(' + (1 + 0.025 * (1 - op)).toFixed(4) + ')';
+    }
+    needsRender = false;
   }
 
-  function tick(){
-    const d = target - pos;
-    if (Math.abs(d) < 0.002){ pos = target; render(); return; }
-    pos += d * 0.14;
-    render();
-    requestAnimationFrame(tick);
+  function loop(now){
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    if (!dragging && !HIDDEN()) {
+      pos = wrap(pos + vel * dt);
+      needsRender = true;
+    } else if (dragging) {
+      needsRender = true;
+    }
+    if (needsRender) render();
+    requestAnimationFrame(loop);
   }
-  function goTo(v, instant){
-    target = clamp(v);
-    if (instant){ pos = target; render(); }
-    else requestAnimationFrame(tick);
-  }
+  requestAnimationFrame(loop);
 
+  // Scrub manual opcional: el usuario puede arrastrar en cualquier sitio
   function posFromX(clientX){
     const r = stage.getBoundingClientRect();
     return clamp((clientX - r.left) / r.width * (N - 1));
   }
-  const onMove = e => { if (!dragging) return; target = pos = posFromX(e.clientX); render(); };
-  const onUp = () => { if (!dragging) return; dragging = false; document.body.classList.remove('hero-scrubbing'); goTo(Math.round(pos)); };
-
+  const onMove = e => { if (!dragging) return; pos = posFromX(e.clientX); needsRender = true; };
+  const onUp = () => { if (!dragging) return; dragging = false; document.body.classList.remove('hero-scrubbing'); snapToNearest(); };
+  function snapToNearest(){
+    const k = Math.round(pos);
+    const step = () => { const d = k - pos; if (Math.abs(d) < 0.002){ pos = k; render(); return; } pos += d * 0.18; render(); requestAnimationFrame(step); };
+    step();
+  }
   const onDown = e => {
-    if (e.target.closest('a, button')) return;   // CTAs y steps siguen siendo clicables
+    if (e.target.closest('a, button')) return;
     if (e.button !== undefined && e.button !== 0) return;
     dragging = true;
     document.body.classList.add('hero-scrubbing');
-    target = pos = posFromX(e.clientX); render();
+    pos = posFromX(e.clientX);
+    needsRender = true;
+    if (scrubEl) scrubEl.classList.remove('is-hint');
   };
   hero.addEventListener('pointerdown', onDown);
   window.addEventListener('pointermove', onMove, { passive: true });
@@ -269,24 +283,26 @@ const telefono = SITE.phoneDisplay;
   document.addEventListener('keydown', e => {
     const r = hero.getBoundingClientRect();
     if (r.bottom < 0 || r.top > innerHeight) return;
-    if (e.key === 'ArrowRight'){ goTo(Math.round(target) + 1); e.preventDefault(); }
-    if (e.key === 'ArrowLeft'){ goTo(Math.round(target) - 1); e.preventDefault(); }
+    if (e.key === 'ArrowRight'){ pos = clamp(pos + 1); snapToNearest(); e.preventDefault(); }
+    if (e.key === 'ArrowLeft'){  pos = clamp(pos - 1); snapToNearest(); e.preventDefault(); }
   });
 
-  steps.forEach((s, k) => s.addEventListener('click', () => goTo(k)));
+  steps.forEach((s, k) => s.addEventListener('click', () => { pos = k; snapToNearest(); }));
+  handle?.addEventListener('pointerdown', onDown);
 
+  // Salir del hero pausa el ciclo; volver lo reanuda
   window.addEventListener('scroll', () => {
     const r = hero.getBoundingClientRect();
-    const scrolled = Math.max(0, -r.top);
-    if (scrolled > 120 && !dragging) goTo(N - 1, true);
-    if (r.top > 60 && !dragging) goTo(0, true);
+    if (r.top > 60 && !dragging) { pos = 0; vel = 0.12; needsRender = true; }
   }, { passive: true });
 
-  if (!reduced && scrubEl){
-    scrubEl.classList.add('is-hint');
-    stage.addEventListener('pointerdown', () => scrubEl.classList.remove('is-hint'), { once: true });
-  }
+  // Pausa al hover (el usuario mira)
+  let hover = false;
+  hero.addEventListener('mouseenter', () => { hover = true; vel = 0.05; });
+  hero.addEventListener('mouseleave', () => { hover = false; vel = 0.12; });
 
+  // Invitación: la manija se mueve un poco al inicio (animación ya en CSS)
+  if (scrubEl) scrubEl.classList.add('is-hint');
   render();
 })();
 </script>
