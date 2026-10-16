@@ -139,6 +139,21 @@ const structuredData = {
       Saltar al contenido principal
     </a>
 
+    <!-- Nav principal para páginas internas -->
+    <header class="fixed top-0 inset-x-0 z-50 bg-cream/90 backdrop-blur border-b border-ink/5">
+      <div class="mx-auto max-w-wide px-gutter h-16 flex items-center justify-between">
+        <a href="/" class="flex items-center shrink-0" aria-label="mit interiorismo — inicio">
+          <img src="/images/brand/logo-mit.png" width="130" height="88" alt="mit interiorismo" class="h-8 w-auto" loading="eager" decoding="async" />
+        </a>
+        <nav class="flex items-center gap-3 sm:gap-6" aria-label="Navegación principal">
+          <a href="/proyectos/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Proyectos</a>
+          <a href="/servicios/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Servicios</a>
+          <a href="/sobre/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Estudio</a>
+          <a href="/contacto/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Contacto</a>
+        </nav>
+      </div>
+    </header>
+
     <!-- Chatbot config: cargado por JS, no crawlable por buscadores -->
     <script type="application/json" id="chatbot-config" data-internal="true" set:html={JSON.stringify({
       phone: SITE.phoneRaw,
