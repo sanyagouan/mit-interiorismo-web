@@ -312,12 +312,8 @@
   transition:none;
   will-change:opacity, transform;
 }
-.hero-morph-stage{
-  touch-action:pan-y;            /* vertical = scroll de página; horizontal = scrub */
-  cursor:ew-resize;
-}
-body.hero-scrubbing{ user-select:none; }
-body.hero-scrubbing .hero-morph-stage{ cursor:grabbing; }
+/* (sin barra de scrub: el hero es autoplay puro desde 16-oct-2026) */
+.hero-morph-stage{ touch-action: pan-y; }
 
 /* Barra + manija de arrastre */
 .hero-scrub{
