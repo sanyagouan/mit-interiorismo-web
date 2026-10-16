@@ -13,12 +13,14 @@ export const SITE = {
   name: 'mit interiorismo',
   legalName: 'mit interiorismo · María Iturbe Sánchez',
   title: 'mit interiorismo — Diseño de interiores boutique en La Rioja y País Vasco',
+  // SEO: description ≤160 chars (era 208 → WARN en auditoría)
   description:
-    'Estudio boutique de interiorismo en Yécora (Álava). Reformas integrales, espacios corporativos y consultoría técnica en La Rioja y País Vasco. Más de 17 años de experiencia uniendo diseño, técnica e instalaciones.',
+    'Estudio boutique de interiorismo en Yécora (Álava). Reformas integrales y espacios corporativos en La Rioja y País Vasco. 17 años uniendo diseño e ingeniería.',
   shortDescription:
     'Estudio boutique de interiorismo en Yécora (Álava). Diseño + técnica + ingeniería.',
   url: 'https://www.mitinteriorismo.studio',
-  ogImage: '/og/og-default.jpg',
+  // FIX: apuntaba a /og/og-default.jpg (inexistente); el set real vive en /images/og/
+  ogImage: '/images/og/og-home.jpg',
   email: 'hola@mitinteriorismo.studio',
   emailPersonal: 'info@mitinteriorismo.studio',
   phone: '+34 637 86 98 90',
@@ -54,12 +56,12 @@ export const MARIA = {
   city: 'Yécora, Álava',
   zone: 'La Rioja · Álava · País Vasco',
   photo: '/team/maria.jpg',
-  bio: `Diseñadora de interiores con sede en Yécora (Álava) y más de 17 años de experiencia. Su estudio no proyecta solo la estética — proyecta también las instalaciones eléctricas, climatización y fontanería, y las tramita con la normativa vigente (CTE, REBT, RITE). Esto le permite defender técnicamente a cada cliente frente a gremios, proveedores y sorpresas de obra.`,
-  bioFull: `Diseñadora de interiores con más de 17 años de experiencia,擅动ando desde Yécora (Álava) sobre La Rioja y País Vasco. La intervención une lo que normalmente va separado: <strong>diseño + ingeniería</strong>. Mi trabajo no proyecta solo la estética — proyecta también las instalaciones (eléctricas, climatización, fontanería) y las tramita con la normativa vigente: CTE, REBT, RITE, DB-SI, DB-HR, DB-HE.
+  bio: `Diseñadora de interiores con sede en Yécora (Álava) y más de 17 años de experiencia. Su estudio no proyecta solo la estética: proyecta también las instalaciones eléctricas, climatización y fontanería, y las tramita con la normativa vigente (CTE, REBT, RITE). Esto le permite defender técnicamente a cada cliente frente a gremios, proveedores y sorpresas de obra.`,
+  bioFull: `Diseñadora de interiores con más de 17 años de experiencia, operando desde Yécora (Álava) sobre La Rioja y País Vasco. La intervención une lo que normalmente va separado: <strong>diseño + ingeniería</strong>. Mi trabajo no proyecta solo la estética: proyecta también las instalaciones (eléctricas, climatización, fontanería) y las tramita con la normativa vigente: CTE, REBT, RITE, DB-SI, DB-HR, DB-HE.
 
 Esto me permite defender técnicamente a cada cliente frente a gremios, proveedores y posibles sorpresas de obra. Mi rol en cada proyecto es claro: <em>aliada técnica del cliente</em>.
 
-Mi software de cabecera: AutoCAD, SketchUp, V-Ray 5, Presto. Esto se traduce en planos ejecutivos, renders fotorrealistas y presupuestos desglosados partida a partida — entregados a cada cliente antes de empezar obra, sin sorpresas.
+Mi software de cabecera: AutoCAD, SketchUp, V-Ray 5, Presto. Esto se traduce en planos ejecutivos, renders fotorrealistas y presupuestos desglosados partida a partida, entregados a cada cliente antes de empezar obra, sin sorpresas.
 
 Modelo boutique: un solo interlocutor, de principio a fin, en La Rioja y País Vasco.`,
   trajectory: [

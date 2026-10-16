@@ -1,10 +1,12 @@
 ---
 import "../styles/editorial.css";
+import "../styles/fonts-selfhosted.css";
 import "../styles/hero-morph.css";
 import ChatBot from "../components/ChatBot.astro";
 import { SITE } from "../data/site";
 import { PROJECTS, getFeaturedProjects } from "../data/projects";
 import { SERVICIOS } from "../data/servicios";
+import { DIMS } from "../data/image-dims";
 
 const site = SITE;
 const featured = getFeaturedProjects().slice(0, 6);
@@ -35,17 +37,15 @@ const telefono = SITE.phoneDisplay;
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>mit interiorismo — De un espacio vacío a un hogar con alma · Yécora, Álava</title>
-<meta name="description" content="Estudio boutique de interiorismo técnico en Yécora, Álava. María Iturbe Sánchez une diseño e ingeniería (CTE, REBT, RITE) en reformas integrales, cambio de uso y espacios comerciales en La Rioja y País Vasco." />
+<title>mit interiorismo — De un espacio vacío a un hogar con alma</title>
+<meta name="description" content="Estudio boutique de interiorismo en Yécora, Álava. Reformas integrales, cambio de uso y espacios comerciales en La Rioja y País Vasco." />
 <link rel="canonical" href="https://www.mitinteriorismo.studio/" />
 <meta name="theme-color" content="#115A6B" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="/fonts/fraunces-8f90dc37.woff2" rel="preload" as="font" crossorigin />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://www.mitinteriorismo.studio/" />
 <meta property="og:title" content="mit interiorismo" />
@@ -80,6 +80,11 @@ const telefono = SITE.phoneDisplay;
 })} />
 </head>
 <body>
+
+<!-- Skip-link: primer foco de tabulación (accesibilidad, igual que BaseLayout) -->
+<a href="#main-content" class="skip-to-content">
+  Saltar al contenido principal
+</a>
 
 <!-- Chatbot config: cargado por JS, no crawlable por buscadores -->
 <script type="application/json" id="chatbot-config" data-internal="true" set:html={JSON.stringify({
@@ -126,7 +131,7 @@ const telefono = SITE.phoneDisplay;
       <picture>
         <source srcset="/images/instagram/ig-01-espacio-vacio.avif" type="image/avif" />
         <source srcset="/images/instagram/ig-01-espacio-vacio.webp" type="image/webp" />
-        <img src="/images/instagram/ig-01-espacio-vacio.jpg" alt="El espacio vacío con vigas de madera — proyecto real de María Iturbe Sánchez" loading="eager" fetchpriority="high" />
+        <img src="/images/instagram/ig-01-espacio-vacio.jpg" width="640" height="1136" alt="El espacio vacío con vigas de madera — proyecto real de María Iturbe Sánchez" loading="eager" fetchpriority="high" />
       </picture>
     </div>
 
@@ -134,7 +139,7 @@ const telefono = SITE.phoneDisplay;
       <picture>
         <source srcset="/images/instagram/ig-02-boceto.avif" type="image/avif" />
         <source srcset="/images/instagram/ig-02-boceto.webp" type="image/webp" />
-        <img src="/images/instagram/ig-02-boceto.jpg" alt="Espacio en plena fase de demolición — antes de la intervención" loading="lazy" />
+        <img src="/images/instagram/ig-02-boceto.jpg" width="1280" height="1280" alt="Espacio en plena fase de demolición — antes de la intervención" loading="lazy" />
       </picture>
     </div>
 
@@ -142,7 +147,7 @@ const telefono = SITE.phoneDisplay;
       <picture>
         <source srcset="/images/instagram/ig-03-anteproyecto.avif" type="image/avif" />
         <source srcset="/images/instagram/ig-03-anteproyecto.webp" type="image/webp" />
-        <img src="/images/instagram/ig-03-anteproyecto.jpg" alt="Render 3D del proyecto — la visión de María" loading="lazy" />
+        <img src="/images/instagram/ig-03-anteproyecto.jpg" width="720" height="1280" alt="Render 3D del proyecto — la visión de María" loading="lazy" />
       </picture>
     </div>
 
@@ -150,7 +155,7 @@ const telefono = SITE.phoneDisplay;
       <picture>
         <source srcset="/images/instagram/ig-04-realidad.avif" type="image/avif" />
         <source srcset="/images/instagram/ig-04-realidad.webp" type="image/webp" />
-        <img src="/images/instagram/ig-04-realidad.jpg" alt="El espacio terminado — reforma final con pared de piedra original" loading="lazy" />
+        <img src="/images/instagram/ig-04-realidad.jpg" width="720" height="1280" alt="El espacio terminado — reforma final con pared de piedra original" loading="lazy" />
       </picture>
     </div>
 
@@ -167,7 +172,7 @@ const telefono = SITE.phoneDisplay;
     </h1>
     <p class="hero-morph-lede">
       Estudio boutique de interiorismo en Yécora, Álava. María une diseño
-      e ingeniería —CTE, REBT, RITE— para entregar reformas habitables,
+      e ingeniería (CTE, REBT, RITE) para entregar reformas habitables,
       normativas y con la luz bien puesta. Sobre La Rioja, Álava y País Vasco.
     </p>
     <div class="hero-morph-actions">
@@ -287,7 +292,7 @@ const telefono = SITE.phoneDisplay;
 <section class="manifest" id="manifiesto">
   <div class="manifest-grid">
     <aside class="manifest-meta">
-      <p class="m-label">— Sobre el estudio</p>
+      <p class="m-label">Sobre el estudio</p>
       <p class="m-folio">Nº 01 · Manifiesto</p>
     </aside>
     <article class="manifest-body">
@@ -296,7 +301,7 @@ const telefono = SITE.phoneDisplay;
         Medimos la luz que entra, lo que cabe en la normativa,
         lo que aguanta el presupuesto. <em>El resto es vender humo.</em>»
       </p>
-      <p class="manifest-sig">— María Iturbe Sánchez, ESDIR ’20 · nota 8,41</p>
+      <p class="manifest-sig">María Iturbe Sánchez · ESDIR ’20 · nota 8,41</p>
     </article>
   </div>
 </section>
@@ -319,7 +324,7 @@ const telefono = SITE.phoneDisplay;
         <picture>
           <source srcset={strip(p, "avif", 0)} type="image/avif" />
           <source srcset={strip(p, "webp", 0)} type="image/webp" />
-          <img src={pick(p, 0)} alt={p.title} loading={i < 2 ? "eager" : "lazy"} />
+          <img src={pick(p, 0)} width={DIMS[pick(p, 0)]?.[0] ?? 1600} height={DIMS[pick(p, 0)]?.[1] ?? 1067} alt={p.title} loading={i < 2 ? "eager" : "lazy"} />
         </picture>
         <figcaption class="work-cap">
           <span>0{i+1} / 0{featured.length}</span>
@@ -343,7 +348,7 @@ const telefono = SITE.phoneDisplay;
       <picture>
         <source srcset="/team/maria.avif" type="image/avif" />
         <source srcset="/team/maria.webp" type="image/webp" />
-        <img src="/team/maria.jpg" alt="María Iturbe Sánchez" loading="lazy" />
+        <img src="/team/maria.jpg" width="528" height="528" alt="María Iturbe Sánchez" loading="lazy" />
       </picture>
       <span class="est-fig-tag">María, 2024 · Yécora</span>
     </figure>
@@ -360,7 +365,7 @@ const telefono = SITE.phoneDisplay;
       <p class="est-tx">
         Antes: Echazarreta Construcciones (Logroño), Blurarquitectura (Bilbao),
         COOK Cocina &amp; Baño. Hoy: dirección de proyectos residenciales,
-        comerciales y de cambio de uso — con planos, normativa y obra alineados.
+        comerciales y de cambio de uso, con planos, normativa y obra alineados.
       </p>
       <ul class="est-tools">
         <li>AutoCAD</li><li>SketchUp · V-Ray 5</li><li>Presto</li>
@@ -386,7 +391,7 @@ const telefono = SITE.phoneDisplay;
   <div class="srv-grid">
     {servicios.map((s, i) => (
       <a href={`/servicios/${s.id}`} class="srv-c" data-hover>
-        <p class="srv-n">— 0{i+1}</p>
+        <p class="srv-n">0{i+1}</p>
         <h3 class="srv-tt">{s.title}</h3>
         <p class="srv-d">{s.description}</p>
         <span class="srv-a">Saber más ↗</span>
@@ -425,7 +430,7 @@ const telefono = SITE.phoneDisplay;
 <footer class="foot">
   <div class="foot-inner">
     <div class="foot-brand">
-      <p class="foot-m">mit <em>interiorismo</em> — {year} · Yécora, Álava</p>
+      <p class="foot-m">mit <em>interiorismo</em> · {year} · Yécora, Álava</p>
       <p class="foot-s">Diseñado en territorio. Construido con planos, normativa y obra.</p>
     </div>
     <ul class="foot-links">

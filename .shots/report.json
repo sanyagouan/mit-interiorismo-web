@@ -1,0 +1,251 @@
+{
+  "url": "http://127.0.0.1:4400/",
+  "errors": [],
+  "failed": [],
+  "desktop": {
+    "loaderMs": 1707,
+    "vitals": {
+      "lcpMs": 360,
+      "lcpElement": "img",
+      "cls": 0
+    },
+    "height": 8907,
+    "overflowX": false,
+    "offenders": [],
+    "h1": [
+      "De un espacio vacío a un  hogar con alma."
+    ],
+    "smallTargets": [
+      "Saltar al contenido prin 225x19",
+      "mit\nINTERIORISMO · YÉCOR 202x23",
+      "I · EL ESPACIO 191x23",
+      "II · LOS MATERIALES 191x23",
+      "III · EL PROYECTO 191x23",
+      "IV · LA REALIDAD 191x23",
+      "VER LOS 3 PROYECTOS ↗ 193x24",
+      "María Iturbe Sánchez ↗ 148x16"
+    ],
+    "glHidden": [],
+    "title": "mit interiorismo — De un espacio vacío a un hogar con alma",
+    "glOn": false,
+    "scrollFps": {
+      "fps": 58,
+      "worstFrameMs": 33
+    },
+    "idleMotion": true,
+    "idleAt": "70%"
+  },
+  "mobile": {
+    "throttled": true,
+    "loaderMs": 6036,
+    "vitals": {
+      "lcpMs": 1464,
+      "lcpElement": "h1.hero-morph-title",
+      "cls": 0
+    },
+    "height": 10174,
+    "overflowX": false,
+    "offenders": [],
+    "h1": [
+      "De un espacio vacío a un  hogar con alma."
+    ],
+    "smallTargets": [
+      "Saltar al contenido prin 225x19",
+      "mit 20x16",
+      "I · EL ESPACIO 191x23",
+      "II · LOS MATERIALES 191x23",
+      "III · EL PROYECTO 191x23",
+      "IV · LA REALIDAD 191x23",
+      "VER LOS 3 PROYECTOS ↗ 193x24",
+      "María Iturbe Sánchez ↗ 148x16"
+    ],
+    "glHidden": [],
+    "title": "mit interiorismo — De un espacio vacío a un hogar con alma",
+    "glOn": false,
+    "scrollFps": {
+      "fps": 57,
+      "worstFrameMs": 83
+    }
+  },
+  "files": [
+    "/root/proyectos/mit-interiorismo-web/.shots/d-00-firstpaint.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-01-hero.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-02-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-03-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-04-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-05-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-06-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/d-07-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/k-01-focus.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/k-02-focus.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/k-03-focus.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/k-04-focus.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-01-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-01-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-02-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-02-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-03-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-03-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-04-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-04-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-05-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-05-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-06-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-06-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-07-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-07-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-08-rest.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/h-08-hover.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/m-01-hero.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/m-02-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/m-03-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/m-04-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/m-05-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/m-06-scroll.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/r-01-hero.png",
+    "/root/proyectos/mit-interiorismo-web/.shots/r-02-mid.png"
+  ],
+  "notes": [
+    "desktop FPS runs headless on a software GPU: treat it as a floor, not a measurement of real hardware",
+    "mobile runs at 4x CPU slowdown on slow 4G: mobile.vitals and mobile.scrollFps are the numbers that count"
+  ],
+  "keyboard": {
+    "stops": [
+      "a \"Saltar al contenido principal\"",
+      "a \"mit INTERIORISMO · YÉCORA\"",
+      "a \"PROYECTOS\"",
+      "a \"ESTUDIO\"",
+      "a \"SERVICIOS\"",
+      "a \"CONTACTO\"",
+      "a \"PEDIR CITA\"",
+      "a \"VER PROYECTOS\"",
+      "button \"I · EL ESPACIO\"",
+      "button \"II · LOS MATERIALES\"",
+      "button \"III · EL PROYECTO\"",
+      "button \"IV · LA REALIDAD\""
+    ],
+    "skipLinkFirst": false,
+    "noVisibleFocus": [],
+    "invisibleFocus": [],
+    "stuck": false
+  },
+  "hover": {
+    "targets": [
+      {
+        "shot": "h-01",
+        "label": "button \"I · El espacio\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "color",
+          "borderColor",
+          "textDecorationColor",
+          "backgroundColor"
+        ]
+      },
+      {
+        "shot": "h-02",
+        "label": "button \"III · El proyecto\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "color",
+          "borderColor",
+          "textDecorationColor",
+          "backgroundColor"
+        ]
+      },
+      {
+        "shot": "h-03",
+        "label": "div \"Abrir chat\"",
+        "interactive": true,
+        "primary": true,
+        "react": "moves",
+        "changed": [
+          "backgroundColor",
+          "transform",
+          "opacity"
+        ]
+      },
+      {
+        "shot": "h-04",
+        "label": "a \"Pedir cita\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "backgroundColor",
+          "borderColor"
+        ]
+      },
+      {
+        "shot": "h-05",
+        "label": "a \"Ver proyectos\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "borderColor"
+        ]
+      },
+      {
+        "shot": "h-06",
+        "label": "a \"Ver los 3 proyectos ↗\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "color",
+          "borderColor",
+          "textDecorationColor"
+        ]
+      },
+      {
+        "shot": "h-07",
+        "label": "a \"01 / 03 2020 · Lapuebla de Labarca, Álav\"",
+        "interactive": true,
+        "primary": true,
+        "react": "moves",
+        "changed": [
+          "transform",
+          "color",
+          "borderColor",
+          "textDecorationColor"
+        ]
+      },
+      {
+        "shot": "h-08",
+        "label": "a \"02 / 03 2020 · Kripan, Álava Espacio soc\"",
+        "interactive": true,
+        "primary": true,
+        "react": "moves",
+        "changed": [
+          "transform",
+          "color",
+          "borderColor",
+          "textDecorationColor"
+        ]
+      }
+    ],
+    "noHoverChange": [],
+    "colorOnly": [
+      "h-01 button \"I · El espacio\"",
+      "h-02 button \"III · El proyecto\"",
+      "h-04 a \"Pedir cita\"",
+      "h-05 a \"Ver proyectos\"",
+      "h-06 a \"Ver los 3 proyectos ↗\""
+    ],
+    "covered": [],
+    "cursorFollower": false
+  },
+  "reduced": {
+    "hiddenText": 1
+  },
+  "a11y": {
+    "violations": [],
+    "serious": 0,
+    "contrastNeedsReview": 62
+  }
+}

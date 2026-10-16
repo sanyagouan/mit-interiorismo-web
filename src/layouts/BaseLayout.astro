@@ -6,6 +6,7 @@
  */
 
 import '../styles/globals.css';
+import '../styles/fonts-selfhosted.css';
 import CookieBanner from '../components/CookieBanner.astro';
 import ChatBot from '../components/ChatBot.astro';
 import { SITE } from '../data/site';
@@ -120,18 +121,8 @@ const structuredData = {
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageURL} />
 
-    <!-- Tipografía variable: Instrument Serif (display) + Inter (sans) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="preload"
-      as="style"
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap"
-    />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300..700&display=swap"
-    />
+    <!-- Tipografía: auto-hospedada (woff2, sin tercera parte) — Fraunces + Inter Tight, unificada con la home -->
+    <link rel="preload" as="font" href="/fonts/fraunces-8f90dc37.woff2" crossorigin />
 
     <!-- Structured data -->
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />

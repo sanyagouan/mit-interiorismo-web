@@ -33,6 +33,8 @@ export interface Project {
   /** Es la imagen principal que se ve en la home y en el listado */
   featured: boolean;
   description: string;
+  /** Meta description SEO (≤160 chars) — si falta, [slug] trunca description */
+  metaDescription?: string;
   /** Bullet points de datos duros del proyecto */
   facts?: string[];
   tags?: string[];
@@ -79,6 +81,8 @@ export const PROJECTS: Project[] = [
     featured: true,
     description:
       'Proyecto de reforma integral de un merendero en Lapuebla de Labarca. La intervención se centra en la creación de un espacio social acogedor y funcional, optimizando la distribución y modernizando las instalaciones existentes. El diseño incorpora elementos contemporáneos mientras mantiene la esencia tradicional del espacio.',
+    metaDescription:
+      'Reforma integral de un merendero en Lapuebla de Labarca: espacio social acogedor, distribución optimizada e instalaciones modernas que respetan lo tradicional.',
     facts: [
       'Diseño de distribución espacial',
       'Selección de materiales y acabados',
@@ -117,6 +121,8 @@ export const PROJECTS: Project[] = [
     featured: true,
     description:
       'Transformación integral de un txoko tradicional en Kripan, combinando funcionalidad y estética moderna. El proyecto abarca la renovación completa del espacio, incluyendo cocina, zona de comedor y área de estar, creando un ambiente acogedor y versátil para reuniones sociales.',
+    metaDescription:
+      'Transformación integral de un txoko tradicional en Kripan: cocina, comedor y estar renovados con estética actual y versátiles para reuniones sociales.',
     facts: [
       'Diseño integral del espacio',
       'Planificación de cocina funcional',
@@ -148,6 +154,8 @@ export const PROJECTS: Project[] = [
     featured: true,
     description:
       'Proyecto integral de renovación para apartamentos vacacionales que combina diseño contemporáneo con funcionalidad. El alcance abarca desde la transformación exterior del edificio hasta el diseño detallado de los espacios interiores, con especial énfasis en las zonas de baño. La propuesta exterior moderniza la fachada manteniendo la esencia arquitectónica de la región, mientras que los interiores destacan por un cuidadoso diseño de baños que incorpora materiales de alta calidad y soluciones innovadoras.',
+    metaDescription:
+      'Renovación integral de apartamentos vacacionales en Labastida: fachada modernizada, interiores contemporáneos y baños de diseño con materiales de alta calidad.',
     facts: [
       'Renovación de fachada y diseño exterior',
       'Diseño integral de baños',

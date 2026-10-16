@@ -29,8 +29,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ['"Instrument Serif"', 'Georgia', 'serif'],
-        sans: ['"Inter Variable"', '"Inter"', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['"Fraunces"', 'Georgia', 'serif'],
+        sans: ['"Inter Tight"', 'system-ui', '-apple-system', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       fontSize: {

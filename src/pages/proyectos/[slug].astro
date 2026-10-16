@@ -13,6 +13,7 @@ import {
   PROJECT_STATUS,
 } from '../../data/projects';
 import { SITE } from '../../data/site';
+import { DIMS } from '../../data/image-dims';
 
 export function getStaticPaths() {
   return PROJECTS.map((project) => ({
@@ -33,8 +34,8 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
 ---
 
 <BaseLayout
-  title={`${project.title} — ${project.subtitle} | ${SITE.name}`}
-  description={project.description}
+  title={`${project.title} | ${SITE.name}`}
+  description={project.metaDescription ?? project.description.slice(0, 155)}
   ogImage={`/images/og/og-proyecto-${project.slug === 'merendero-lapuebla' ? 'lapuebla' : project.slug === 'txoko-kripan' ? 'kripan' : project.slug === 'apartamentos-labastida' ? 'labastida' : project.slug}.jpg`}
 >
   <main id="main-content" class="bg-cream">
@@ -52,6 +53,8 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
           />
           <img
             src={project.cover}
+            width={DIMS[project.cover]?.[0] ?? 1600}
+            height={DIMS[project.cover]?.[1] ?? 1067}
             alt={`${project.title} — proyecto de MIT Interiorismo`}
             class="h-full w-full object-cover"
             loading="eager"
@@ -162,6 +165,8 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
                   <figure class="overflow-hidden bg-cream">
                     <img
                       src={img}
+                      width={DIMS[img]?.[0] ?? 1600}
+                      height={DIMS[img]?.[1] ?? 1067}
                       alt={`${project.title} — imagen adicional`}
                       class="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
                       loading="lazy"
@@ -170,21 +175,6 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
                   </figure>
                 ))}
               </div>
-              {project.facts && project.facts.length > 0 && (
-                <div class="mt-12 border-l-2 border-teal pl-6">
-                  <p class="mb-3 text-xs uppercase tracking-[0.25em] text-ink-light">
-                    Datos del proyecto
-                  </p>
-                  <ul class="space-y-2 text-base text-ink-muted">
-                    {project.facts.map((fact) => (
-                      <li class="flex gap-3">
-                        <span class="text-teal" aria-hidden="true">✓</span>
-                        <span>{fact}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           </section>
         )

@@ -1,0 +1,244 @@
+{
+  "url": "http://127.0.0.1:4400/",
+  "errors": [],
+  "failed": [],
+  "desktop": {
+    "loaderMs": 2162,
+    "vitals": {
+      "lcpMs": 780,
+      "lcpElement": "img",
+      "cls": 0.005
+    },
+    "height": 8858,
+    "overflowX": false,
+    "offenders": [],
+    "h1": [
+      "De un espacio vacío a un  hogar con alma."
+    ],
+    "smallTargets": [
+      "Saltar al contenido prin 188x20",
+      "mit\nINTERIORISMO · YÉCOR 197x24",
+      "VER LOS 3 PROYECTOS ↗ 182x24",
+      "María Iturbe Sánchez ↗ 162x19",
+      "Proyectos 57x16",
+      "Estudio 40x16",
+      "Servicios 50x16",
+      "Contacto 52x16"
+    ],
+    "glHidden": [],
+    "title": "mit interiorismo — De un espacio vacío a un hogar con alma",
+    "glOn": false,
+    "scrollFps": {
+      "fps": 58,
+      "worstFrameMs": 50
+    },
+    "idleMotion": true,
+    "idleAt": "35%"
+  },
+  "mobile": {
+    "throttled": true,
+    "loaderMs": 6049,
+    "vitals": {
+      "lcpMs": 1480,
+      "lcpElement": "h1.hero-morph-title",
+      "cls": 0.114
+    },
+    "height": 10075,
+    "overflowX": false,
+    "offenders": [],
+    "h1": [
+      "De un espacio vacío a un  hogar con alma."
+    ],
+    "smallTargets": [
+      "Saltar al contenido prin 188x20",
+      "mit 24x16",
+      "VER LOS 3 PROYECTOS ↗ 182x24",
+      "María Iturbe Sánchez ↗ 162x19",
+      "Proyectos 57x16",
+      "Estudio 40x16",
+      "Servicios 50x16",
+      "Contacto 52x16"
+    ],
+    "glHidden": [],
+    "title": "mit interiorismo — De un espacio vacío a un hogar con alma",
+    "glOn": false,
+    "scrollFps": {
+      "fps": 56,
+      "worstFrameMs": 83
+    }
+  },
+  "files": "36 screenshots in /root/proyectos/mit-interiorismo-web/.shots",
+  "notes": [
+    "desktop FPS runs headless on a software GPU: treat it as a floor, not a measurement of real hardware",
+    "mobile runs at 4x CPU slowdown on slow 4G: mobile.vitals and mobile.scrollFps are the numbers that count"
+  ],
+  "keyboard": {
+    "stops": [
+      "a \"Saltar al contenido principal\"",
+      "a \"mit INTERIORISMO · YÉCORA\"",
+      "a \"PROYECTOS\"",
+      "a \"ESTUDIO\"",
+      "a \"SERVICIOS\"",
+      "a \"CONTACTO\"",
+      "a \"PEDIR CITA\"",
+      "a \"VER PROYECTOS\"",
+      "button \"I · EL ESPACIO\"",
+      "button \"II · LOS MATERIALES\"",
+      "button \"III · EL PROYECTO\"",
+      "button \"IV · LA REALIDAD\""
+    ],
+    "skipLinkFirst": false,
+    "noVisibleFocus": [],
+    "invisibleFocus": [],
+    "stuck": false
+  },
+  "hover": {
+    "targets": [
+      {
+        "shot": "h-01",
+        "label": "button \"I · El espacio\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "color",
+          "borderColor",
+          "textDecorationColor",
+          "backgroundColor"
+        ]
+      },
+      {
+        "shot": "h-02",
+        "label": "button \"III · El proyecto\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "color",
+          "borderColor",
+          "textDecorationColor",
+          "backgroundColor"
+        ]
+      },
+      {
+        "shot": "h-03",
+        "label": "a \"Pedir cita\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "backgroundColor",
+          "borderColor"
+        ]
+      },
+      {
+        "shot": "h-04",
+        "label": "a \"Ver proyectos\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "borderColor"
+        ]
+      },
+      {
+        "shot": "h-05",
+        "label": "a \"Ver los 3 proyectos ↗\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "color",
+          "borderColor",
+          "textDecorationColor"
+        ]
+      },
+      {
+        "shot": "h-06",
+        "label": "a \"01 / 03 2020 · Lapuebla de Labarca, Álav\"",
+        "interactive": true,
+        "primary": true,
+        "react": "moves",
+        "changed": [
+          "transform",
+          "color",
+          "borderColor",
+          "textDecorationColor"
+        ]
+      },
+      {
+        "shot": "h-07",
+        "label": "a \"02 / 03 2020 · Kripan, Álava Espacio soc\"",
+        "interactive": true,
+        "primary": true,
+        "react": "moves",
+        "changed": [
+          "transform",
+          "color",
+          "borderColor",
+          "textDecorationColor"
+        ]
+      },
+      {
+        "shot": "h-08",
+        "label": "a \"Trayectoria completa →\"",
+        "interactive": true,
+        "primary": true,
+        "react": "color",
+        "changed": [
+          "backgroundColor",
+          "borderColor"
+        ]
+      }
+    ],
+    "noHoverChange": [],
+    "colorOnly": [
+      "h-01 button \"I · El espacio\"",
+      "h-02 button \"III · El proyecto\"",
+      "h-03 a \"Pedir cita\"",
+      "h-04 a \"Ver proyectos\"",
+      "h-05 a \"Ver los 3 proyectos ↗\"",
+      "h-08 a \"Trayectoria completa →\""
+    ],
+    "covered": [],
+    "cursorFollower": false
+  },
+  "reduced": {
+    "hiddenText": 1
+  },
+  "a11y": {
+    "violations": [
+      {
+        "id": "aria-allowed-attr",
+        "impact": "critical",
+        "help": "Elements must only use supported ARIA attributes",
+        "count": 1,
+        "nodes": [
+          "#cb-fab"
+        ]
+      },
+      {
+        "id": "aria-prohibited-attr",
+        "impact": "serious",
+        "help": "Elements must only use permitted ARIA attributes",
+        "count": 1,
+        "nodes": [
+          "#cb-fab"
+        ]
+      },
+      {
+        "id": "color-contrast",
+        "impact": "serious",
+        "help": "Elements must meet minimum color contrast ratio thresholds",
+        "count": 3,
+        "nodes": [
+          "a[href$=\"aviso-legal\"] (#747370 on #0a0a09, 4.17:1, needs 4.5:1)",
+          "a[href$=\"privacidad\"] (#747370 on #0a0a09, 4.17:1, needs 4.5:1)",
+          "a[href$=\"cookies\"] (#747370 on #0a0a09, 4.17:1, needs 4.5:1)"
+        ]
+      }
+    ],
+    "serious": 3,
+    "contrastNeedsReview": 62
+  }
+}

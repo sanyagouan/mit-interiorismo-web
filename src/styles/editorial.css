@@ -494,7 +494,7 @@ em{font-style:italic;}
   transition:opacity .25s,color .25s;
 }
 .foot-links a:hover{opacity:1;color:var(--gold);}
-.foot-legal a{opacity:0.45;font-size:12px;}
+.foot-legal a{opacity:0.62;font-size:12px;}
 @media (max-width:760px){
   .foot-inner{grid-template-columns:1fr;gap:32px;}
 }

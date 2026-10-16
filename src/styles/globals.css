@@ -18,9 +18,9 @@
   --color-accent-clay: #D4A373;
   --color-accent-terracotta: #C4553C;
 
-  /* Tipografía */
-  --font-display: 'Instrument Serif', Georgia, serif;
-  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  /* Tipografía — UNIFICADA al design system "artistic" (16-oct-2026): Fraunces + Inter Tight */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter Tight', system-ui, -apple-system, sans-serif;
 
   /* Espaciado fluido */
   --space-section: clamp(4rem, 10vh, 8rem);

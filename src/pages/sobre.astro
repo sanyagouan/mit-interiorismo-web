@@ -12,7 +12,7 @@ import { SITE, MARIA } from '../data/site';
 ---
 
 <BaseLayout
-  title={`Sobre — ${SITE.name}`}
+  title={`Sobre · ${SITE.name}`}
   description={`Conoce a María Iturbe Sánchez, interiorista con más de 17 años de experiencia, fundada ESDIR La Rioja 8,41. Estudio boutique en ${MARIA.city}.`}
 >
   <main id="main-content" class="bg-cream">
@@ -37,6 +37,8 @@ import { SITE, MARIA } from '../data/site';
           <div class="md:col-span-5">
             <img
               src={MARIA.photo}
+              width="528"
+              height="528"
               alt={MARIA.fullName}
               class="aspect-[4/5] w-full object-cover bg-cream-warm"
               loading="eager"
@@ -141,7 +143,7 @@ import { SITE, MARIA } from '../data/site';
               <div class="grid gap-4 md:grid-cols-12">
                 <div class="md:col-span-3">
                   <p class="text-xs uppercase tracking-[0.2em] text-teal">
-                    {job.from} — {job.to}
+                    {job.from} · {job.to}
                   </p>
                 </div>
                 <div class="md:col-span-9">
@@ -169,7 +171,7 @@ import { SITE, MARIA } from '../data/site';
 
         {MARIA.education.map((edu) => (
           <article class="border-l-2 border-teal pl-6">
-            <p class="text-xs uppercase tracking-[0.2em] text-ink-light">{edu.from} — {edu.to}</p>
+            <p class="text-xs uppercase tracking-[0.2em] text-ink-light">{edu.from} · {edu.to}</p>
             <h3 class="font-display mt-2 text-2xl text-ink">{edu.title}</h3>
             <p class="mt-1 text-ink-soft">{edu.institution}</p>
             <p class="mt-3 max-w-2xl text-ink-muted" set:html={edu.detail}></p>
