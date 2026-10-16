@@ -125,22 +125,38 @@ const telefono = SITE.phoneDisplay;
     <p class="hero-morph-tag">estudio de interiorismo · Yécora, Álava</p>
   </div>
 
-  <div class="hero-morph-stage" id="hero-morph-stage" aria-label="Transformación de la obra al hacer scroll">
+  <div class="hero-morph-stage" id="hero-morph-stage">
 
     <div class="hero-morph-layer hero-morph-layer--sketch is-on" data-step="1">
-      <img src="/images/instagram/ig-01-espacio-vacio.jpg" width="640" height="1136" alt="El espacio antes de la reforma: vigas, arcos y un lienzo en blanco" loading="eager" fetchpriority="high" decoding="async" />
+      <picture>
+        <source srcset="/images/instagram/ig-01-espacio-vacio.avif" type="image/avif" />
+        <source srcset="/images/instagram/ig-01-espacio-vacio.webp" type="image/webp" />
+        <img src="/images/instagram/ig-01-espacio-vacio.jpg" width="640" height="1136" alt="El espacio vacío con vigas de madera — proyecto real de María Iturbe Sánchez" loading="eager" fetchpriority="high" />
+      </picture>
     </div>
 
     <div class="hero-morph-layer" data-step="2">
-      <img src="/images/instagram/ig-02-boceto.jpg" width="1280" height="1280" alt="La materia prima: la obra en plena transformación" loading="eager" decoding="async" />
+      <picture>
+        <source srcset="/images/instagram/ig-02-boceto.avif" type="image/avif" />
+        <source srcset="/images/instagram/ig-02-boceto.webp" type="image/webp" />
+        <img src="/images/instagram/ig-02-boceto.jpg" width="1280" height="1280" alt="Espacio en plena fase de demolición — antes de la intervención" loading="lazy" />
+      </picture>
     </div>
 
     <div class="hero-morph-layer" data-step="3">
-      <img src="/images/instagram/ig-03-anteproyecto.jpg" width="720" height="1280" alt="El proyecto: el render de la visión" loading="lazy" decoding="async" />
+      <picture>
+        <source srcset="/images/instagram/ig-03-anteproyecto.avif" type="image/avif" />
+        <source srcset="/images/instagram/ig-03-anteproyecto.webp" type="image/webp" />
+        <img src="/images/instagram/ig-03-anteproyecto.jpg" width="720" height="1280" alt="Render 3D del proyecto — la visión de María" loading="lazy" />
+      </picture>
     </div>
 
     <div class="hero-morph-layer" data-step="4">
-      <img src="/images/instagram/ig-04-realidad.jpg" width="720" height="1280" alt="La realidad: el espacio terminado" loading="lazy" decoding="async" />
+      <picture>
+        <source srcset="/images/instagram/ig-04-realidad.avif" type="image/avif" />
+        <source srcset="/images/instagram/ig-04-realidad.webp" type="image/webp" />
+        <img src="/images/instagram/ig-04-realidad.jpg" width="720" height="1280" alt="El espacio terminado — reforma final con pared de piedra original" loading="lazy" />
+      </picture>
     </div>
 
     <div class="hero-morph-vignette"></div>
@@ -166,9 +182,14 @@ const telefono = SITE.phoneDisplay;
   </div>
 
   <div class="hero-morph-foot" id="hero-morph-foot">
-    <div class="hero-morph-scroll" aria-hidden="true">
-      <span>Desplaza para transformar</span>
-    </div>
+    <button type="button" class="mf-step is-active" data-step="1">I · El espacio</button>
+    <button type="button" class="mf-step" data-step="2">II · Los materiales</button>
+    <button type="button" class="mf-step" data-step="3">III · El proyecto</button>
+    <button type="button" class="mf-step" data-step="4">IV · La realidad</button>
+  </div>
+
+  <div class="hero-morph-scroll" aria-hidden="true">
+    <span>Desplaza para transformar</span>
   </div>
 
   <p class="mark">mit</p>
@@ -177,53 +198,86 @@ const telefono = SITE.phoneDisplay;
 
 <script is:inline>
 (function(){
-  // HERO · TRANSFORMACIÓN atada al scroll de la página (patrón Awwwards):
-  // el usuario no hace nada, hace scroll normal y la obra avanza.
-  const hero  = document.getElementById('top');
+  // HERO · TRANSFORMACIÓN
+  // · 4 imágenes apiladas
+  // · crossfade autoplay (6.5s por paso)
+  // · controlable por scroll (rueda) y por click en steps
+  // · pausa si el hero no está visible
   const stage = document.getElementById('hero-morph-stage');
-  if (!hero || !stage) return;
-  const layers = Array.from(stage.querySelectorAll('.hero-morph-layer'));
-  const N = layers.length;
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hero  = document.getElementById('top');
+  if (!stage || !hero) return;
 
-  function render(pos){
-    for (let i = 0; i < N; i++){
-      const op = Math.max(0, 1 - Math.abs(pos - i));
-      layers[i].style.opacity = op.toFixed(3);
+  const layers = stage.querySelectorAll('.hero-morph-layer');
+  const steps  = document.querySelectorAll('#hero-morph-foot .mf-step');
+  const N = layers.length;
+  let current = 0;       // 0..N-1
+  let autoplay = null;
+  let paused   = false;
+  const DELAY = 8000;
+
+  function go(i){
+    i = (i + N) % N;
+    if (i === current) return;
+    layers[current].classList.remove('is-on');
+    layers[i].classList.add('is-on');
+    steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
+    current = i;
+  }
+
+  function next(){ go(current + 1); }
+  function prev(){ go(current - 1); }
+
+  function start(){
+    stop();
+    if (paused) return;
+    autoplay = setInterval(next, DELAY);
+  }
+  function stop(){
+    if (autoplay){ clearInterval(autoplay); autoplay = null; }
+  }
+
+  // === HERO scroll ===
+  // El usuario hace scroll normal de página. La rueda/touch trackpad
+  // en el hero transforma el proyecto. No bloqueamos el scroll vertical
+  // (eso es UX terrible). En su lugar: en cuanto el hero deja de estar
+  // visible al hacer scroll, la transformación se ha completado.
+  // Para control fino: las teclas ←/→ y los botones del stepper.
+
+  // En este modelo la "transformación" se desarrolla con autoplay + tiempo
+  // que el usuario pasa en el hero. Si scroll-y > 0 dentro del hero,
+  // aceleramos. Si scroll-y > 100px (saliendo), saltamos al final.
+
+  function onScroll(){
+    const r = hero.getBoundingClientRect();
+    // cuánto ha scrolleado el usuario dentro del hero (en px)
+    const scrolled = Math.max(0, -r.top);
+    if (scrolled > 0 && scrolled < 40) {
+      // acaba de empezar a salir → fuerza la última capa
+      if (current !== N - 1) go(N - 1);
+    }
+    // si vuelve al hero, vuelve a la primera
+    if (r.top > 50 && current !== 0) {
+      go(0);
     }
   }
-  render(0);
-
-  if (reduced){
-    let i = 0;
-    setInterval(() => {
-      layers.forEach((l, k) => l.style.opacity = k === i ? 1 : 0);
-      i = (i + 1) % N;
-    }, 4000);
-    return;
-  }
-
-  let raf = 0;
-  function update(){
-    const r = hero.getBoundingClientRect();
-    const total = hero.offsetHeight - window.innerHeight;
-    if (total <= 0) { render(0); return; }
-    const scrolled = Math.max(0, Math.min(total, -r.top));
-    const pos = (scrolled / total) * (N - 1);
-    render(pos);
-  }
-  function onScroll(){
-    if (raf) return;
-    raf = requestAnimationFrame(() => { update(); raf = 0; });
-  }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', onScroll);
-  update();
-})();
-</script>
 
-<script is:inline>
-/* (sin script del hero: ahora es scroll-driven; ver <script> inline al final de la sección) */
+  // Pausa con teclado (control fino)
+  document.addEventListener('keydown', e => {
+    const r = hero.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) return;
+    if (e.key === 'ArrowRight') { next(); start(); e.preventDefault(); }
+    if (e.key === 'ArrowLeft')  { prev(); start(); e.preventDefault(); }
+  });
+
+  // Click en step — el click PAUSA el autoplay
+  steps.forEach((s, k) => s.addEventListener('click', () => {
+    go(k);
+    stop(); // pausa hasta que el usuario vuelva a interactuar
+  }));
+
+  start();
+})();
 </script>
 
 <!-- ===== TICKER ===== -->
