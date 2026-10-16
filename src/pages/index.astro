@@ -125,34 +125,22 @@ const telefono = SITE.phoneDisplay;
     <p class="hero-morph-tag">estudio de interiorismo · Yécora, Álava</p>
   </div>
 
-  <div class="hero-morph-stage" id="hero-morph-stage" aria-label="Secuencia de la reforma: arrastra para avanzar la obra">
+  <div class="hero-morph-stage" id="hero-morph-stage" aria-label="Transformación de la obra al hacer scroll">
 
     <div class="hero-morph-layer hero-morph-layer--sketch is-on" data-step="1">
-      <picture>
-        <source srcset="/images/hero/obra-fase-1-vacio.webp" type="image/webp" />
-        <img src="/images/hero/obra-fase-1-vacio.jpg" width="1920" height="1080" alt="Interior de casa de pueblo sin reformar: paredes de piedra con yeso agrietado, vigas de madera y suelo de terrazo polvoriento" loading="eager" fetchpriority="high" decoding="async" />
-      </picture>
+      <img src="/images/instagram/ig-01-espacio-vacio.jpg" width="640" height="1136" alt="El espacio antes de la reforma: vigas, arcos y un lienzo en blanco" loading="eager" fetchpriority="high" decoding="async" />
     </div>
 
     <div class="hero-morph-layer" data-step="2">
-      <picture>
-        <source srcset="/images/hero/obra-fase-2-demolicion.webp" type="image/webp" />
-        <img src="/images/hero/obra-fase-2-demolicion.jpg" width="1920" height="1080" alt="La misma sala en plena fase de demolición: yeso retirado, piedra vista, escombros y herramientas de obra" loading="eager" decoding="async" />
-      </picture>
+      <img src="/images/instagram/ig-02-boceto.jpg" width="1280" height="1280" alt="La materia prima: la obra en plena transformación" loading="eager" decoding="async" />
     </div>
 
     <div class="hero-morph-layer" data-step="3">
-      <picture>
-        <source srcset="/images/hero/obra-fase-3-instalaciones.webp" type="image/webp" />
-        <img src="/images/hero/obra-fase-3-instalaciones.jpg" width="1920" height="1080" alt="La misma sala en fase de instalaciones: tuberías de cobre y conducciones eléctricas vistas sobre piedra, aislamiento y placas de yeso" loading="lazy" decoding="async" />
-      </picture>
+      <img src="/images/instagram/ig-03-anteproyecto.jpg" width="720" height="1280" alt="El proyecto: el render de la visión" loading="lazy" decoding="async" />
     </div>
 
     <div class="hero-morph-layer" data-step="4">
-      <picture>
-        <source srcset="/images/hero/obra-fase-4-resultado.webp" type="image/webp" />
-        <img src="/images/hero/obra-fase-4-resultado.jpg" width="1920" height="1080" alt="La misma sala ya reformada: paredes de cal crema con franja de piedra original, suelo de roble e isla de cocina" loading="lazy" decoding="async" />
-      </picture>
+      <img src="/images/instagram/ig-04-realidad.jpg" width="720" height="1280" alt="La realidad: el espacio terminado" loading="lazy" decoding="async" />
     </div>
 
     <div class="hero-morph-vignette"></div>
@@ -178,15 +166,9 @@ const telefono = SITE.phoneDisplay;
   </div>
 
   <div class="hero-morph-foot" id="hero-morph-foot">
-    <button type="button" class="mf-step is-active" data-step="1">I · El espacio</button>
-    <button type="button" class="mf-step" data-step="2">II · La obra</button>
-    <button type="button" class="mf-step" data-step="3">III · Las instalaciones</button>
-    <button type="button" class="mf-step" data-step="4">IV · El resultado</button>
-    <p class="hero-ia-note">Secuencia ilustrativa generada por IA · sustituible por fotografía real de obra</p>
-  </div>
-
-  <div class="hero-morph-scroll" aria-hidden="true">
-    <span>Arrastra para avanzar la obra</span>
+    <div class="hero-morph-scroll" aria-hidden="true">
+      <span>Desplaza para transformar</span>
+    </div>
   </div>
 
   <p class="mark">mit</p>
@@ -195,47 +177,53 @@ const telefono = SITE.phoneDisplay;
 
 <script is:inline>
 (function(){
-  // HERO · AUTOPLAY puro (sin barra, sin scrub, sin cursor raro). ~3.5s por fase, 14s ciclo.
-  const stage = document.getElementById('hero-morph-stage');
+  // HERO · TRANSFORMACIÓN atada al scroll de la página (patrón Awwwards):
+  // el usuario no hace nada, hace scroll normal y la obra avanza.
   const hero  = document.getElementById('top');
-  if (!stage || !hero) return;
+  const stage = document.getElementById('hero-morph-stage');
+  if (!hero || !stage) return;
   const layers = Array.from(stage.querySelectorAll('.hero-morph-layer'));
-  const steps  = Array.from(document.querySelectorAll('#hero-morph-foot .mf-step'));
   const N = layers.length;
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (reduced){
-    for (let i = 0; i < N; i++){ const l = layers[i]; l.style.opacity = i===0?1:0; l.classList.toggle('is-on', i===0); }
-    steps.forEach((s,k)=>s.classList.toggle('is-active', k===0));
-    return;
-  }
-  const SPEED = 0.28; // 1/3.5s por fase → 14s ida+vuelta
-  let pos = 0, dir = 1, last = performance.now(), needsRender = true;
-  function render(){
-    const active = Math.round(pos);
+
+  function render(pos){
     for (let i = 0; i < N; i++){
       const op = Math.max(0, 1 - Math.abs(pos - i));
-      const l = layers[i];
-      l.style.opacity = op.toFixed(3);
-      l.classList.toggle('is-on', op > 0.5);
+      layers[i].style.opacity = op.toFixed(3);
     }
-    steps.forEach((s,k)=>s.classList.toggle('is-active', k===active));
-    needsRender = false;
   }
-  function loop(now){
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  render(0);
+
+  if (reduced){
+    let i = 0;
+    setInterval(() => {
+      layers.forEach((l, k) => l.style.opacity = k === i ? 1 : 0);
+      i = (i + 1) % N;
+    }, 4000);
+    return;
+  }
+
+  let raf = 0;
+  function update(){
     const r = hero.getBoundingClientRect();
-    if (!document.hidden && !(r.bottom < 0 || r.top > innerHeight)){
-      pos += dir * SPEED * dt;
-      if (pos >= N - 1){ pos = N - 1; dir = -1; }
-      else if (pos <= 0){ pos = 0; dir = 1; }
-      needsRender = true;
-    }
-    if (needsRender) render();
-    requestAnimationFrame(loop);
+    const total = hero.offsetHeight - window.innerHeight;
+    if (total <= 0) { render(0); return; }
+    const scrolled = Math.max(0, Math.min(total, -r.top));
+    const pos = (scrolled / total) * (N - 1);
+    render(pos);
   }
-  requestAnimationFrame(loop);
-  render();
+  function onScroll(){
+    if (raf) return;
+    raf = requestAnimationFrame(() => { update(); raf = 0; });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  update();
 })();
+</script>
+
+<script is:inline>
+/* (sin script del hero: ahora es scroll-driven; ver <script> inline al final de la sección) */
 </script>
 
 <!-- ===== TICKER ===== -->
