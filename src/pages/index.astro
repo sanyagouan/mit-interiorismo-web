@@ -156,8 +156,7 @@ const telefono = SITE.phoneDisplay;
 
     <div class="hero-morph-vignette"></div>
 
-    <!-- Manejador de arrastre: avanza la obra con la mano -->
-  </div>
+    <!-- Manejador de arrastre: avanza la obra con la mano (scrub implementado en FASE 2) -->
   </div>
 
   <div class="hero-morph-copy">
@@ -475,98 +474,8 @@ const telefono = SITE.phoneDisplay;
   document.querySelectorAll('.work,.reveal').forEach(function(el){ io.observe(el); });
 })();
 
-// hero morph animation (wireframe → photo)
-(function(){
-  var stage = document.getElementById('hero-morph-stage');
-  var photo = document.getElementById('hero-morph-photo');
-  var cursor = document.getElementById('hero-morph-cursor');
-  var cursorLabel = document.getElementById('hero-morph-cursor-label');
-  var lines = document.querySelectorAll('.hero-morph-title .hm-line span');
-  var steps = document.querySelectorAll('.mf-step');
-  if (!stage || !photo) return;
-
-  function setStep(n){
-    steps.forEach(function(s){ s.classList.toggle('is-active', parseInt(s.dataset.step,10) === n); });
-  }
-
-  function step1_plano(){
-    setStep(1);
-    // wireframe ya visible
-    // cursor aparece en el centro
-    if (cursor) {
-      cursor.style.transition = 'none';
-      cursor.style.left = '50%';
-      cursor.style.top = '50%';
-      cursor.style.opacity = '0';
-      requestAnimationFrame(function(){
-        if (cursor) {
-          cursor.style.transition = 'opacity .6s ease';
-          cursor.style.opacity = '1';
-        }
-      });
-    }
-    if (cursorLabel) cursorLabel.textContent = 'N 42°37.4\' — W 2°28.1\'';
-  }
-
-  function step2_gesto(){
-    setStep(2);
-    if (cursorLabel) cursorLabel.textContent = 'TRAZANDO LÍNEAS DE LUZ';
-    // cursor se mueve (gesto)
-    if (cursor) {
-      cursor.style.transition = 'left 2.4s cubic-bezier(.6,.1,.3,1), top 2.4s cubic-bezier(.6,.1,.3,1)';
-      cursor.style.left = '32%';
-      cursor.style.top = '38%';
-    }
-  }
-
-  function step3_luz(){
-    setStep(3);
-    if (cursorLabel) cursorLabel.textContent = 'AÑADIENDO TEXTURA';
-    if (cursor) {
-      cursor.style.transition = 'left 2s ease-in-out, top 2s ease-in-out';
-      cursor.style.left = '68%';
-      cursor.style.top = '58%';
-    }
-    // elementos decorativos aparecen
-    var decor = document.querySelector('.wire-decor');
-    if (decor) {
-      decor.style.transition = 'opacity 1.2s ease';
-      decor.style.opacity = '1';
-    }
-  }
-
-  function step4_espacio(){
-    setStep(4);
-    if (cursorLabel) cursorLabel.textContent = 'RESULTADO';
-    if (cursor) {
-      cursor.style.transition = 'opacity .6s ease';
-      cursor.style.opacity = '0';
-    }
-    // foto se expande clip-path (morfismo desde wireframe)
-    photo.classList.add('is-revealing');
-    setTimeout(function(){ photo.classList.add('is-final'); }, 50);
-  }
-
-  function start(){
-    var t0 = Date.now();
-    // título aparece escalonado una vez cargado el wireframe
-    lines.forEach(function(s, i){
-      s.style.transition = 'transform 1s cubic-bezier(.2,.8,.2,1) '+(i*0.12+1.4)+'s';
-      s.style.transform = 'translateY(0)';
-    });
-    setTimeout(step1_plano, 1000);
-    setTimeout(step2_gesto,   3000);
-    setTimeout(step3_luz,      6000);
-    setTimeout(step4_espacio,  9000);
-  }
-
-  // pre-estado del título (oculto bajo)
-  lines.forEach(function(s){ s.style.transform = 'translateY(110%)'; });
-  // pre-estado de la foto (clip minúsculo en el centro)
-  photo.classList.add('is-pre');
-
-  if (document.readyState === 'complete') start();
-  else window.addEventListener('load', start, {once:true});
+// (script wireframe→foto eliminado: dependía de IDs inexistentes en el DOM — FASE 2
+//  implementa el scrub real por arrastre sobre las 4 capas existentes)
 })();
 </script>
 

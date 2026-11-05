@@ -124,67 +124,7 @@ export const NAV = [
   { label: 'Contacto', href: '/contacto' },
 ] as const;
 
-export const SERVICES = [
-  {
-    id: 'reforma-integral',
-    title: 'Reforma integral',
-    description:
-      'Dirección completa del proyecto: distribución, instalaciones (climatización, electricidad, fontanería), materiales, mobiliario y coordinación de gremios. Cumplimiento normativo CTE, REBT y RITE.',
-    icon: 'home',
-    evidence: 'Apartamentos en Labastida (Álava 2020) — reforma residencial vacacional con fachada y diseño integral de baños.',
-  },
-  {
-    id: 'reforma-comercial',
-    title: 'Reforma de espacios comerciales y oficinas',
-    description:
-      'Transformación de locales y oficinas técnicas. Cambios de uso, licencias, instalaciones industriales y diseño de mobiliario corporativo a medida.',
-    icon: 'building',
-    evidence:
-      'Espacios sociales en Álava — merenderos, txokos, apartamentos. Diseño integral con instalaciones resueltas.',
-  },
-  {
-    id: 'cambio-uso',
-    title: 'Cambio de uso (terciario → residencial)',
-    description:
-      'Tramitación y proyecto para transformar locales u oficinas en viviendas. Cumplimiento del CTE 2026, gestión con comunidades de propietarios y licencias municipales.',
-    icon: 'key',
-    evidence:
-      'Apartamentos vacacionales en Labastida (Álava 2020) — reconversión residencial con normativa y diseño de baños.',
-  },
-  {
-    id: 'asesoria-tecnica',
-    title: 'Asesoría técnica y consultoría',
-    description:
-      'Comparativa de presupuestos de instaladores, supervisión de ofertas, defensa técnica del cliente frente a propuestas abusivas. Traducción de normativa CTE/REBT/RITE.',
-    icon: 'compass',
-    evidence:
-      'Proyecto histórico en Álava — supervisión de ofertas y comparativa de presupuestos para clientes residenciales.',
-  },
-  {
-    id: 'renderizacion',
-    title: 'Renderizado 3D y documentación',
-    description:
-      'Renders fotorrealistas (V-Ray 5), memorias técnicas, presupuestos desglosados (Presto) y planos ejecutivos (AutoCAD + SketchUp). Visualiza el proyecto antes de ejecutar.',
-    icon: 'image',
-    evidence: 'Memorias técnicas, presupuestos y planos ejecutivos para cada proyecto entregado.',
-  },
-  {
-    id: 'espacios-sociales',
-    title: 'Espacios sociales y viviendas',
-    description:
-      'Diseño de merenderos, txokos, viviendas vacacionales y apartamentos. Reformas residenciales con atención a detalles de cocinas y baños.',
-    icon: 'home',
-    evidence: 'Merendero Lapuebla, Txoko Kripan, Apartamentos Labastida (2020).',
-  },
-  {
-    id: 'identidad-corporativa',
-    title: 'Identidad corporativa para estudios',
-    description:
-      'Diseño de marca completo para estudios y proyectos de interiorismo: logo, paleta, tipografía y aplicaciones (cartas, lonas de obra, etc.).',
-    icon: 'sparkle',
-    evidence: 'Logo MIT Interiorismo — 7 iteraciones, paleta teal + beige.',
-  },
-] as const;
+// (SERVICES legacy eliminado en FASE 1 — la fuente de verdad de servicios es src/data/servicios.ts)
 
 export const PROCESS_STEPS = [
   {
