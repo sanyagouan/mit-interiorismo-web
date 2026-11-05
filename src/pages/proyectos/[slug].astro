@@ -31,6 +31,11 @@ const { Content } = await import(
 const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
   (img, idx, arr) => arr.indexOf(img) === idx && Boolean(img)
 );
+
+// Pager circular anterior / siguiente
+const idx = PROJECTS.findIndex((p) => p.slug === project.slug);
+const prev = PROJECTS[(idx - 1 + PROJECTS.length) % PROJECTS.length];
+const next = PROJECTS[(idx + 1) % PROJECTS.length];
 ---
 
 <BaseLayout
@@ -167,27 +172,34 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
                   const base = img.replace(/\.[^.]+$/, '');
                   return (
                     <figure class="overflow-hidden bg-cream">
-                      <picture>
-                        <source
-                          srcset={`${base}-w800.avif 800w, ${base}-w1600.avif 1600w, ${base}-w2400.avif 2400w`}
-                          type="image/avif"
-                          sizes="(min-width: 768px) 50vw, 92vw"
-                        />
-                        <source
-                          srcset={`${base}-w800.webp 800w, ${base}-w1600.webp 1600w, ${base}-w2400.webp 2400w`}
-                          type="image/webp"
-                          sizes="(min-width: 768px) 50vw, 92vw"
-                        />
-                        <img
-                          src={img}
-                          width={DIMS[img]?.[0] ?? 1600}
-                          height={DIMS[img]?.[1] ?? 1067}
-                          alt={`${project.title} — imagen adicional`}
-                          class="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </picture>
+                      <button
+                        type="button"
+                        class="gal-item group block w-full cursor-zoom-in bg-cream p-0"
+                        data-full={img}
+                        aria-label={`Ampliar imagen: ${project.title}`}
+                      >
+                        <picture>
+                          <source
+                            srcset={`${base}-w800.avif 800w, ${base}-w1600.avif 1600w, ${base}-w2400.avif 2400w`}
+                            type="image/avif"
+                            sizes="(min-width: 768px) 50vw, 92vw"
+                          />
+                          <source
+                            srcset={`${base}-w800.webp 800w, ${base}-w1600.webp 1600w, ${base}-w2400.webp 2400w`}
+                            type="image/webp"
+                            sizes="(min-width: 768px) 50vw, 92vw"
+                          />
+                          <img
+                            src={img}
+                            width={DIMS[img]?.[0] ?? 1600}
+                            height={DIMS[img]?.[1] ?? 1067}
+                            alt={`${project.title} — imagen adicional`}
+                            class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        </picture>
+                      </button>
                     </figure>
                   );
                 })}
@@ -196,14 +208,112 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
           </section>
         )
       }
+
+      <!-- Lightbox accesible de la galería -->
+      <dialog id="lightbox" class="lb" aria-label={`Imágenes de ${project.title}`}>
+        <button type="button" id="lb-close" class="lb-x" aria-label="Cerrar">×</button>
+        <img id="lb-img" src="" alt="" />
+        <div class="lb-nav">
+          <button type="button" id="lb-prev" aria-label="Imagen anterior">←</button>
+          <span id="lb-count"></span>
+          <button type="button" id="lb-next" aria-label="Imagen siguiente">→</button>
+        </div>
+      </dialog>
+
+      <script>
+        (function () {
+          const items = Array.from(document.querySelectorAll('.gal-item'));
+          const dlg = document.getElementById('lightbox');
+          if (!items.length || !dlg) return;
+          const img = document.getElementById('lb-img');
+          const count = document.getElementById('lb-count');
+          let i = 0;
+          function show(k) {
+            i = (k + items.length) % items.length;
+            const src = items[i].getAttribute('data-full');
+            img.src = src;
+            img.alt = items[i].querySelector('img')?.alt || '';
+            count.textContent = (i + 1) + ' / ' + items.length;
+          }
+          items.forEach((b, k) => b.addEventListener('click', () => { show(k); dlg.showModal(); }));
+          document.getElementById('lb-close').addEventListener('click', () => dlg.close());
+          document.getElementById('lb-prev').addEventListener('click', () => show(i - 1));
+          document.getElementById('lb-next').addEventListener('click', () => show(i + 1));
+          dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+          dlg.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') show(i - 1);
+            if (e.key === 'ArrowRight') show(i + 1);
+          });
+        })();
+      </script>
+
+      <style>
+        .lb{
+          max-width:min(92vw, 1100px);
+          padding:0;
+          border:1px solid rgba(10,10,9,0.2);
+          background:var(--paper, #f6f4ed);
+        }
+        .lb::backdrop{ background:rgba(10,10,9,0.82); }
+        .lb img{ display:block; width:100%; height:auto; }
+        .lb-x{
+          position:absolute; top:10px; right:10px; z-index:2;
+          width:40px; height:40px; border-radius:50%;
+          border:1px solid rgba(246,244,237,0.4);
+          background:rgba(10,10,9,0.55); color:#f6f4ed;
+          font-size:20px; cursor:pointer;
+        }
+        .lb-x:hover{ background:rgba(92,31,46,0.85); }
+        .lb-nav{
+          display:flex; align-items:center; justify-content:center; gap:16px;
+          padding:12px; font-size:12px; letter-spacing:0.14em;
+          color:var(--g700, #3b3833);
+        }
+        .lb-nav button{
+          width:40px; height:40px; border-radius:50%;
+          border:1px solid rgba(10,10,9,0.25);
+          background:transparent; color:inherit; cursor:pointer;
+        }
+        .lb-nav button:hover{ background:var(--wine, #5c1f2e); color:#f6f4ed; border-color:var(--wine, #5c1f2e); }
+      </style>
     </article>
+
+    <!-- Pager anterior / siguiente -->
+    <section class="border-t border-ink/10 bg-cream">
+      <div class="mx-auto grid max-w-wide gap-px bg-ink/10 md:grid-cols-2">
+        <a
+          href={`/proyectos/${prev.slug}`}
+          class="group bg-cream p-8 transition-colors hover:bg-cream-warm md:p-12"
+        >
+          <p class="text-xs uppercase tracking-[0.2em] text-ink-muted">
+            <span class="inline-block transition-transform duration-300 group-hover:-translate-x-1" aria-hidden="true">←</span>
+            Anterior
+          </p>
+          <p class="mt-3 font-display text-2xl text-ink transition-colors group-hover:text-wine md:text-3xl">
+            {prev.title}
+          </p>
+        </a>
+        <a
+          href={`/proyectos/${next.slug}`}
+          class="group bg-cream p-8 text-right transition-colors hover:bg-cream-warm md:p-12"
+        >
+          <p class="text-xs uppercase tracking-[0.2em] text-ink-muted">
+            Siguiente
+            <span class="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
+          </p>
+          <p class="mt-3 font-display text-2xl text-ink transition-colors group-hover:text-wine md:text-3xl">
+            {next.title}
+          </p>
+        </a>
+      </div>
+    </section>
 
     <!-- Volver -->
     <section class="border-t border-ink/10 bg-cream-warm py-12">
       <div class="mx-auto max-w-wide px-gutter text-center">
         <a
           href="/proyectos"
-          class="group inline-flex items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-teal"
+          class="group inline-flex items-center gap-2 text-sm font-medium text-ink transition-colors hover:text-wine"
         >
           <span
             class="inline-block transition-transform duration-300 group-hover:-translate-x-1"
