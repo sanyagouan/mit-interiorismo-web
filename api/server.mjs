@@ -7,7 +7,7 @@
 // Variables de entorno:
 //   PORT                     - default 3100
 //   OPENROUTER_API_KEY       - para el chat IA
-//   OPENROUTER_MODEL         - modelo (default google/gemini-2.5-flash)
+//   OPENROUTER_MODEL         - modelo (default minimax/minimax-m3.1-flash; alternativa: minimax/minimax-m3)
 //   SMTP_URL                 - mailgun://user:pass@mg.domain.com (opcional)
 //   MAIL_TO                  - email destino María
 //   MAIL_FROM                - email remitente
@@ -85,7 +85,9 @@ PERSONALIDAD:
 - Cuando conviene, concreta: "el jueves a las 17h te llamo"
 - No sonríes con signos de exclamación. Escribes con aplomo.
 
-IDIOMA: español de España, sin argentinismos ni mexicanismos.
+IDIOMA: español de España, sin argentinismos ni mexicanismos. PROHIBIDO usar
+palabras en inglés u otro idioma (ni "published", ni "pricing", ni anglicismos):
+si no sabes el término en español, reformula la frase.
 
 SOBRE MÍ (MARÍA):
 - 17 años de experiencia (desde 2008)
@@ -209,6 +211,12 @@ REGLAS DE ORO:
    tu frustración. Si quieres que trabajemos juntos, encantada. Si no, te deseo
    mucha suerte con tu proyecto."
 5. Máximo 2-3 frases por respuesta, salvo que el cliente pida detalle técnico.
+6. LOS PRECIOS: los ÚNICOS que puedes mencionar son los de la lista SERVICIOS Y
+   HONORARIOS ORIENTATIVOS de esta ficha, siempre con su matiz (850 €/m² son
+   HONORARIOS DE PROYECTO, no el coste de obra). Si una cifra no está en la
+   lista, no existe: nunca la estimes, la calcules ni la inventes. Di que
+   depende del proyecto y ofrécele la primera llamada.
+7. Español puro y estricto en el campo "reply": cero palabras en inglés.
 
 EJEMPLOS DE TONO:
 Cliente: "Hola"
@@ -268,7 +276,7 @@ app.post('/api/chat', async (req, res) => {
     });
   }
 
-  const model = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
+  const model = process.env.OPENROUTER_MODEL || 'minimax/minimax-m3.1-flash';
 
   try {
     const r = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -286,8 +294,8 @@ app.post('/api/chat', async (req, res) => {
           ...messages.slice(-12) // últimas 12 para no petar contexto
         ],
         response_format: { type: 'json_object' },
-        max_tokens: 350,
-        temperature: 0.5
+        max_tokens: 900,
+        temperature: 0.35
       })
     });
     if (!r.ok) {
@@ -296,7 +304,9 @@ app.post('/api/chat', async (req, res) => {
       return res.status(502).json({ ok: false, error: 'AI service error' });
     }
     const j = await r.json();
-    const raw = j.choices?.[0]?.message?.content || '{}';
+    let raw = j.choices?.[0]?.message?.content || '{}';
+    // Algunos modelos envuelven el JSON en fences markdown — limpiar antes de parsear
+    raw = raw.replace(/^\s*```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
 
     let parsed;
     try { parsed = JSON.parse(raw); }
@@ -458,7 +468,7 @@ async function summarizeLead({ messages, lead }) {
       is_qualified: false
     };
   }
-  const model = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
+  const model = process.env.OPENROUTER_MODEL || 'minimax/minimax-m3.1-flash';
   const convo = messages.slice(-20).map(m => {
     const role = m.role === 'user' ? 'Cliente' : 'María IA';
     return `${role}: ${String(m.content || '').slice(0, 500)}`;
@@ -748,6 +758,10 @@ async function sendEmail(lead) {
   const m = url.match(/^mailgun:\/\/([^:]+):([^@]+)@(.+)$/);
   if (!m) throw new Error('SMTP_URL no tiene formato mailgun://user:pass@host');
   const [, user, pass, host] = m;
+  // SSRF: permitir solo hosts de Mailgun antes de construir la URL de envío
+  if (!/^[a-z0-9.-]+\.mailgun\.org$/i.test(host)) {
+    throw new Error('SMTP_URL: host no permitido (solo *.mailgun.org)');
+  }
   const auth = Buffer.from(`${user}:${pass}`).toString('base64');
   const form = new URLSearchParams();
   form.set('from', from);
@@ -815,7 +829,10 @@ async function sendTelegram(lead) {
       `*Página:* ${escapeMd(lead.page || '—')}\n` +
       `*Hora:* ${lead.ts}`;
   }
-  const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  // SSRF: URL construida con new URL + codificación del token (no interpolación directa)
+  const tgUrl = new URL(`https://api.telegram.org/bot${encodeURIComponent(token)}/sendMessage`);
+  if (tgUrl.origin !== 'https://api.telegram.org') throw new Error('Telegram: host no permitido');
+  const r = await fetch(tgUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

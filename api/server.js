@@ -120,6 +120,10 @@ async function sendEmail(lead) {
   const m = url.match(/^mailgun:\/\/([^:]+):([^@]+)@(.+)$/);
   if (!m) throw new Error('SMTP_URL no tiene formato mailgun://user:pass@host');
   const [, user, pass, host] = m;
+  // SSRF: permitir solo hosts de Mailgun antes de construir la URL de envío
+  if (!/^[a-z0-9.-]+\.mailgun\.org$/i.test(host)) {
+    throw new Error('SMTP_URL: host no permitido (solo *.mailgun.org)');
+  }
   const auth = Buffer.from(`${user}:${pass}`).toString('base64');
   const form = new URLSearchParams();
   form.set('from', from);
@@ -147,7 +151,10 @@ async function sendTelegram(lead) {
     `*Modo:* ${lead.mode}\n` +
     `*Página:* ${escapeMd(lead.page)}\n` +
     `*Hora:* ${lead.ts}`;
-  const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+  // SSRF: URL construida con new URL + codificación del token (no interpolación directa)
+  const tgUrl = new URL(`https://api.telegram.org/bot${encodeURIComponent(token)}/sendMessage`);
+  if (tgUrl.origin !== 'https://api.telegram.org') throw new Error('Telegram: host no permitido');
+  const r = await fetch(tgUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
