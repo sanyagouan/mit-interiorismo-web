@@ -6,13 +6,16 @@
    VARIABLES GLOBALES — Design Tokens
    ============================================ */
 :root {
-  /* Paleta principal — extraída de decisiones aprobadas */
-  --color-teal: #115A6B;
-  --color-teal-light: #4C8390;
-  --color-teal-deep: #0A3D4A;
+  /* Paleta principal — unificada con la home editorial (FASE 1): wine/gold mandan */
+  --color-wine: #5c1f2e;
+  --color-wine-deep: #401420;
+  --color-gold: #a98043;
+  --color-gold-soft: #d4b78a;
+  --color-paper: #f6f4ed;
+  --color-bone: #eeebe2;
   --color-cream: #FAF7F2;
   --color-cream-warm: #F0EBE0;
-  --color-ink: #1A1817;
+  --color-ink: #0a0a09;
   --color-ink-soft: #2A2826;
   --color-ink-muted: #5C5853;
   --color-accent-clay: #D4A373;
@@ -68,13 +71,13 @@
 
   /* Selección de texto coherente con paleta */
   ::selection {
-    background-color: var(--color-teal);
-    color: var(--color-cream);
+    background-color: var(--color-wine);
+    color: var(--color-paper);
   }
 
   /* Focus visible accesible */
   :focus-visible {
-    outline: 2px solid var(--color-teal);
+    outline: 2px solid var(--color-wine);
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -86,8 +89,8 @@
     left: 1rem;
     z-index: 9999;
     padding: 0.875rem 1.75rem;
-    background: var(--color-teal);
-    color: var(--color-cream);
+    background: var(--color-wine);
+    color: var(--color-paper);
     font-weight: 600;
     border-radius: 4px;
     transition: top 0.2s var(--ease-out-expo);
@@ -146,7 +149,7 @@
     left: 0;
     width: 3rem;
     height: 1px;
-    background: var(--color-teal);
+    background: var(--color-gold);
   }
 }
 
@@ -200,8 +203,8 @@ img[loading="lazy"] {
 }
 
 /* ============================================
-   TIPOGRAFÍA VARIABLE — Instrument Serif + Inter
-   Cargadas desde Google Fonts vía <link> en Layout
+   TIPOGRAFÍA VARIABLE — Fraunces + Inter Tight
+   Auto-hospedadas (fonts-selfhosted.css); esto son solo métricas de fallback
    ============================================ */
 
 /* Soporte para font-display: swap nativo */
