@@ -124,7 +124,7 @@ const telefono = SITE.phoneDisplay;
     <p class="hero-morph-tag">estudio de interiorismo · Yécora, Álava</p>
   </div>
 
-  <div class="hero-morph-stage" id="hero-morph-stage" aria-label="Secuencia de la reforma: arrastra para avanzar la obra">
+  <div class="hero-morph-stage" id="hero-morph-stage" role="slider" tabindex="0" aria-label="Secuencia de la obra: arrastra, usa las flechas o los botones de fase para avanzar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
 
     <div class="hero-morph-layer hero-morph-layer--sketch is-on" data-step="1">
       <picture>
@@ -143,20 +143,18 @@ const telefono = SITE.phoneDisplay;
     <div class="hero-morph-layer" data-step="3">
       <picture>
         <source srcset="/images/hero/obra-fase-3-instalaciones.webp" type="image/webp" />
-        <img src="/images/hero/obra-fase-3-instalaciones.jpg" width="1920" height="1080" alt="La misma sala en fase de instalaciones: tuberías de cobre y conducciones eléctricas vistas sobre piedra, aislamiento y placas de yeso" loading="lazy" decoding="async" />
+        <img src="/images/hero/obra-fase-3-instalaciones.jpg" width="1920" height="1080" alt="La misma sala en fase de instalaciones: tuberías de cobre y conducciones eléctricas vistas sobre piedra, aislamiento y placas de yeso" loading="eager" decoding="async" />
       </picture>
     </div>
 
     <div class="hero-morph-layer" data-step="4">
       <picture>
         <source srcset="/images/hero/obra-fase-4-resultado.webp" type="image/webp" />
-        <img src="/images/hero/obra-fase-4-resultado.jpg" width="1920" height="1080" alt="La misma sala ya reformada: paredes de cal crema con franja de piedra original, suelo de roble e isla de cocina" loading="lazy" decoding="async" />
+        <img src="/images/hero/obra-fase-4-resultado.jpg" width="1920" height="1080" alt="La misma sala ya reformada: paredes de cal crema con franja de piedra original, suelo de roble e isla de cocina" loading="eager" decoding="async" />
       </picture>
     </div>
 
     <div class="hero-morph-vignette"></div>
-
-    <!-- Manejador de arrastre: avanza la obra con la mano (scrub implementado en FASE 2) -->
   </div>
 
   <div class="hero-morph-copy">
@@ -194,37 +192,88 @@ const telefono = SITE.phoneDisplay;
 
 <script is:inline>
 (function(){
-  // HERO · AUTOPLAY + botones I·II·III·IV
-  // · ciclo completo ~10s: cada fase dura 2.5s, crossfade suave de 2s
-  // · pulsar un botón salta a esa fase y reinicia el ciclo
+  // HERO · SCRUB por arrastre + botones de fase + teclado
+  // · Progreso 0-100 → 4 capas: opacidad por tramos + micro-zoom 1.06→1.
+  // · El arrastre en vivo sigue el dedo/ratón; al soltar, snap a la fase más cercana.
+  // · HOOK VÍDEO IA (pendiente de María): si una capa incluye data-video-src,
+  //   sustituir su <img> por <video muted playsinline loop> y en vez de opacidad
+  //   controlar video.currentTime = (progreso local) * duration.
   const stage = document.getElementById('hero-morph-stage');
   if (!stage) return;
   const layers = Array.from(stage.querySelectorAll('.hero-morph-layer'));
   const steps  = Array.from(document.querySelectorAll('#hero-morph-foot .mf-step'));
+  const lines  = document.querySelectorAll('.hero-morph-title .hm-line > span');
   const N = layers.length;
-  if (N === 0) return;
-  const PHASE_MS = 2500;  // 2.5s por fase → ciclo de 10s con las 4
-  // crossfade suave de 2s (ease-in-out), inyectado desde aquí para tenerlo junto al resto
-  const style = document.createElement('style');
-  style.textContent = '.hero-morph-layer{transition:opacity 2s ease-in-out;}';
-  document.head.appendChild(style);
+  if (!N) return;
+  const SEG = 100 / (N - 1); // 33.33 por fase
+  const clamp = (v) => Math.max(0, Math.min(100, v));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let idx = 0;
-  function show(i){
-    for (let k = 0; k < N; k++) layers[k].style.opacity = k === i ? '1' : '0';
-    steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
-    idx = i;
+  function apply(p){
+    for (let k = 0; k < N; k++){
+      const dist = Math.abs(p - k * SEG) / SEG;
+      const o = Math.max(0, 1 - dist);
+      layers[k].style.opacity = o.toFixed(3);
+      const img = layers[k].querySelector('img');
+      if (img) img.style.transform = 'scale(' + (1.06 - 0.06 * o).toFixed(4) + ')';
+    }
+    const near = Math.min(N - 1, Math.max(0, Math.round(p / SEG)));
+    steps.forEach((s, k) => s.classList.toggle('is-active', k === near));
+    stage.setAttribute('aria-valuenow', String(Math.round(p)));
   }
-  show(0);
 
-  let timer = setInterval(() => show((idx + 1) % N), PHASE_MS);
+  let target = 0, current = 0;
+  const setTarget = (v) => {
+    target = clamp(v);
+    if (reduced) apply(target); // sin interpolación
+  };
 
-  steps.forEach((s, k) => s.addEventListener('click', () => {
-    if (k === idx) return;
-    clearInterval(timer);          // evita que el ciclo pise el salto manual
-    show(k);
-    timer = setInterval(() => show((idx + 1) % N), PHASE_MS);  // reanuda desde la nueva fase
-  }));
+  if (!reduced) {
+    const tick = () => {
+      current += (target - current) * 0.14;
+      if (Math.abs(target - current) < 0.05) current = target;
+      apply(current);
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  apply(0);
+
+  // arrastre (mouse + touch): en vivo sigue la mano, al soltar hace snap a fase
+  let dragging = false, x0 = 0, t0 = 0;
+  const x = (e) => (e.touches ? e.touches[0].clientX : e.clientX);
+  const down = (e) => { dragging = true; x0 = x(e); t0 = target; stage.classList.add('is-dragging'); };
+  const move = (e) => { if (dragging) setTarget(t0 + (x(e) - x0) / stage.clientWidth * 140); };
+  const up = () => { if (!dragging) return; dragging = false; stage.classList.remove('is-dragging'); setTarget(Math.round(target / SEG) * SEG); };
+  stage.addEventListener('mousedown', down);
+  window.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', up);
+  stage.addEventListener('touchstart', down, { passive: true });
+  stage.addEventListener('touchmove', move, { passive: true });
+  stage.addEventListener('touchend', up);
+  stage.addEventListener('dragstart', (e) => e.preventDefault());
+
+  // botones de fase (glide cinematográfico vía lerp)
+  steps.forEach((s, k) => s.addEventListener('click', () => setTarget(k * SEG)));
+
+  // teclado: la stage es un slider accesible
+  stage.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { setTarget(target + SEG); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { setTarget(target - SEG); e.preventDefault(); }
+    else if (e.key === 'Home') { setTarget(0); e.preventDefault(); }
+    else if (e.key === 'End') { setTarget(100); e.preventDefault(); }
+  });
+
+  // título: reveal escalonado (estado inicial aplicado por JS → si no hay JS, se ve)
+  lines.forEach((s) => { s.style.transform = 'translateY(112%)'; });
+  const revealTitle = () => {
+    lines.forEach((s, i) => {
+      s.style.transition = 'transform 1.05s cubic-bezier(.2,.8,.2,1) ' + (0.3 + i * 0.16).toFixed(2) + 's';
+      s.style.transform = 'translateY(0)';
+    });
+  };
+  if (document.readyState !== 'loading') requestAnimationFrame(revealTitle);
+  else document.addEventListener('DOMContentLoaded', () => requestAnimationFrame(revealTitle));
 })();
 </script>
 
@@ -474,9 +523,8 @@ const telefono = SITE.phoneDisplay;
   document.querySelectorAll('.work,.reveal').forEach(function(el){ io.observe(el); });
 })();
 
-// (script wireframe→foto eliminado: dependía de IDs inexistentes en el DOM — FASE 2
-//  implementa el scrub real por arrastre sobre las 4 capas existentes)
-})();
+// (script wireframe→foto eliminado: dependía de IDs inexistentes en el DOM.
+//  La FASE 2 implementa el scrub real por arrastre sobre las 4 capas.)
 </script>
 
 <!-- ChatBot embebido -->

@@ -306,12 +306,26 @@
   .hero-morph-scroll::after{ animation:none; }
 }
 
-/* ---------- HERO SCRUB · arrastra para avanzar la obra (16-oct-2026) ---------- */
+/* ---------- HERO SCRUB · arrastra para avanzar la obra ---------- */
 /* Capas dirigidas por JS frame a frame: sin transition de opacidad */
 .hero-morph-layer{
   transition:none;
   will-change:opacity, transform;
 }
+.hero-morph-layer img{
+  will-change:transform;
+  -webkit-user-drag:none;
+}
 .hero-morph-stage{
   touch-action:pan-y;
+  cursor:grab;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.hero-morph-stage.is-dragging{
+  cursor:grabbing;
+}
+.hero-morph-stage:focus-visible{
+  outline:2px solid rgba(169,128,67,0.85);
+  outline-offset:-2px;
 }
