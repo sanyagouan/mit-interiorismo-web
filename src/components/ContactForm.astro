@@ -1,14 +1,15 @@
 ---
 /**
  * ContactForm.astro
- * Formulario de contacto con campos básicos.
+ * Formulario conectado al backend propio (/api/contact) — mismo flujo de
+ * leads del chatbot: email a María + Telegram + EspoCRM.
  * Protección anti-spam honeypot + validación client-side.
  */
+import { SERVICIOS } from '../data/servicios';
 ---
 
 <form
-  action="https://formspree.io/f/REEMPLAZAR_CON_FORM_ID"
-  method="POST"
+  id="contact-form"
   class="space-y-6"
   data-contact-form
   novalidate
@@ -67,10 +68,9 @@
       class="w-full border-b border-ink/30 bg-transparent px-1 py-3 text-ink transition-colors focus:border-wine focus:outline-none"
     >
       <option value="">Selecciona una opción</option>
-      <option value="reforma-integral">Reforma integral</option>
-      <option value="decoracion">Decoración</option>
-      <option value="consultoria">Consultoría de diseño</option>
-      <option value="home-staging">Home staging</option>
+      {SERVICIOS.map((s) => (
+        <option value={s.id}>{s.title}</option>
+      ))}
       <option value="otro">Otro / no estoy seguro</option>
     </select>
   </div>
@@ -109,4 +109,78 @@
     Enviar mensaje
     <span class="inline-block transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true">→</span>
   </button>
+
+  <p id="contact-status" class="hidden text-sm" role="status" aria-live="polite"></p>
 </form>
+
+<script>
+  (function () {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+    const status = document.getElementById('contact-status');
+    const btn = form.querySelector('button[type="submit"]');
+
+    function setStatus(msg, cls) {
+      if (!status) return;
+      status.textContent = msg;
+      status.className = 'text-sm ' + (cls || '');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const honeypot = String(data.get('_gotcha') || '');
+      if (honeypot) return; // bot
+
+      const name = String(data.get('name') || '').trim();
+      const email = String(data.get('email') || '').trim();
+      const phone = String(data.get('phone') || '').trim();
+      const service = String(data.get('service') || '').trim();
+      const message = String(data.get('message') || '').trim();
+      const privacy = data.get('privacy');
+
+      if (!name) return setStatus('Dinos tu nombre, por favor.', 'text-ink-muted');
+      if (!email && !phone) return setStatus('Necesitamos un email o un teléfono para responderte.', 'text-ink-muted');
+      if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return setStatus('Ese email no parece válido.', 'text-ink-muted');
+      if (!message) return setStatus('Cuéntanos al menos un poco sobre el proyecto.', 'text-ink-muted');
+      if (!privacy) return setStatus('Acepta la política de privacidad para poder escribirte.', 'text-ink-muted');
+
+      const contact = [email, phone].filter(Boolean).join(' · ');
+      const topic = [service, message].filter(Boolean).join(' — ');
+
+      if (btn) { btn.disabled = true; btn.style.opacity = '0.6'; }
+      setStatus('Enviando…', 'text-ink-muted');
+
+      try {
+        const r = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name,
+            contact,
+            email,
+            phone,
+            topic,
+            mode: 'contact',
+            source: 'web-form',
+            page: location.pathname,
+            ts: new Date().toISOString(),
+          }),
+        });
+        const j = await r.json().catch(() => ({}));
+
+        if (r.ok && j.ok) {
+          form.querySelectorAll('input, select, textarea, button').forEach((el) => (el.disabled = true));
+          setStatus('✅ Recibido, ' + name.split(' ')[0] + '. María te responderá en menos de 48 h. Referencia: ' + (j.id || '—'), 'text-wine');
+        } else {
+          setStatus('No ha podido enviarse. Escríbenos directamente a hola@mitinteriorismo.studio', 'text-ink-muted');
+          if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+        }
+      } catch (err) {
+        setStatus('Sin conexión ahora mismo. Escríbenos a hola@mitinteriorismo.studio', 'text-ink-muted');
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+      }
+    });
+  })();
+</script>
