@@ -36,7 +36,9 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
 <BaseLayout
   title={`${project.title} | ${SITE.name}`}
   description={project.metaDescription ?? project.description.slice(0, 155)}
-  ogImage={`/images/og/og-proyecto-${project.slug === 'merendero-lapuebla' ? 'lapuebla' : project.slug === 'txoko-kripan' ? 'kripan' : project.slug === 'apartamentos-labastida' ? 'labastida' : project.slug}.jpg`}
+  ogImage={project.slug === 'merendero-lapuebla' || project.slug === 'txoko-kripan' || project.slug === 'apartamentos-labastida'
+    ? `/images/og/og-proyecto-${project.slug === 'merendero-lapuebla' ? 'lapuebla' : project.slug === 'txoko-kripan' ? 'kripan' : 'labastida'}.jpg`
+    : undefined}
 >
   <main id="main-content" class="bg-cream">
     <article>
@@ -44,12 +46,14 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
       <header class="relative h-[70svh] min-h-[480px] overflow-hidden bg-ink">
         <picture>
           <source
-            srcset={project.cover.replace(/\.[^.]+$/, '.avif')}
+            srcset={`${project.cover.replace(/\.[^.]+$/, '')}-w1600.avif 1600w, ${project.cover.replace(/\.[^.]+$/, '')}-w2400.avif 2400w`}
             type="image/avif"
+            sizes="100vw"
           />
           <source
-            srcset={project.cover.replace(/\.[^.]+$/, '.webp')}
+            srcset={`${project.cover.replace(/\.[^.]+$/, '')}-w1600.webp 1600w, ${project.cover.replace(/\.[^.]+$/, '')}-w2400.webp 2400w`}
             type="image/webp"
+            sizes="100vw"
           />
           <img
             src={project.cover}
@@ -60,8 +64,6 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
             loading="eager"
             fetchpriority="high"
             decoding="async"
-            width="1920"
-            height="1080"
           />
         </picture>
         <div
@@ -161,19 +163,34 @@ const galleryImages = [project.cover, ...(project.gallery ?? [])].filter(
                 Imágenes del proyecto
               </h2>
               <div class="grid gap-4 md:grid-cols-2 lg:gap-6">
-                {galleryImages.slice(1).map((img) => (
-                  <figure class="overflow-hidden bg-cream">
-                    <img
-                      src={img}
-                      width={DIMS[img]?.[0] ?? 1600}
-                      height={DIMS[img]?.[1] ?? 1067}
-                      alt={`${project.title} — imagen adicional`}
-                      class="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  </figure>
-                ))}
+                {galleryImages.slice(1).map((img) => {
+                  const base = img.replace(/\.[^.]+$/, '');
+                  return (
+                    <figure class="overflow-hidden bg-cream">
+                      <picture>
+                        <source
+                          srcset={`${base}-w800.avif 800w, ${base}-w1600.avif 1600w, ${base}-w2400.avif 2400w`}
+                          type="image/avif"
+                          sizes="(min-width: 768px) 50vw, 92vw"
+                        />
+                        <source
+                          srcset={`${base}-w800.webp 800w, ${base}-w1600.webp 1600w, ${base}-w2400.webp 2400w`}
+                          type="image/webp"
+                          sizes="(min-width: 768px) 50vw, 92vw"
+                        />
+                        <img
+                          src={img}
+                          width={DIMS[img]?.[0] ?? 1600}
+                          height={DIMS[img]?.[1] ?? 1067}
+                          alt={`${project.title} — imagen adicional`}
+                          class="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.02]"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </picture>
+                    </figure>
+                  );
+                })}
               </div>
             </div>
           </section>
