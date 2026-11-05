@@ -33,27 +33,28 @@
     });
     gsap.ticker.lagSmoothing(0);
 
-    // Hero text reveal
+    // Hero text reveal — gsap.from: anima DESDE oculto hacia el estado natural.
+    // Si el JS falla, el contenido simplemente se ve (progressive enhancement).
     const heroText = document.querySelector('[data-hero-text]');
     if (heroText) {
-      gsap.to(heroText, {
-        opacity: 1,
-        y: 0,
+      gsap.from(heroText, {
+        opacity: 0,
+        y: 32,
         duration: 1.4,
         ease: 'power3.out',
         delay: 0.3,
       });
     }
 
-    // Project cards stagger reveal
+    // Project cards stagger reveal (mismo patrón .from)
     const projectCards = document.querySelectorAll('[data-project-card]');
     projectCards.forEach((card, idx) => {
-      gsap.to(card, {
-        opacity: 1,
-        y: 0,
+      gsap.from(card, {
+        opacity: 0,
+        y: 32,
         duration: 1.0,
         ease: 'power3.out',
-        delay: 0.1 + idx * 0.1,
+        delay: idx * 0.08,
         scrollTrigger: {
           trigger: card,
           start: 'top 85%',
@@ -68,12 +69,7 @@
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     });
   } else {
-    // Sin animaciones — mostrar contenido directamente
-    document
-      .querySelectorAll('[data-hero-text], [data-project-card]')
-      .forEach((el) => {
-        (el as HTMLElement).style.opacity = '1';
-        (el as HTMLElement).style.transform = 'none';
-      });
+    // prefers-reduced-motion: sin animaciones. El contenido ya es visible por
+    // defecto (progressive enhancement), aquí no hay nada que revelar.
   }
 </script>

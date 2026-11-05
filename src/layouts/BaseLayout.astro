@@ -6,9 +6,11 @@
  */
 
 import '../styles/globals.css';
+import '../styles/editorial.css';
 import '../styles/fonts-selfhosted.css';
 import CookieBanner from '../components/CookieBanner.astro';
 import ChatBot from '../components/ChatBot.astro';
+import SmoothScroll from '../islands/SmoothScroll.astro';
 import { SITE } from '../data/site';
 import { SERVICIOS } from '../data/servicios';
 
@@ -103,7 +105,7 @@ const structuredData = {
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#115A6B" />
+    <meta name="theme-color" content="#0a0a09" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={type} />
@@ -143,13 +145,13 @@ const structuredData = {
     <header class="fixed top-0 inset-x-0 z-50 bg-cream/90 backdrop-blur border-b border-ink/5">
       <div class="mx-auto max-w-wide px-gutter h-16 flex items-center justify-between">
         <a href="/" class="flex items-center shrink-0" aria-label="mit interiorismo — inicio">
-          <img src="/images/brand/logo-mit.png" width="130" height="88" alt="mit interiorismo" class="h-8 w-auto" loading="eager" decoding="async" />
+          <img src="/images/brand/logo-mit.png" width="130" height="88" alt="mit interiorismo" class="h-9 w-auto" loading="eager" decoding="async" />
         </a>
         <nav class="flex items-center gap-3 sm:gap-6" aria-label="Navegación principal">
-          <a href="/proyectos/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Proyectos</a>
-          <a href="/servicios/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Servicios</a>
-          <a href="/sobre/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Estudio</a>
-          <a href="/contacto/" class="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-teal transition-colors">Contacto</a>
+          <a href="/proyectos" class="py-1.5 px-0.5 text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-wine transition-colors">Proyectos</a>
+          <a href="/servicios" class="py-1.5 px-0.5 text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-wine transition-colors">Servicios</a>
+          <a href="/sobre" class="py-1.5 px-0.5 text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-wine transition-colors">Estudio</a>
+          <a href="/contacto" class="py-1.5 px-0.5 text-[10px] sm:text-[11px] uppercase tracking-[0.18em] font-semibold text-ink hover:text-wine transition-colors">Contacto</a>
         </nav>
       </div>
     </header>
@@ -164,23 +166,8 @@ const structuredData = {
 
     <slot />
 
-    <!-- Smooth scroll Lenis como island -->
-    <!-- Smooth scroll Lenis + GSAP cargados como island -->
-    <script>
-      // Detectar prefers-reduced-motion
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!prefersReducedMotion) {
-        import('../islands/SmoothScroll.astro');
-      } else {
-        // Sin animaciones — mostrar contenido directamente
-        document.addEventListener('DOMContentLoaded', () => {
-          document.querySelectorAll('[data-hero-text], [data-project-card]').forEach((el) => {
-            (el as HTMLElement).style.opacity = '1';
-            (el as HTMLElement).style.transform = 'none';
-          });
-        });
-      }
-    </script>
+    <!-- Smooth scroll Lenis + GSAP: island real (progressive enhancement, nada oculto por CSS) -->
+    <SmoothScroll />
     <CookieBanner />
     <ChatBot />
   </body>

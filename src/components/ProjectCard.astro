@@ -16,6 +16,7 @@ interface Props {
 }
 
 const { slug, title, type, year, location, cover, index } = Astro.props;
+const base = cover.replace(/\.[^.]+$/, '');
 ---
 
 <a
@@ -26,8 +27,16 @@ const { slug, title, type, year, location, cover, index } = Astro.props;
 >
   <div class="relative aspect-[4/5] overflow-hidden bg-ink/5">
     <picture>
-      <source srcset={cover.replace(/\.[^.]+$/, '.avif')} type="image/avif" />
-      <source srcset={cover.replace(/\.[^.]+$/, '.webp')} type="image/webp" />
+      <source
+        srcset={`${base}-w800.avif 800w, ${base}-w1600.avif 1600w, ${base}-w2400.avif 2400w`}
+        type="image/avif"
+        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 92vw"
+      />
+      <source
+        srcset={`${base}-w800.webp 800w, ${base}-w1600.webp 1600w, ${base}-w2400.webp 2400w`}
+        type="image/webp"
+        sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 92vw"
+      />
       <img
         src={cover}
         alt={`${title} — proyecto de interiorismo en ${location}`}
@@ -59,27 +68,9 @@ const { slug, title, type, year, location, cover, index } = Astro.props;
     </div>
 
     <h2
-      class="font-display text-display-sm text-ink transition-colors duration-300 group-hover:text-teal"
+      class="font-display text-display-sm text-ink transition-colors duration-300 group-hover:text-wine"
     >
       {title}
-    </h3>
+    </h2>
   </div>
 </a>
-
-<style>
-  [data-project-card] {
-    opacity: 0;
-    transform: translateY(2rem);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    [data-project-card] {
-      opacity: 1;
-      transform: none;
-    }
-
-    [data-project-card] img {
-      transition: none !important;
-    }
-  }
-</style>

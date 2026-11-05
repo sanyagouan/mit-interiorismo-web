@@ -4,21 +4,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Paleta MIT Interiorismo — basada en decisiones aprobadas
-        teal: {
-          DEFAULT: '#115A6B',
-          light: '#4C8390',
-          deep: '#0A3D4A',
-          mist: '#D8E5E8',
+        // Paleta MIT Interiorismo — unificada con la home editorial (decisiones FASE 1)
+        // wine/gold mandan en todo el sitio; teal se elimina.
+        wine: {
+          DEFAULT: '#5c1f2e',
+          deep: '#401420',
         },
+        gold: {
+          DEFAULT: '#a98043',
+          soft: '#d4b78a', // acento suave del chat, coherente con gold
+        },
+        paper: '#f6f4ed',
+        bone: '#eeebe2',
         ink: {
-          DEFAULT: '#1A1817',   // casi negro cálido
+          DEFAULT: '#0a0a09',   // alineado con la home editorial
           soft: '#2A2826',
           muted: '#5C5853',
           light: '#8A8580',
         },
         cream: {
-          DEFAULT: '#FAF7F2',   // fondo principal
+          DEFAULT: '#FAF7F2',
           warm: '#F0EBE0',
           deep: '#EDE4D4',
         },

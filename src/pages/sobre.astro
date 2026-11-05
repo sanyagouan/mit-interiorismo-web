@@ -8,7 +8,7 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, MARIA } from '../data/site';
+import { SITE, MARIA, DIFFERENTIATORS } from '../data/site';
 ---
 
 <BaseLayout
@@ -19,11 +19,11 @@ import { SITE, MARIA } from '../data/site';
 
     <section class="bg-cream py-section">
       <div class="mx-auto max-w-wide px-gutter">
-        <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">
+        <p class="mb-3 text-xs uppercase tracking-[0.25em] text-wine">
           Sobre el estudio
         </p>
         <h1 class="font-display text-display-xl text-ink max-w-4xl">
-          Donde el <span class="italic text-teal">diseño</span> encuentra a la <span class="italic text-teal">ingeniería</span>.
+          Donde el <span class="italic text-wine">diseño</span> encuentra a la <span class="italic text-wine">ingeniería</span>.
         </h1>
         <p class="mt-6 max-w-2xl text-lg text-ink-muted">
           Yécora, Álava. 17 años haciendo espacios que funcionan.
@@ -48,7 +48,7 @@ import { SITE, MARIA } from '../data/site';
             <h2 class="font-display text-display-md mb-8 text-ink">
               {MARIA.fullName}
             </h2>
-            <p class="mb-2 text-sm uppercase tracking-[0.2em] text-teal">
+            <p class="mb-2 text-sm uppercase tracking-[0.2em] text-wine">
               {MARIA.role}
             </p>
             <p class="mb-8 font-display text-2xl text-ink-soft">
@@ -77,11 +77,11 @@ import { SITE, MARIA } from '../data/site';
               <div class="col-span-2">
                 <dt class="text-xs uppercase tracking-[0.2em] text-ink-light">Contacto</dt>
                 <dd class="mt-2 text-base">
-                  <a href={`mailto:${SITE.email}`} class="text-teal transition-colors hover:text-teal-deep">
+                  <a href={`mailto:${SITE.email}`} class="text-wine transition-colors hover:text-wine-deep">
                     {SITE.email}
                   </a>
                   {' · '}
-                  <a href={SITE.social.linkedin} target="_blank" rel="noopener" class="text-teal transition-colors hover:text-teal-deep">
+                  <a href={SITE.social.linkedin} target="_blank" rel="noopener" class="text-wine transition-colors hover:text-wine-deep">
                     LinkedIn
                   </a>
                 </dd>
@@ -97,25 +97,19 @@ import { SITE, MARIA } from '../data/site';
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-16 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">Forma de trabajar</p>
+            <p class="text-xs uppercase tracking-[0.25em] text-wine">Forma de trabajar</p>
           </div>
           <div class="md:col-span-8">
             <h2 class="font-display text-display-lg text-ink">
-              Cómo <span class="italic text-teal">trabajo</span>
+              Cómo <span class="italic text-wine">trabajo</span>
             </h2>
           </div>
         </div>
         <div class="grid gap-12 md:grid-cols-2">
-          {[
-            { t: 'Diseño + técnica, juntos', d: 'La mayoría de interioristas trabajan solo con la estética. Yo proyecto también las instalaciones: eléctricas, climatización, fontanería. Todo con normativa.' },
-            { t: 'Presupuestos transparentes', d: 'Cada partida, cada medición, cada proveedor. Si un instalador cobra de más, te lo digo y te ahorro el dinero.' },
-            { t: 'Defensa técnica del cliente', d: 'Soy tu aliada frente a gremios, proveedores y posibles sorpresas. Cuando surge un problema en obra, te lo explico y te defiendo.' },
-            { t: 'Boutique, no franquicia', d: 'Un solo interlocutor, de principio a fin. Honorarios fijos en torno al 11% s/ PEM.' },
-            { t: '17 años de experiencia', d: 'Desde 2008, he pasado por Echazarreta Construcciones, COOK cocina y baño, BLURARQUITECTURA y mi propio estudio desde 2020.' },
-          ].map((card) => (
+          {DIFFERENTIATORS.map((card) => (
             <div>
-              <h3 class="font-display mb-3 text-2xl text-ink">{card.t}</h3>
-              <p class="text-ink-muted" set:html={card.d}></p>
+              <h3 class="font-display mb-3 text-2xl text-ink">{card.title}</h3>
+              <p class="text-ink-muted" set:html={card.body}></p>
             </div>
           ))}
         </div>
@@ -127,7 +121,7 @@ import { SITE, MARIA } from '../data/site';
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-12 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">Trayectoria</p>
+            <p class="text-xs uppercase tracking-[0.25em] text-wine">Trayectoria</p>
             <h2 class="font-display mt-3 text-display-sm text-ink">17 años haciendo espacios</h2>
           </div>
           <div class="md:col-span-8">
@@ -142,7 +136,7 @@ import { SITE, MARIA } from '../data/site';
             <article class="group bg-cream p-8 transition-colors duration-300 hover:bg-cream-warm md:p-10">
               <div class="grid gap-4 md:grid-cols-12">
                 <div class="md:col-span-3">
-                  <p class="text-xs uppercase tracking-[0.2em] text-teal">
+                  <p class="text-xs uppercase tracking-[0.2em] text-wine">
                     {job.from} · {job.to}
                   </p>
                 </div>
@@ -164,13 +158,13 @@ import { SITE, MARIA } from '../data/site';
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-12 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">Formación</p>
+            <p class="text-xs uppercase tracking-[0.25em] text-wine">Formación</p>
             <h2 class="font-display mt-3 text-display-sm text-ink">Bases académicas</h2>
           </div>
         </div>
 
         {MARIA.education.map((edu) => (
-          <article class="border-l-2 border-teal pl-6">
+          <article class="border-l-2 border-wine pl-6">
             <p class="text-xs uppercase tracking-[0.2em] text-ink-light">{edu.from} · {edu.to}</p>
             <h3 class="font-display mt-2 text-2xl text-ink">{edu.title}</h3>
             <p class="mt-1 text-ink-soft">{edu.institution}</p>
@@ -185,10 +179,10 @@ import { SITE, MARIA } from '../data/site';
       <div class="mx-auto max-w-wide px-gutter">
         <div class="mb-12 grid gap-12 md:grid-cols-12">
           <div class="md:col-span-4">
-            <p class="text-xs uppercase tracking-[0.25em] text-teal">Habilidades</p>
+            <p class="text-xs uppercase tracking-[0.25em] text-wine">Habilidades</p>
           </div>
           <div class="md:col-span-8">
-            <h2 class="font-display text-display-lg text-ink">Stack <span class="italic text-teal">técnico</span></h2>
+            <h2 class="font-display text-display-lg text-ink">Stack <span class="italic text-wine">técnico</span></h2>
           </div>
         </div>
         <div class="grid gap-x-8 gap-y-6 md:grid-cols-3">

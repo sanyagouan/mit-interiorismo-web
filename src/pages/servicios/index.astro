@@ -12,7 +12,7 @@ import { SITE } from '../../data/site';
 >
   <main id="main-content" class="bg-cream pt-section">
     <header class="mx-auto max-w-wide px-gutter pb-16">
-      <p class="mb-3 text-xs uppercase tracking-[0.25em] text-teal">Servicios</p>
+      <p class="mb-3 text-xs uppercase tracking-[0.25em] text-wine">Servicios</p>
       <h1 class="font-display text-display-xl text-ink">Lo que hacemos</h1>
       <p class="mt-6 max-w-2xl text-lg text-ink-muted">
         Seis servicios, un mismo estándar: diseño + ingeniería con planos,
@@ -24,17 +24,17 @@ import { SITE } from '../../data/site';
       <div class="mx-auto max-w-wide px-gutter grid gap-8 md:grid-cols-2">
         {SERVICIOS.map((s) => (
           <a
-            href={`/servicios/${s.id}/`}
+            href={`/servicios/${s.id}`}
             class="group block border border-ink/10 bg-paper p-8 transition-shadow hover:shadow-lg"
           >
-            <h2 class="font-display text-2xl text-ink group-hover:text-teal transition-colors">
+            <h2 class="font-display text-2xl text-ink group-hover:text-wine transition-colors">
               {s.title}
             </h2>
             {s.subtitle && (
               <p class="mt-2 text-sm uppercase tracking-[0.2em] text-ink-light">{s.subtitle}</p>
             )}
             <p class="mt-4 text-base text-ink-muted">{s.description}</p>
-            <span class="mt-6 inline-block text-sm text-teal">Saber más ↗</span>
+            <span class="mt-6 inline-block text-sm text-wine">Saber más ↗</span>
           </a>
         ))}
       </div>
