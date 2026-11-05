@@ -38,6 +38,16 @@ em{font-style:italic;}
   background:var(--wine);width:0;z-index:200;
 }
 
+/* ---------- accesibilidad: foco visible + targets de toque ---------- */
+:focus-visible{
+  outline:2px solid var(--wine);
+  outline-offset:3px;
+}
+.nav-l{
+  padding:10px 2px;
+  display:inline-block;
+}
+
 /* ---------- nav ---------- */
 .nav{
   position:fixed;inset:0 0 auto 0;z-index:90;
@@ -576,7 +586,7 @@ em{font-style:italic;}
   /* nav mobile: oculta los 3 enlaces secundarios, deja visible solo Contacto (CTA)
      evita overflow horizontal a 390px y mantiene el destino principal accesible */
   .nav-links{gap:14px;align-items:center;}
-  .nav-l{font-size:9px;letter-spacing:.12em;}
+  .nav-l{font-size:10px;letter-spacing:.12em;}
   .nav-l span{display:none;}
   .nav-l[href="#proyectos"],
   .nav-l[href="#estudio"],

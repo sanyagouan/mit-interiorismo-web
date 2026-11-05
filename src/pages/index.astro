@@ -26,7 +26,7 @@ const strip = (p: typeof featured[number], ext: string, idx: number = 0) => {
   return raw.replace(/\.[a-z0-9]+$/i, `.${ext}`);
 };
 const lapueblaFor = (arr: typeof featured) => arr.find(p => p.slug === "merendero-lapuebla")!;
-const mariaImg = "/team/maria.jpg";
+const mariaImg = "/team/maria-editorial.jpg";
 const servicios = SERVICIOS;
 const year = new Date().getFullYear();
 const telefono = SITE.phoneDisplay;
@@ -99,7 +99,7 @@ const telefono = SITE.phoneDisplay;
 <!-- nav principal -->
 <header class="nav" id="nav">
   <a href="/" class="nav-mark" aria-label="mit interiorismo — inicio">
-    <img class="nav-mark-logo" src="/images/brand/logo-mit.png" width="130" height="88" alt="mit interiorismo" style="height:34px;width:auto;" />
+    <img class="nav-mark-logo" src="/images/brand/logo-mit.png" width="130" height="88" alt="mit interiorismo" style="height:38px;width:auto;" />
   </a>
   <nav class="nav-links">
     <a href="#proyectos" class="nav-l">Proyectos</a>

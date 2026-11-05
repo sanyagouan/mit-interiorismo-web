@@ -55,7 +55,7 @@ export const MARIA = {
   role: 'Interior Design Specialist',
   city: 'Yécora, Álava',
   zone: 'La Rioja · Álava · País Vasco',
-  photo: '/team/maria.jpg',
+  photo: '/team/maria-editorial.jpg',
   bio: `Diseñadora de interiores con sede en Yécora (Álava) y más de 17 años de experiencia. Su estudio no proyecta solo la estética: proyecta también las instalaciones eléctricas, climatización y fontanería, y las tramita con la normativa vigente (CTE, REBT, RITE). Esto le permite defender técnicamente a cada cliente frente a gremios, proveedores y sorpresas de obra.`,
   bioFull: `Diseñadora de interiores con más de 17 años de experiencia, operando desde Yécora (Álava) sobre La Rioja y País Vasco. La intervención une lo que normalmente va separado: <strong>diseño + ingeniería</strong>. Mi trabajo no proyecta solo la estética: proyecta también las instalaciones (eléctricas, climatización, fontanería) y las tramita con la normativa vigente: CTE, REBT, RITE, DB-SI, DB-HR, DB-HE.
 
