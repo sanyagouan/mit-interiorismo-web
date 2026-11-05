@@ -41,6 +41,72 @@ export interface Project {
 }
 
 export const PROJECTS: Project[] = [
+  // ────── ACTIVOS 2026 (en ejecución / anteproyecto) ──────
+  // ⚠️ DATOS A CONFIRMAR POR MARÍA: ubicación aproximada y año estimados
+  // a partir del material disponible (carpetas luciano/ e efitar/ + IG).
+  {
+    slug: 'oficina-luciano',
+    title: 'Oficina Luciano',
+    subtitle: 'Reforma de oficina · En ejecución · 2026',
+    type: 'reforma-comercial',
+    year: 2026,
+    status: 'en-curso',
+    location: 'La Rioja',
+    surface: undefined,
+    cover: '/images/instagram/ig-15-luciano-01.jpg',
+    gallery: [
+      '/images/projects/luciano/foto-01-cocina.jpg',
+      '/images/projects/luciano/foto-02-oficina.jpg',
+      '/images/projects/luciano/foto-03-utility.jpg',
+      '/images/projects/luciano/foto-04-oficina-principal.jpg',
+      '/images/projects/luciano/foto-05-rejillas.jpg',
+      '/images/projects/luciano/foto-06-edificio.jpg',
+      '/images/instagram/ig-15-luciano-01.jpg',
+    ],
+    featured: true,
+    description:
+      'Reforma integral de una oficina ocupada: levantamiento del existente, nuevo proyecto de distribución e instalaciones y dirección de obra. La intervención moderniza el espacio de trabajo manteniendo la actividad del cliente durante la ejecución.',
+    metaDescription:
+      'Reforma integral de oficina en La Rioja: proyecto, instalaciones y dirección de obra de un espacio de trabajo moderno, en ejecución.',
+    facts: [
+      'Levantamiento y documentación del existente',
+      'Proyecto de distribución e instalaciones',
+      'Dirección de obra',
+      'Coordinación de gremios',
+    ],
+    tags: ['oficina', 'en-curso'],
+  },
+  {
+    slug: 'cocina-tecnica-efitar',
+    title: 'Cocina Técnica Efitar',
+    subtitle: 'Anteproyecto · Espacio profesional · 2026',
+    type: 'reforma-comercial',
+    year: 2026,
+    status: 'anteproyecto',
+    location: 'Álava',
+    surface: undefined,
+    cover: '/images/projects/efitar/moodboard-1.png',
+    gallery: [
+      '/images/projects/efitar/fachada-01.jpg',
+      '/images/projects/efitar/fachada-02.jpg',
+      '/images/projects/efitar/moodboard-1.png',
+      '/images/projects/efitar/moodboard-2.png',
+      '/images/projects/efitar/moodboard-3.png',
+    ],
+    featured: false,
+    description:
+      'Anteproyecto de reforma de una cocina técnica profesional: análisis del local existente, conceptos de materiales y color, y definición del ambiente antes de licitar la obra. El moodboard fija la identidad del espacio desde el primer día.',
+    metaDescription:
+      'Anteproyecto de cocina técnica profesional en Álava: análisis del local, moodboards de materiales y color para definir el espacio antes de obra.',
+    facts: [
+      'Análisis del local y levantamiento',
+      'Concepto de materiales y color',
+      'Moodboard del espacio',
+      'Definición previa a licitación',
+    ],
+    tags: ['anteproyecto', 'cocina-tecnica'],
+  },
+
   // ────── HISTÓRICOS 2020 (web antigua GeneraIA-Yago/WEB-MARIA) ──────
   // Las imágenes son las MISMAS de la web antigua (mismo MD5): la web
   // antigua las tenía en DESCARGAS-LINKELIND/{carpeta}/{name}-images-N.jpg.

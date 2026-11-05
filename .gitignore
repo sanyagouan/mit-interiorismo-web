@@ -29,3 +29,6 @@ pnpm-debug.log*
 *.hasta
 optimize.cjs
 *.hasta
+
+# herramientas locales de sesión (escaneo de seguridad)
+.mimosa/
