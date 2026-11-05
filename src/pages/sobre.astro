@@ -8,7 +8,7 @@
  */
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Footer from '../components/Footer.astro';
-import { SITE, MARIA } from '../data/site';
+import { SITE, MARIA, DIFFERENTIATORS } from '../data/site';
 ---
 
 <BaseLayout
@@ -106,16 +106,10 @@ import { SITE, MARIA } from '../data/site';
           </div>
         </div>
         <div class="grid gap-12 md:grid-cols-2">
-          {[
-            { t: 'Diseño + técnica, juntos', d: 'La mayoría de interioristas trabajan solo con la estética. Yo proyecto también las instalaciones: eléctricas, climatización, fontanería. Todo con normativa.' },
-            { t: 'Presupuestos transparentes', d: 'Cada partida, cada medición, cada proveedor. Si un instalador cobra de más, te lo digo y te ahorro el dinero.' },
-            { t: 'Defensa técnica del cliente', d: 'Soy tu aliada frente a gremios, proveedores y posibles sorpresas. Cuando surge un problema en obra, te lo explico y te defiendo.' },
-            { t: 'Boutique, no franquicia', d: 'Un solo interlocutor, de principio a fin. Honorarios fijos en torno al 11% s/ PEM.' },
-            { t: '17 años de experiencia', d: 'Desde 2008, he pasado por Echazarreta Construcciones, COOK cocina y baño, BLURARQUITECTURA y mi propio estudio desde 2020.' },
-          ].map((card) => (
+          {DIFFERENTIATORS.map((card) => (
             <div>
-              <h3 class="font-display mb-3 text-2xl text-ink">{card.t}</h3>
-              <p class="text-ink-muted" set:html={card.d}></p>
+              <h3 class="font-display mb-3 text-2xl text-ink">{card.title}</h3>
+              <p class="text-ink-muted" set:html={card.body}></p>
             </div>
           ))}
         </div>

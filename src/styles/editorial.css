@@ -295,6 +295,13 @@ em{font-style:italic;}
   transition:color .3s, border-color .3s;
 }
 .work:hover .work-go{color:var(--wine);border-color:var(--wine);}
+.work-fig{overflow:hidden;}
+.work-fig img{
+  transition:transform 1.4s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+}
+.work:hover .work-fig img{transform:scale(1.035);}
+.work:hover .work-cap{color:var(--wine);}
 
 /* word reveal in titles */
 .wt-w{display:inline-block;overflow:hidden;vertical-align:top;margin-right:0.18em;}
